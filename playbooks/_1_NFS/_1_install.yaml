@@ -1,0 +1,35 @@
+---
+- name: Add repository nfs-subdir-external-provisioner
+  kubernetes.core.helm_repository:
+    name: "{{ item.name }}"
+    repo_url: "{{ item.url }}"
+    repo_state: "present"
+    force_update: true
+  with_items:
+    - {name: "nfs-subdir-external-provisioner", url: "https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner"}
+
+- name: Copy values
+  ansible.builtin.copy:
+    src: '/source/config/_1_NFS/values.yaml'
+    dest: '/tmp/values_NFS.yaml'
+    mode: "0640"
+
+- name: Remove nfs_provisioner
+  kubernetes.core.helm:
+    name: nfs-provisioner-01
+    chart_ref: nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
+    release_namespace: provisioners
+    create_namespace: true
+    state: absent
+    values_files:
+      - /tmp/values_NFS.yaml
+
+- name: Install nfs_provisioner
+  kubernetes.core.helm:
+    name: nfs-provisioner-01
+    chart_ref: nfs-subdir-external-provisioner/nfs-subdir-external-provisioner
+    release_namespace: provisioners
+    create_namespace: true
+    state: present
+    values_files:
+      - /tmp/values_NFS.yaml

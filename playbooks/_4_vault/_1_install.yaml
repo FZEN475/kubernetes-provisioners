@@ -1,0 +1,151 @@
+---
+
+- name: Add stable chart repo hashicorp
+  kubernetes.core.helm_repository:
+    name: "{{ item.name }}"
+    repo_url: "{{ item.url }}"
+    repo_state: "present"
+    force_update: true
+  with_items:
+    - {name: "hashicorp", url: "https://helm.releases.hashicorp.com"}
+    - {name: "external-secrets", url: "https://charts.external-secrets.io"}
+    - {name: "stakater", url: "https://stakater.github.io/stakater-charts"}
+
+- name: Vault init secrets access Role.
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: Role
+      metadata:
+        name: vault-secrets
+        namespace: secrets
+      rules:
+        - apiGroups: ['']
+          resources: ['secrets']
+          verbs: ["get", "watch", "create", "delete"]
+
+- name: Vault init secrets access RoleBinding
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: RoleBinding
+      metadata:
+        name: vault-secrets
+        namespace: secrets
+      subjects:
+        - kind: ServiceAccount
+          name: vault-sa
+          namespace: secrets
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: Role
+        name: vault-secrets
+
+- name: ConfigMap c vault-init.sh
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: vault-init
+        namespace: secrets
+      data:
+        vault-init.sh: "{{ lookup('ansible.builtin.file', '/source/config/_4_vault/vault-init.sh')  }}"
+        backup.sh: "{{ lookup('ansible.builtin.file', '/source/config/_4_vault/backup.sh')  }}"
+
+- name: Slurp ca_etcd.pem
+  ansible.builtin.slurp:
+    src: /etc/ssl/etcd/ca_etcd.pem
+  register: ca_etcd
+
+- name: Slurp ca_etcd-key.pem
+  ansible.builtin.slurp:
+    src: /etc/ssl/etcd/ca_etcd-key.pem
+  register: ca_etcd_key
+
+- name: Create root-etcd-tls
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: kubernetes.io/tls
+      metadata:
+        name: root-etcd-tls
+        namespace: secrets
+      data:
+        tls.crt: "{{ ca_etcd['content'] }}"
+        tls.key: "{{ ca_etcd_key['content'] }}"
+        ca.crt: "{{ ca_etcd['content'] }}"
+
+- name: Create pgsql-secret
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: Secret
+      type: Opaque
+      metadata:
+        name: pgsql-secret
+        namespace: secrets
+      data:
+        postgres-password: "{{ lookup('ansible.builtin.file', '/run/secrets/pgsql_password') | b64encode }}"
+
+- name: Copy values
+  ansible.builtin.copy:
+    src: '/source/config/_4_vault/_1_values-vault.yaml'
+    dest: '/tmp/values_vault.yaml'
+    mode: "0640"
+
+- name: Remove vault
+  kubernetes.core.helm:
+    name: vault
+    chart_ref: hashicorp/vault
+    release_namespace: secrets
+    create_namespace: true
+    state: absent
+    wait: true
+    values_files:
+      - /tmp/values_vault.yaml
+
+- name: Install vault
+  kubernetes.core.helm:
+    name: vault
+    chart_ref: hashicorp/vault
+    release_namespace: secrets
+    create_namespace: true
+    state: present
+    wait: true
+    values_files:
+      - /tmp/values_vault.yaml
+
+- name: Copy values
+  ansible.builtin.copy:
+    src: '/source/config/_4_vault/_2_values-es.yaml'
+    dest: '/tmp/values_es.yaml'
+    mode: "0640"
+
+- name: Remove external-secrets (DELETE ALL external-secrets)
+  kubernetes.core.helm:
+    name: external-secrets
+    chart_ref: external-secrets/external-secrets
+    release_namespace: secrets
+    create_namespace: true
+    state: absent
+    wait: true
+    values_files:
+      - /tmp/values_es.yaml
+
+- name: Install external-secrets
+  kubernetes.core.helm:
+    name: external-secrets
+    chart_ref: external-secrets/external-secrets
+    release_namespace: secrets
+    create_namespace: true
+    state: present
+    wait: true
+    values_files:
+      - /tmp/values_es.yaml

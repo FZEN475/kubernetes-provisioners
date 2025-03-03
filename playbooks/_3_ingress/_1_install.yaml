@@ -1,0 +1,64 @@
+- name: Add stable chart repo ingress-nginx
+  kubernetes.core.helm_repository:
+    name: "{{ item.name }}"
+    repo_url: "{{ item.url }}"
+    repo_state: "present"
+    force_update: true
+  with_items:
+    - {name: "ingress-nginx", url: "https://kubernetes.github.io/ingress-nginx"}
+
+- name: Copy values
+  ansible.builtin.copy:
+    src: '/source/config/_3_ingress/_1_values-internal.yaml'
+    dest: '/tmp/values_internal.yaml'
+    mode: "0640"
+
+- name: Remove internal ingress-nginx
+  kubernetes.core.helm:
+    name: internal-nginx
+    chart_ref: ingress-nginx/ingress-nginx
+    release_namespace: provisioners
+    create_namespace: true
+    state: absent
+    wait: true
+    values_files:
+      - /tmp/values_internal.yaml
+
+- name: Install internal ingress-nginx
+  kubernetes.core.helm:
+    name: internal-nginx
+    chart_ref: ingress-nginx/ingress-nginx
+    release_namespace: provisioners
+    create_namespace: true
+    state: present
+    wait: true
+    values_files:
+      - /tmp/values_internal.yaml
+
+- name: Copy values
+  ansible.builtin.copy:
+    src: '/source/config/_3_ingress/_2_values-external.yaml'
+    dest: '/tmp/values_external.yaml'
+    mode: "0640"
+
+- name: Remove external ingress-nginx
+  kubernetes.core.helm:
+    name: external-nginx
+    chart_ref: ingress-nginx/ingress-nginx
+    release_namespace: provisioners
+    create_namespace: true
+    state: absent
+    wait: true
+    values_files:
+      - /tmp/values_external.yaml
+
+- name: Install external ingress-nginx
+  kubernetes.core.helm:
+    name: external-nginx
+    chart_ref: ingress-nginx/ingress-nginx
+    release_namespace: provisioners
+    create_namespace: true
+    state: present
+    wait: true
+    values_files:
+      - /tmp/values_external.yaml

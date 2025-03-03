@@ -1,0 +1,10 @@
+include:
+  - project: 'library/ci'
+    file:
+      - 'root.gitlab-ci.yaml'
+    inputs:
+      merge_branch_action: delete
+
+variables:
+  CI_DEBUG_TRACE: "false"
+

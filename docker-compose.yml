@@ -1,0 +1,28 @@
+
+services:
+  ansible:
+    image: ghcr.io/fzen475/ansible-image:latest
+    container_name: ansible-kubernetes-provisioners
+    env_file: ./.env
+    environment:
+      ANSIBLE_REPO: ${ANSIBLE_REPO}
+      SECURE_SERVER: ${SECURE_SERVER}
+      SECURE_PATH: ${SECURE_PATH}
+      LIBRARY: ${LIBRARY}
+      GIT_EXTRA_PARAM: ${GIT_EXTRA_PARAM}
+    secrets:
+      - id_ed25519
+      - id_ed25519.pub
+      - pgsql_password
+      - gitlab-secrets.yaml
+    restart: no
+
+secrets:
+  id_ed25519:
+    file: /root/.ssh/id_ed25519
+  id_ed25519.pub:
+    file: /root/.ssh/id_ed25519.pub
+  pgsql_password:
+    file: /mnt/secrets/pgsql_password
+  gitlab-secrets.yaml:
+    file: /mnt/secrets/gitlab-secrets.yaml

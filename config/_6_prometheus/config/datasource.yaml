@@ -1,0 +1,9 @@
+apiVersion: 1
+datasources:
+  - name: sidecarProvider
+    type: prometheus
+    url: https://prometheus-server.monitoring.svc:80
+    access: proxy
+    isDefault: true
+    secureJsonData:
+      tlsCACert: '/run/secrets/kubernetes.io/serviceaccount/ca.crt'

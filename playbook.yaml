@@ -1,0 +1,6 @@
+---
+- name: Ожидание доступности серверов
+  ansible.builtin.import_playbook: ./playbooks/_0_wait_for_connection.yaml
+
+- name: Install
+  ansible.builtin.import_playbook: ./playbooks/_1_install.yaml

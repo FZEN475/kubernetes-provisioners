@@ -1,93 +1,216 @@
 # kubernetes-provisioners
-
-
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.fzen.pro/github/kubernetes-provisioners.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.fzen.pro/github/kubernetes-provisioners/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
 ## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+* Поставщик доступа к NFS.
+  * StorageClass для PVC.
+  * Возможность указать поддиректорию в PVC.annotations.
+* cert-manager, trust-manager.
+  * Автоматически управляет сертификатами.
+  * В качестве корневого сертификата используется сертификат Kubernetes.
+  * Цепочка: root-ca -> intermediate-ca -> [Consumers]
+  * Интеграция с сертификатами из Vault.
+  * <details><summary> Таблица сертификатов </summary>
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+    | Consumer              | Source       | Consumers                                    | Type   |
+    |-----------------------|:-------------|:---------------------------------------------|:-------|
+    | ingress               | cert-manager | provisioners/ingress                         | server |
+    | vault                 | cert-manager | secrets/vault                                | server |
+    | prometheus            | cert-manager | monitoring/prometheus<br/>monitoring/grafena | server |
+    | client-etcd           | vault        | storage/minio                                | client |
+    | kuber                 | cert-manager | monitoring/dashboard                         | server |
+    | minio                 | cert-manager | storage/minio                                | server |
+    | pgsql                 | cert-manager | storage/pgsql                                | server |    
+    | pgadmin               | cert-manager | storage/pgadmin                              | server |
+    | redis                 | cert-manager | storage/redis                                | server |
+    | gitlab                | cert-manager | gitlab/gitlab                                | server |  
+    | kubernetes-agent-dev  | cert-manager | dev/kubernetes-agent-dev                     | server |
+    | kubernetes-agent-prod | cert-manager | dev/kubernetes-agent-prod                    | server |
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+  </details>
+* ingress
+  * Чарт [ingress-nginx/ingress-nginx](https://github.com/kubernetes/ingress-nginx).
+  * Два контроллера: 
+    * [internal](https://github.com/FZEN475/kubernetes-provisioners/blob/main/config/_3_ingress/_1_values-internal.yaml); 
+    * [external](https://github.com/FZEN475/kubernetes-provisioners/blob/main/config/_3_ingress/_2_values-external.yaml).
+* Vault
+  * Данные хранятся на NFS.
+  * [Backup](https://github.com/FZEN475/kubernetes-provisioners/blob/main/playbooks/_0_init/_1_install.yaml)
+  * [vault-init.sh](https://github.com/FZEN475/kubernetes-provisioners/blob/main/config/_4_vault/vault-init.sh)
+    * Если первый запуск.
+      * Создание базы с настройками `init -key-shares=1 -key-threshold=1`
+      * Создание секрета в kubernetes c key и token.
+    * Распечатка базы.
+    * Первичная статичная настройка:
+      * github
+      * kubernetes
+      * pki
+      * database
+  * [Создание секретов](https://github.com/FZEN475/ansible-library?tab=readme-ov-file#add_vault_secret).
+  * <details><summary> Таблица секретов </summary>
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+    | SecretStore       | External |     Dynamic     | Secret name                                                                                                                                                                                                                                 | Comment                                                                                    | 
+    |-------------------|:--------:|:---------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:-------------------------------------------------------------------------------------------|
+    | grafana-ss        | &cross;  |     &check;     | monitoring/grafana-secrets                                                                                                                                                                                                                  |                                                                                            |
+    | minio-ss          | &cross;  |     &check;     | storage/minio-secrets                                                                                                                                                                                                                       |                                                                                            |
+    | storage-minio-css | &check;  |     &check;     | storage/minio-gitlab-secrets<br/>gitlab/gitlab-minio-secrets                                                                                                                                                                                | Учетная запись gitlab для minio;<br/>Ключ доступа к minio в gitlab.                        | 
+    | pgsql-ss          | &cross;  | &cross;/&check; | storage/pgsql-secrets<br/>storage/pgadmin-pgsql-secrets                                                                                                                                                                                     | Пароль postgres статический;<br/>PGAdmin использует пароль postgres                        |
+    | pgadmin-ss        | &cross;  |     &check;     | storage/pgadmin-secrets                                                                                                                                                                                                                     |                                                                                            |
+    | gitlab-pgsql-css  | &check;  |     &check;     | gitlab/gitlab-pgsql-secrets                                                                                                                                                                                                                 | Пароль хранится и ротируется в Vault.                                                      | 
+    | redis-ss          | &cross;  |     &check;     | storage/redis-secrets                                                                                                                                                                                                                       | Использует секреты redis-clients-secrets                                                   |
+    | storage-redis-css | &check;  |     &check;     | storage/redis-clients-secrets<br/>storage/redis-secrets<br/>gitlab/gitlab-redis-secrets                                                                                                                                                     |                                                                                            | 
+    | gitlab-ss         | &cross;  |     &cross;     | gitlab/gitlab-secrets<br/>gitlab/kas-secrets<br/>gitlab/rails-secrets<br/>gitlab/gitaly-secrets<br/>gitlab/registry-secrets<br/>gitlab/registry-connect-secrets<br/>gitlab/pages-secrets<br/>gitlab/runner-secrets<br/>gitlab/shell-secrets | Все пароли статические и [созданы отдельно]();<br/> Пароль runner-secrets не используется. |
+    | runners-ss        | &cross;  |     &cross;     | gitlab/runners-secrets<br/>gitlab/runner-no-tag-secrets<br/>gitlab/runner-docker-builder-secrets<br/>gitlab/runner-helm-secrets<br/>gitlab/runner-gitlab-registry-secrets                                                                   | runner-gitlab-registry-secrets для доступа раннеров к закрытым репозиториям gitlab.        | 
+    | gitlab-agent-ss   | &cross;  |     &cross;     | dev/gitlab-agent-secrets<br/>prod/gitlab-agent-secrets                                                                                                                                                                                      | gitlab-agent-secrets - токен регистрации агента KAS.                                       |
+  
+  </details>
+  
+  * [Пример создания секретов gitlab](https://github.com/FZEN475/kubernetes-provisioners/blob/main/playbooks/_4_vault/_0_gitlab_secrets_example.yaml)
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+* [reloaer](https://github.com/stakater/Reloader)
+  * Перезагрузка pod при изменении ConfigMap или Secrets.
+* prometheus
+  * Prometheus-adapter - добавляет API: v1beta1.metrics.k8s.io; v1beta1.custom.metrics.k8s.io; v1beta1.external.metrics.k8s.io.
+  * Kube-state-metrics - агрегирует метрики kubernetes.
+  * Prometheus-node-exporter собирает метрики NODE.
+  * Grafana - визуализирует метрики.
+  * ConfigMaps:
+    * [Настройки Prometheus-adapter](https://github.com/FZEN475/kubernetes-provisioners/blob/main/config/_6_prometheus/config/adapter-rules.yaml).
+    * [Настройки prometheus](https://github.com/FZEN475/kubernetes-provisioners/blob/main/config/_6_prometheus/config/prometheus.yml).
+    * [Настройки grafana](https://github.com/FZEN475/kubernetes-provisioners/blob/main/config/_6_prometheus/config/dashboard.json).
+* kubernetes-dashboard
+  * [JWT-token](https://github.com/FZEN475/kubernetes-provisioners/blob/main/config/_7_dashboard/config/dashboard-read-only.yaml).
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+## Dependency
+* [Образ](https://github.com/FZEN475/ansible-image)
+* [Library](https://github.com/FZEN475/ansible-library)
+* <details><summary> .env </summary>
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+  ```properties
+  TERRAFORM_REPO="https://github.com/FZEN475/kubernetes-provisioners.git"
+  #GIT_EXTRA_PARAM="-bdev"
+  SECURE_SERVER=""
+  SECURE_PATH=""
+  LIBRARY="https://github.com/FZEN475/ansible-library.git"
+  ``` 
+  </details>
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+* <details><summary> secrets </summary>
+  
+  ```yaml
+  secrets:
+    - id_ed25519
+    - pgsql_password # Постоянный пароль пользоватьеля postgress
+    - gitlab-secrets.yaml # Статические секреты gitlab
+  ```
+</details>
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+## Stages
+### [init](https://github.com/FZEN475/kubernetes-provisioners/blob/main/playbooks/_0_init/_1_install.yaml)
+* Установка CIRDs prometheus как зависимость для cert-manager и vault.
+* Создание CronJob для резервного копирования базы vault.
+### [NFS-provisioner](https://github.com/FZEN475/kubernetes-provisioners/blob/main/playbooks/_1_NFS/_1_install.yaml)
+* Установка чарта.
+### [cert-manager, trust-manager](https://github.com/FZEN475/kubernetes-provisioners/blob/main/playbooks/_2_cert-manager/_1_install.yaml)
+* Установка cert-manager.
+* Установка trust-manager.
+* Создание цепочки сертификатов кластера.
+* Создание ClusterIssuer для клиентских сертификатов etcd из Vault.
+* [Создание сертификатов](https://github.com/FZEN475/kubernetes-provisioners/blob/main/playbooks/_2_cert-manager/_2_certificates.yaml)
+### [ingress](https://github.com/FZEN475/kubernetes-provisioners/blob/main/playbooks/_3_ingress/_1_install.yaml)
+* Установка двух чартов.
+### [vault](https://github.com/FZEN475/kubernetes-provisioners/blob/main/playbooks/_4_vault/_1_install.yaml)
+* Установка чарта vault.
+* Установка чарта external-secrets.
+* Создание [секретов в vault](https://github.com/FZEN475/kubernetes-provisioners/blob/main/playbooks/_4_vault/_2_secrets.yaml).
+### [reloaer](https://github.com/FZEN475/kubernetes-provisioners/blob/main/playbooks/_5_reloader/_1_install.yaml)
+* Установка чарта.
+### [prometheus](https://github.com/FZEN475/kubernetes-provisioners/blob/main/playbooks/_6_prometheus/_1_install.yaml)
+* Установка чарта kube-state-metrics.
+* [Fix kube-rbac-proxy для kube-state-metrics](https://github.com/FZEN475/kubernetes-provisioners?tab=readme-ov-file#Troubleshoots).
+* Установка чарта prometheus.
+* Установка чарта prometheus-adapter.
+* [Fix kube-rbac-proxy для node-exporter](https://github.com/FZEN475/kubernetes-provisioners?tab=readme-ov-file#Troubleshoots).
+* Установка чарта grafana.
+### [dashboard](https://github.com/FZEN475/kubernetes-provisioners/blob/main/playbooks/_7_dashboard/_1_install.yaml)
+* Установка чарта dashboard.
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+## Troubleshoots
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+<!DOCTYPE html>
+<table>
+  <thead>
+    <tr>
+      <th>Источник</th>
+      <th>Проблема</th>
+      <th>Решение</th>
+    </tr>
+  </thead>
+  <tr>
+      <td>ingress</td>
+      <td>При запросе к nginx-controller-admission: <br/> tls: failed to verify certificate</td>
+      <td>
 
-## License
-For open source projects, say how it is licensed.
+Указать tls-секрет через extraArgs;<br/>
+Смонтировать tls-секрет и указать пути из extraArgs;
+</td>
+  </tr>
+  <tr>
+      <td>Vault</td>
+      <td>В логах аутентификации: <br/> permission denied<br/>"path":"auth/token/lookup-self"</td>
+      <td>
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+У политики default нет разрешений на чтение пути.<br/>
+```
+path "auth/token/lookup-self" {
+    capabilities = ["read"]
+}
+```
+</td>
+  </tr>
+  <tr>
+      <td>Vault</td>
+      <td>Перестаёт работать аутентификация store в Vault</td>
+      <td>
+
+```shell
+kubectl exec -it -n secrets            pod/vault-0 -- ash
+export VAULT_ADDR='https://127.0.0.1:8200'
+export VAULT_CACERT='/tmp/certs/ca.crt'
+export VAULT_CLIENT_TIMEOUT=300s
+export VAULT_TOKEN=$(/tmp/curl -k --cacert run/secrets/kubernetes.io/serviceaccount/ca.crt\
+    -X GET \
+    -H "Authorization: Bearer $(cat /run/secrets/kubernetes.io/serviceaccount/token)" \
+    -H 'Accept: application/json' \
+    https://192.168.2.2:6443/api/v1/namespaces/secrets/secrets/vault | grep \"token\" | awk '{gsub(/"/, "", $2);gsub(/,/, "", $2);print $2}' | base64 -d )
+vault write auth/kubernetes/config token_reviewer_jwt="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+    kubernetes_host=https://192.168.2.2:6443 kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+```
+
+</td>
+  </tr>
+  <tr>
+      <td>prometheus-adapter</td>
+      <td>Не устанавливаются APIService при установке через helm.</td>
+      <td>
+
+Заполнить:<br/>.Values.rules.custom<br/>.Values.rules.external<br/>.Values.rules.resource<br/>
+Любыми правилами. Потом можно менять редактированием ConfigMap.
+</td>
+  </tr>
+  <tr>
+      <td>kube-rbac-proxy</td>
+      <td>После успешного развёртывания нет доступа к бекэнду с корректным JWT-токеном.</td>
+      <td>
+
+В настройках ConfigMap очистить subresource.
+```yaml
+authorization:
+  resourceAttributes:
+    namespace: monitoring
+    apiVersion: v1
+    resource: services
+    subresource:
+    name: prometheus-kube-state-metrics
+```
+</td>
+  </tr>
+</table>
