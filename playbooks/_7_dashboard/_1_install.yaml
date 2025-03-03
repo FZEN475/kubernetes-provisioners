@@ -1,0 +1,48 @@
+- name: Add stable chart repo cert-manager
+  kubernetes.core.helm_repository:
+    name: "{{ item.name }}"
+    repo_url: "{{ item.url }}"
+    repo_state: "present"
+    force_update: true
+  with_items:
+    - {name: "kubernetes-dashboard", url: "https://kubernetes.github.io/dashboard/"}
+
+- name: Copy values
+  ansible.builtin.copy:
+    src: '/source/config/_7_dashboard/values.yaml'
+    dest: '/tmp/values_dashboard.yaml'
+    mode: "0640"
+
+- name: Remove dashboard
+  kubernetes.core.helm:
+    name: dashboard
+    chart_ref: kubernetes-dashboard/kubernetes-dashboard
+    release_namespace: monitoring
+    create_namespace: true
+    state: absent
+    values_files:
+      - /tmp/values_dashboard.yaml
+
+- name: Install dashboard
+  kubernetes.core.helm:
+    name: dashboard
+    chart_ref: kubernetes-dashboard/kubernetes-dashboard
+    release_namespace: monitoring
+    create_namespace: true
+    state: present
+    values_files:
+      - /tmp/values_dashboard.yaml
+
+- name: Copy values
+  ansible.builtin.copy:
+    src: '/source/config/_7_dashboard/config/dashboard-read-only.yaml'
+    dest: '/tmp/dashboard-read-only.yaml'
+    mode: "0640"
+
+- name: Remove read-only ServiceAccount
+  ansible.builtin.shell: "kubectl delete -f /tmp/dashboard-read-only.yaml"
+  ignore_errors: true
+
+- name: Create read-only ServiceAccount
+  ansible.builtin.shell: "kubectl create -f /tmp/dashboard-read-only.yaml"
+  ignore_errors: true

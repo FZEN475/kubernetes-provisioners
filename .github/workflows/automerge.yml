@@ -1,0 +1,75 @@
+name: Enable Automerge
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+
+  build-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: false
+
+  Enable-Automerge:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: build-test
+    steps:
+#      - name: view the secrets context
+#        shell: bash
+#        run: echo "$SECRETS_CONTEXT"
+#        env:
+#          SECRETS_CONTEXT: ${{ toJson(secrets) }}
+      - name: Auto Merge
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{github.event.pull_request.html_url}}
+          GITHUB_TOKEN: ${{secrets.github_token}}
+
+  pull-image:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+    needs: build-test
+    steps:
+      - uses: actions/checkout@v4
+      - id: test
+        shell: pwsh
+        run: env
+      - id: tag
+        shell: bash
+        run: |
+          if [[ ${{github.event_name}} == pull_request ]]; then
+            echo "tag=latest" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${{github.ref_name}}" >> "$GITHUB_OUTPUT"
+          fi
+      - id: test1
+        shell: pwsh
+        run: echo "${{ steps.tag.outputs.tag }}"
+      - name: 'Login to GitHub Container Registry'
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+      - id: lower-repo
+        shell: bash
+        run: echo "repository=${{github.repository}}" | awk '{print tolower($0)}' >> "$GITHUB_OUTPUT"
+      - uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ steps.lower-repo.outputs.repository }}:${{ steps.tag.outputs.tag }}

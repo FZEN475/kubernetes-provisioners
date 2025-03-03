@@ -1,0 +1,41 @@
+groups:
+  - name: "custom.rules"
+    rules:
+      - record: pod:cpu_usage_percentage:ratio
+        expr: |
+          sum by (pod, namespace) (
+            node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate{cluster="",namespace!="",pod!=""}
+          )
+          /
+          sum by (pod, namespace) (
+            kube_pod_container_resource_limits{cluster="",job="_5_kube-state-metrics",namespace!="",pod!="",resource="cpu"}
+          ) * 100
+      - record: pod:memory_usage_percentage:ratio
+        expr: |
+          sum by (pod, namespace) (
+            container_memory_working_set_bytes{cluster="",container!="",image!="",job="kubelet",metrics_path="/metrics/cadvisor",namespace!="",pod!=""}
+          )
+          /
+          sum by (pod, namespace) (
+            kube_pod_container_resource_limits{cluster="",job="_5_kube-state-metrics",namespace!="",pod!="",resource="memory"}
+          ) * 100
+      - expr: |
+          sum by (cluster, namespace, pod, container) (
+            irate(container_cpu_usage_seconds_total{job="_3_kubelet_resource"}[5m])
+          ) * on (cluster, namespace, pod) group_left(node) topk by (cluster, namespace, pod) (
+            1, max by(cluster, namespace, pod, node) (kube_pod_info{node!=""})
+          )
+        record: node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate
+  - name: "v1beta1.metrics.k8s.io"
+    rules:
+      - expr: |
+          max(label_replace(kube_pod_info, "pod", "$1", "pod", "(.*)")) by (node, namespace, pod)
+        record: 'node_namespace_pod:kube_pod_info:'
+  - name: "tests"
+    rules:
+      - expr: sum(rate(container_cpu_usage_seconds_total{namespace!=""}[5m])) by (namespace)
+        record: 'test:namespace'
+      - expr: sum(rate(container_cpu_usage_seconds_total{namespace!=""}[5m])) by (namespace,pod)
+        record: 'test:namespace:pod'
+      - expr: sum(rate(container_cpu_usage_seconds_total{namespace!=""}[5m])) by (namespace,pod,instance)
+        record: 'test:namespace:pod:instance'

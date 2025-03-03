@@ -1,0 +1,37 @@
+---
+- name: Add stable chart repo reloader
+  kubernetes.core.helm_repository:
+    name: "{{ item.name }}"
+    repo_url: "{{ item.url }}"
+    repo_state: "present"
+    force_update: true
+  with_items:
+    - {name: "stakater", url: "https://stakater.github.io/stakater-charts"}
+
+- name: Copy values
+  ansible.builtin.copy:
+    src: '/source/config/_5_reloader/values.yaml'
+    dest: '/tmp/values_reloader.yaml'
+    mode: "0640"
+
+- name: Remove reloader
+  kubernetes.core.helm:
+    name: reloader
+    chart_ref: stakater/reloader
+    release_namespace: provisioners
+    create_namespace: true
+    state: absent
+    wait: true
+    values_files:
+      - /tmp/values_reloader.yaml
+
+- name: Install reloader
+  kubernetes.core.helm:
+    name: reloader
+    chart_ref: stakater/reloader
+    release_namespace: provisioners
+    create_namespace: true
+    state: present
+    wait: true
+    values_files:
+      - /tmp/values_reloader.yaml

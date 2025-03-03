@@ -1,0 +1,99 @@
+- name: Prometheus-community repository
+  kubernetes.core.helm_repository:
+    name: "{{ item.name }}"
+    repo_url: "{{ item.url }}"
+    repo_state: "present"
+    force_update: true
+  with_items:
+    - {name: "prometheus-community", url: "https://prometheus-community.github.io/helm-charts"}
+
+- name: CIRDs prometheus
+  kubernetes.core.helm:
+    name: prometheus-cird
+    chart_ref: prometheus-community/prometheus-operator-crds
+    release_namespace: monitoring
+    create_namespace: true
+    state: present
+
+- name: Create backup-pvc
+  kubernetes.core.k8s:
+    state: present
+    wait: true
+    definition:
+      kind: PersistentVolumeClaim
+      apiVersion: v1
+      metadata:
+        name: backup-pvc
+        namespace: secrets
+        annotations:
+          nfs.io/storage-path: "backup"
+      spec:
+        storageClassName: nfs-client
+        accessModes:
+          - ReadWriteMany
+        resources:
+          requests:
+            storage: 10Gi
+
+- name: Remove CronJob backup-secrets
+  kubernetes.core.k8s:
+    state: absent
+    wait: true
+    definition:
+      apiVersion: batch/v1
+      kind: CronJob
+      metadata:
+        name: backup-secrets
+        namespace: secrets
+
+- name: Create CronJob backup-secrets
+  kubernetes.core.k8s:
+    state: present
+    wait: true
+    definition:
+      apiVersion: batch/v1
+      kind: CronJob
+      metadata:
+        name: backup-secrets
+        namespace: secrets
+      spec:
+        schedule: "@daily"
+        concurrencyPolicy: Forbid
+        successfulJobsHistoryLimit: 1
+        failedJobsHistoryLimit: 1
+        jobTemplate:
+          spec:
+            template:
+              spec:
+                restartPolicy: Never
+                dnsPolicy: ClusterFirst
+                nodeSelector:
+                  kubernetes.io/hostname: "control02"
+                containers:
+                  - name: backup
+                    image: ghcr.io/fzen475/multitool:latest
+                    imagePullPolicy: Always
+                    volumeMounts:
+                      - name: vault-data
+                        mountPath: /vault-data
+                      - name: backup
+                        mountPath: /backup/
+                      - name: vault-init
+                        mountPath: /entrypoint.sh
+                        subPath: backup.sh
+                        readOnly: true
+                volumes:
+                  - name: vault-init
+                    configMap:
+                      defaultMode: 0744
+                      name: vault-init
+                      items:
+                        - key: backup.sh
+                          path: backup.sh
+                  - name: backup
+                    persistentVolumeClaim:
+                      claimName: backup-pvc
+                  - name: vault-data
+                    hostPath:
+                      path: /vault-data/
+                      type: Directory

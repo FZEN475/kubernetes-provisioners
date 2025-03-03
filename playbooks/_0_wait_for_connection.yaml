@@ -1,0 +1,11 @@
+---
+- hosts: servers
+  name: Wait for system to become reachable in all servers
+  tasks:
+
+    - name: Wait for system to become reachable
+      ansible.builtin.wait_for_connection:
+        timeout: 9000
+
+    - name: Gather facts for first time
+      ansible.builtin.setup:

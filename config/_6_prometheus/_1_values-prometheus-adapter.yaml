@@ -1,0 +1,398 @@
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: kubernetes.io/os
+              operator: In
+              values:
+                - linux
+    preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 1
+        preference:
+          matchExpressions:
+            - key: node-role.kubernetes.io/control-plane
+              operator: Exists
+
+topologySpreadConstraints: []
+
+image:
+  repository: registry.k8s.io/prometheus-adapter/prometheus-adapter
+  # if not set appVersion field from Chart.yaml is used
+  tag: ""
+  pullPolicy: IfNotPresent
+
+logLevel: 1
+
+metricsRelistInterval: 120s
+
+listenPort: 6443
+
+nodeSelector:
+  kubernetes.io/hostname: "control01"
+
+priorityClassName: ""
+
+## Override the release namespace (for multi-namespace deployments in combined charts)
+namespaceOverride: ""
+
+## Additional annotations to add to all resources
+customAnnotations: {}
+# role: custom-metrics
+
+## Additional labels to add to all resources
+customLabels: {}
+# monitoring: prometheus-adapter
+
+# Url to access prometheus
+prometheus:
+  # Value is templated
+  url: https://prometheus-server.monitoring.svc
+  port: 80
+  path: ""
+
+replicas: 1
+
+# k8s 1.21 needs fsGroup to be set for non root deployments
+# ref: https://github.com/kubernetes/kubernetes/issues/70679
+podSecurityContext:
+  fsGroup: 10001
+
+# SecurityContext of the container
+# ref. https://kubernetes.io/docs/tasks/configure-pod-container/security-context
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop: ["ALL"]
+  readOnlyRootFilesystem: true
+  runAsNonRoot: true
+  runAsUser: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+rbac:
+  # Specifies whether RBAC resources should be created
+  create: true
+  # Specifies if a Cluster Role should be used for the Auth Reader
+  useAuthReaderClusterRole: false
+  externalMetrics:
+    resources: ["*"]
+  customMetrics:
+    resources: ["*"]
+
+psp:
+  # Specifies whether PSP resources should be created
+  create: false
+  # Annotations added to the pod security policy
+  annotations: {}
+  ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#apparmor
+  ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#seccomp
+  ## Ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/#sysctl
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+#  name: prometheus-adapter-sa
+  # ServiceAccount annotations.
+  # Use case: AWS EKS IAM roles for service accounts
+  # ref: https://docs.aws.amazon.com/eks/latest/userguide/specify-service-account-role.html
+  annotations: {}
+
+# Custom DNS configuration to be added to prometheus-adapter pods
+dnsConfig: {}
+  # nameservers:
+  #   - 1.2.3.4
+  # searches:
+  #   - ns1.svc.cluster-domain.example
+  #   - my.dns.search.suffix
+  # options:
+  #   - name: ndots
+#     value: "2"
+#   - name: edns0
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  # limits:
+#   cpu: 100m
+#   memory: 128Mi
+
+# Configure liveness probe
+# https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#Probe
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: https
+    scheme: HTTPS
+  initialDelaySeconds: 30
+  timeoutSeconds: 5
+
+# Configure readiness probe
+readinessProbe:
+  httpGet:
+    path: /healthz
+    port: https
+    scheme: HTTPS
+  initialDelaySeconds: 30
+  timeoutSeconds: 5
+
+# Configure startup probe
+# Use if prometheus-adapter takes a long time to finish startup e.g. polling a lot of API versions in cluster
+startupProbe: {}
+
+rules:
+  default: false
+
+  custom:
+    - seriesQuery: '{__name__=~"^container_.*",container!="POD",namespace!="",pod!=""}'
+      seriesFilters: [ ]
+      resources:
+        overrides:
+          namespace:
+            resource: namespace
+          pod:
+            resource: pod
+      name:
+        matches: ^container_(.*)_seconds_total$
+        as: ""
+      metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>,container!="POD"}[5m]))
+        by (<<.GroupBy>>)
+    - seriesQuery: '{__name__=~"^container_.*",container!="POD",namespace!="",pod!=""}'
+      seriesFilters:
+        - isNot: ^container_.*_seconds_total$
+      resources:
+        overrides:
+          namespace:
+            resource: namespace
+          pod:
+            resource: pod
+      name:
+        matches: ^container_(.*)_total$
+        as: ""
+      metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>,container!="POD"}[5m]))
+        by (<<.GroupBy>>)
+    - seriesQuery: '{__name__=~"^container_.*",container!="POD",namespace!="",pod!=""}'
+      seriesFilters:
+        - isNot: ^container_.*_total$
+      resources:
+        overrides:
+          namespace:
+            resource: namespace
+          pod:
+            resource: pod
+      name:
+        matches: ^container_(.*)$
+        as: ""
+      metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>,container!="POD"}) by (<<.GroupBy>>)
+    - seriesQuery: '{namespace!="",__name__!~"^container_.*"}'
+      seriesFilters:
+        - isNot: .*_total$
+      resources:
+        template: <<.Resource>>
+      name:
+        matches: ""
+        as: ""
+      metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)
+    - seriesQuery: '{namespace!="",__name__!~"^container_.*"}'
+      seriesFilters:
+        - isNot: .*_seconds_total
+      resources:
+        template: <<.Resource>>
+      name:
+        matches: ^(.*)_total$
+        as: ""
+      metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>}[5m])) by (<<.GroupBy>>)
+    - seriesQuery: '{namespace!="",__name__!~"^container_.*"}'
+      seriesFilters: [ ]
+      resources:
+        template: <<.Resource>>
+      name:
+        matches: ^(.*)_seconds_total$
+        as: ""
+      metricsQuery: sum(rate(<<.Series>>{<<.LabelMatchers>>}[5m])) by (<<.GroupBy>>)
+    # - seriesQuery: '{__name__=~"^some_metric_count$"}'
+    #   resources:
+    #     template: <<.Resource>>
+    #   name:
+    #     matches: ""
+  #     as: "my_custom_metric"
+  #   metricsQuery: sum(<<.Series>>{<<.LabelMatchers>>}) by (<<.GroupBy>>)
+
+  # Mounts a configMap with pre-generated rules for use. Overrides the
+  # default, custom, external and resource entries
+  existing: "prometheus-adapter-rules"
+
+  external:
+    - metricsQuery: sum(rate(pod_cpu_usage_seconds_total{namespace=~"kube-system",pod=~"kube-apiserver-.*"}[3m]))
+        by (namespace)
+      name:
+        as: custom_metric_cpu_usage_metrics_type_external
+        matches: pod_cpu_usage_seconds_total
+      resources:
+        namespaced: false
+      seriesQuery: '{__name__=~"pod_cpu_usage_seconds_total",namespace="kube-system"}'
+  resource:
+    cpu:
+      containerLabel: container
+      containerQuery: |
+        sum by (<<.GroupBy>>) (
+          irate (
+              container_cpu_usage_seconds_total{<<.LabelMatchers>>,container!="",pod!=""}[120s]
+          )
+        )
+      nodeQuery: |
+        sum by (<<.GroupBy>>) (
+          1 - irate(
+            node_cpu_seconds_total{mode="idle"}[120s]
+          )
+          * on(namespace, pod) group_left(node) (
+            node_namespace_pod:kube_pod_info:{<<.LabelMatchers>>}
+          )
+        )
+        or sum by (<<.GroupBy>>) (
+          1 - irate(
+            windows_cpu_time_total{mode="idle", job="windows-exporter",<<.LabelMatchers>>}[4m]
+          )
+        )
+      resources:
+        overrides:
+          namespace:
+            resource: namespace
+          node:
+            resource: node
+          pod:
+            resource: pod
+    memory:
+      containerLabel: container
+      containerQuery: |
+        sum by (<<.GroupBy>>) (
+          container_memory_working_set_bytes{<<.LabelMatchers>>,container!="",pod!=""}
+        )
+      nodeQuery: |
+        sum by (<<.GroupBy>>) (
+          node_memory_MemTotal_bytes{<<.LabelMatchers>>}
+          -
+          node_memory_MemAvailable_bytes{<<.LabelMatchers>>}
+        )
+        or sum by (<<.GroupBy>>) (
+          windows_cs_physical_memory_bytes{job="windows-exporter",<<.LabelMatchers>>}
+          -
+          windows_memory_available_bytes{job="windows-exporter",<<.LabelMatchers>>}
+        )
+      resources:
+        overrides:
+          namespace:
+            resource: namespace
+          node:
+            resource: node
+          pod:
+            resource: pod
+    window: 5m
+
+service:
+  annotations: {}
+  port: 443
+  type: ClusterIP
+  # clusterIP: 1.2.3.4
+  ipDualStack:
+    enabled: false
+    ipFamilies: ["IPv6", "IPv4"]
+    ipFamilyPolicy: "PreferDualStack"
+tls:
+  enable: false
+  ca: |-
+    # Public CA file that signed the APIService
+  key: |-
+    # Private key of the APIService
+  certificate: |-
+    # Public key of the APIService
+
+# Set environment variables from secrets, configmaps or by setting them as name/value
+env: []
+  # - name: TMP_DIR
+  #   value: /tmp
+  # - name: PASSWORD
+  #   valueFrom:
+  #     secretKeyRef:
+  #       name: mysecret
+#       key: password
+#       optional: false
+
+# Any extra arguments
+extraArguments:
+  - --tls-private-key-file=/tmp/certs/tls.key
+  - --tls-cert-file=/tmp/certs/tls.crt
+
+# Additional containers to add to the pod
+extraContainers: []
+
+# Any extra volumes
+extraVolumes:
+  - name: tls
+    secret:
+      secretName: cm-prometheus-tls
+      items:
+        - key: tls.crt
+          path: tls.crt
+        - key: tls.key
+          path: tls.key
+        - key: ca.crt
+          path: ca.crt
+
+# Any extra volume mounts
+extraVolumeMounts:
+  - name: tls
+    mountPath: /tmp/certs/
+    readOnly: true
+  - name: tls
+    mountPath: /etc/ssl/certs/ca.crt
+    subPath: ca.crt
+    readOnly: true
+
+tolerations:
+  - key: "node-role.kubernetes.io/control-plane"
+    operator: "Exists"
+    effect: "NoSchedule"
+
+# Labels added to the pod
+podLabels: {}
+
+# Annotations added to the pod
+podAnnotations: {}
+
+# Annotations added to the deployment
+deploymentAnnotations:
+  reloader.stakater.com/auto: "true"
+
+hostNetwork:
+  # Specifies if prometheus-adapter should be started in hostNetwork mode.
+  #
+  # You would require this enabled if you use alternate overlay networking for pods and
+  # API server unable to communicate with metrics-server. As an example, this is required
+  # if you use Weave network on EKS. See also dnsPolicy
+  enabled: false
+
+# When hostNetwork is enabled, you probably want to set this to ClusterFirstWithHostNet
+# dnsPolicy: ClusterFirstWithHostNet
+
+# Deployment strategy type
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 25%
+    maxSurge: 25%
+
+podDisruptionBudget:
+  # Specifies if PodDisruptionBudget should be enabled
+  # When enabled, minAvailable or maxUnavailable should also be defined.
+  enabled: false
+  minAvailable:
+  maxUnavailable: 1
+
+certManager:
+  enabled: false
+  caCertDuration: 43800h0m0s
+  certDuration: 8760h0m0s
