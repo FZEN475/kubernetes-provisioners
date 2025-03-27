@@ -29,7 +29,7 @@ resources:
 
 
 nodeSelector:
-  kubernetes.io/hostname: "control02"
+  kubernetes.io/hostname: "prod01"
 affinity:
   nodeAffinity:
     requiredDuringSchedulingIgnoredDuringExecution:

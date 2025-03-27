@@ -83,7 +83,7 @@ vault secrets enable database || true
 vault write database/config/pgsql \
     plugin_name="postgresql-database-plugin" \
     connection_url="postgresql://{{username}}:{{password}}@postgresql-primary.storage.svc:5432/postgres" \
-    allowed_roles="gitlab" \
+    allowed_roles="gitlab, telebot-gpt" \
     username="postgres" \
     password="$(cat /tmp/pgsql/postgres-password)" \
     password_authentication="scram-sha-256"
@@ -100,7 +100,33 @@ vault write database/static-roles/gitlab \
   rotation_statements="ALTER USER {{username}} PASSWORD '{{password}}'" \
   rotation_period="24h"
 
+vault write database/static-roles/telebot-gpt \
+  db_name="pgsql" \
+  username="telegram_bot_gpt" \
+  rotation_statements="ALTER USER {{username}} PASSWORD '{{password}}'" \
+  rotation_period="24h"
+
 echo "set jwt token $(date)" >> /tmp/init.log
 
 vault write auth/kubernetes/config token_reviewer_jwt="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" kubernetes_host=https://192.168.2.2:6443 kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt >> /tmp/init.log
 
+echo "Access for telebot-gpt (dev)" >> /tmp/init.log
+vault secrets enable -path=dev kv-v2 || true
+vault policy write telebot-gpt-dev - <<EOF
+path "dev/data/telebot-gpt/*" { capabilities = ["read"] }
+path "database/static-creds/telebot-gpt"                        { capabilities = ["read", "list"] }
+EOF
+
+vault write auth/kubernetes/role/telebot-gpt-dev bound_service_account_names="telebot-gpt-dev-sa" bound_service_account_namespaces="dev" policies=telebot-gpt-dev ttl=1h
+
+# Закоментирован потому, что перепишет реальные данные
+#vault kv put -mount=dev telebot-gpt/telebot-gpt-secrets telegramToken=change_me OpenAPIToken=change_me || true
+
+echo "Access for telebot-gpt (prod)" >> /tmp/init.log
+vault secrets enable -path=prod kv-v2 || true
+vault policy write telebot-gpt - <<EOF
+path "prod/data/telebot-gpt/*" { capabilities = ["read"] }
+path "database/static-creds/telebot-gpt"                        { capabilities = ["read", "list"] }
+EOF
+
+vault write auth/kubernetes/role/telebot-gpt bound_service_account_names="telebot-gpt-sa" bound_service_account_namespaces="prod" policies=telebot-gpt-dev ttl=1h

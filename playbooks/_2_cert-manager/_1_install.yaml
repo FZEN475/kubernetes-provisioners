@@ -21,16 +21,16 @@
     dest: '/tmp/values_cm.yaml'
     mode: "0640"
 
-- name: Remove cert-manager
-  kubernetes.core.helm:
-    name: cert-manager
-    chart_ref: jetstack/cert-manager
-    release_namespace: secrets
-    create_namespace: true
-    state: absent
-    wait: true
-    values_files:
-      - /tmp/values_cm.yaml
+#- name: Remove cert-manager
+#  kubernetes.core.helm:
+#    name: cert-manager
+#    chart_ref: jetstack/cert-manager
+#    release_namespace: secrets
+#    create_namespace: true
+#    state: absent
+#    wait: true
+#    values_files:
+#      - /tmp/values_cm.yaml
 
 - name: Install cert-manager
   kubernetes.core.helm:
@@ -49,16 +49,16 @@
     dest: '/tmp/values_tm.yaml'
     mode: "0640"
 
-- name: Remove trust-manager
-  kubernetes.core.helm:
-    name: trust-manager
-    chart_ref: jetstack/trust-manager
-    release_namespace: secrets
-    create_namespace: false
-    state: absent
-    wait: true
-    values_files:
-      - /tmp/values_tm.yaml
+#- name: Remove trust-manager
+#  kubernetes.core.helm:
+#    name: trust-manager
+#    chart_ref: jetstack/trust-manager
+#    release_namespace: secrets
+#    create_namespace: false
+#    state: absent
+#    wait: true
+#    values_files:
+#      - /tmp/values_tm.yaml
 
 - name: Install trust-manager
   kubernetes.core.helm:
@@ -71,153 +71,153 @@
     values_files:
       - /tmp/values_tm.yaml
 
-- name: Create root certs variables
-  slurp:
-    src: "{{ item }}"
-  register: root_cert_encoded
-  with_items:
-    - "/etc/kubernetes/pki/ca.crt"
-    - "/etc/kubernetes/pki/ca.key"
-
-- name: Create root cert secrets
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: v1
-      kind: Secret
-      type: kubernetes.io/tls
-      metadata:
-        name: kuber-root-ca
-        namespace: secrets
-      data:
-        ca.crt: "{{ root_cert_encoded.results[0].content }}"
-        tls.key: "{{ root_cert_encoded.results[1].content }}"
-        tls.crt: "{{ root_cert_encoded.results[0].content }}"
-
-- name: Root certs issuer (improve to External Certificate Provider)
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: cert-manager.io/v1
-      kind: Issuer
-      metadata:
-        annotations: {}
-        labels:
-          name: root-ca-issuer
-        name: root-ca-issuer
-        namespace: secrets
-      spec:
-        ca:
-          secretName: kuber-root-ca
-
-- name: Create intermediate certificate
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: cert-manager.io/v1
-      kind: Certificate
-      metadata:
-        name: root-intermediate0-ca
-        namespace: secrets
-      spec:
-        isCA: true
-        commonName: root-intermediate0-ca
-        secretName: root-intermediate0-ca
-        #  privateKey:
-        #    algorithm: ECDSA
-        #    size: 256
-        issuerRef:
-          name: root-ca-issuer
-          kind: Issuer
-          group: cert-manager.io
-
-- name: Create ClusterIssuer for intermediate certificate
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: cert-manager.io/v1
-      kind: ClusterIssuer
-      metadata:
-        annotations: {}
-        labels:
-          name: root-intermediate0-ci
-        name: root-intermediate0-ci
-      spec:
-        ca:
-          secretName: root-intermediate0-ca
-
-- name: Allow cert-manager to create Issuers token.
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: rbac.authorization.k8s.io/v1
-      kind: Role
-      metadata:
-        name: vault-issuer
-        namespace: secrets
-      rules:
-        - apiGroups: ['']
-          resources: ['serviceaccounts/token'] # Какой ресурс разрешено создавать.
-          resourceNames: ['issuer'] # Для кого есть право создавать ресурс.
-          verbs: ['create']
-
-- name: RoleBinding vault-issuer to cert-manager
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: rbac.authorization.k8s.io/v1
-      kind: RoleBinding
-      metadata:
-        name: vault-issuer
-        namespace: secrets
-      subjects:
-        - kind: ServiceAccount
-          name: cert-manager-sa
-          namespace: secrets
-      roleRef:
-        apiGroup: rbac.authorization.k8s.io
-        kind: Role
-        name: vault-issuer
-
-- name: Create ServiceAccount issuer for access to vault.
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: v1
-      kind: ServiceAccount
-      metadata:
-        name: issuer
-        namespace: secrets
-
-- name: Remove ClusterIssuer for etcd cert on Vault.
-  kubernetes.core.k8s:
-    state: absent
-    definition:
-      apiVersion: cert-manager.io/v1
-      kind: ClusterIssuer
-      metadata:
-        name: vault-etcd-ci
-        namespace: secrets
-
-- name: Create ClusterIssuer for etcd cert on Vault.
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: cert-manager.io/v1
-      kind: ClusterIssuer
-      metadata:
-        name: vault-etcd-ci
-        namespace: secrets
-      spec:
-        vault:
-          path: pki/sign/etcd
-          server: https://vault.secrets.svc:8200
-          caBundleSecretRef:
-            name: "vault-ca"
-            key: "ca.crt"
-          auth:
-            kubernetes:
-              role: issuer
-              mountPath: /v1/auth/kubernetes
-              serviceAccountRef:
-                name: issuer
+#- name: Create root certs variables
+#  slurp:
+#    src: "{{ item }}"
+#  register: root_cert_encoded
+#  with_items:
+#    - "/etc/kubernetes/pki/ca.crt"
+#    - "/etc/kubernetes/pki/ca.key"
+#
+#- name: Create root cert secrets
+#  kubernetes.core.k8s:
+#    state: present
+#    definition:
+#      apiVersion: v1
+#      kind: Secret
+#      type: kubernetes.io/tls
+#      metadata:
+#        name: kuber-root-ca
+#        namespace: secrets
+#      data:
+#        ca.crt: "{{ root_cert_encoded.results[0].content }}"
+#        tls.key: "{{ root_cert_encoded.results[1].content }}"
+#        tls.crt: "{{ root_cert_encoded.results[0].content }}"
+#
+#- name: Root certs issuer (improve to External Certificate Provider)
+#  kubernetes.core.k8s:
+#    state: present
+#    definition:
+#      apiVersion: cert-manager.io/v1
+#      kind: Issuer
+#      metadata:
+#        annotations: {}
+#        labels:
+#          name: root-ca-issuer
+#        name: root-ca-issuer
+#        namespace: secrets
+#      spec:
+#        ca:
+#          secretName: kuber-root-ca
+#
+#- name: Create intermediate certificate
+#  kubernetes.core.k8s:
+#    state: present
+#    definition:
+#      apiVersion: cert-manager.io/v1
+#      kind: Certificate
+#      metadata:
+#        name: root-intermediate0-ca
+#        namespace: secrets
+#      spec:
+#        isCA: true
+#        commonName: root-intermediate0-ca
+#        secretName: root-intermediate0-ca
+#        #  privateKey:
+#        #    algorithm: ECDSA
+#        #    size: 256
+#        issuerRef:
+#          name: root-ca-issuer
+#          kind: Issuer
+#          group: cert-manager.io
+#
+#- name: Create ClusterIssuer for intermediate certificate
+#  kubernetes.core.k8s:
+#    state: present
+#    definition:
+#      apiVersion: cert-manager.io/v1
+#      kind: ClusterIssuer
+#      metadata:
+#        annotations: {}
+#        labels:
+#          name: root-intermediate0-ci
+#        name: root-intermediate0-ci
+#      spec:
+#        ca:
+#          secretName: root-intermediate0-ca
+#
+#- name: Allow cert-manager to create Issuers token.
+#  kubernetes.core.k8s:
+#    state: present
+#    definition:
+#      apiVersion: rbac.authorization.k8s.io/v1
+#      kind: Role
+#      metadata:
+#        name: vault-issuer
+#        namespace: secrets
+#      rules:
+#        - apiGroups: ['']
+#          resources: ['serviceaccounts/token'] # Какой ресурс разрешено создавать.
+#          resourceNames: ['issuer'] # Для кого есть право создавать ресурс.
+#          verbs: ['create']
+#
+#- name: RoleBinding vault-issuer to cert-manager
+#  kubernetes.core.k8s:
+#    state: present
+#    definition:
+#      apiVersion: rbac.authorization.k8s.io/v1
+#      kind: RoleBinding
+#      metadata:
+#        name: vault-issuer
+#        namespace: secrets
+#      subjects:
+#        - kind: ServiceAccount
+#          name: cert-manager-sa
+#          namespace: secrets
+#      roleRef:
+#        apiGroup: rbac.authorization.k8s.io
+#        kind: Role
+#        name: vault-issuer
+#
+#- name: Create ServiceAccount issuer for access to vault.
+#  kubernetes.core.k8s:
+#    state: present
+#    definition:
+#      apiVersion: v1
+#      kind: ServiceAccount
+#      metadata:
+#        name: issuer
+#        namespace: secrets
+#
+#- name: Remove ClusterIssuer for etcd cert on Vault.
+#  kubernetes.core.k8s:
+#    state: absent
+#    definition:
+#      apiVersion: cert-manager.io/v1
+#      kind: ClusterIssuer
+#      metadata:
+#        name: vault-etcd-ci
+#        namespace: secrets
+#
+#- name: Create ClusterIssuer for etcd cert on Vault.
+#  kubernetes.core.k8s:
+#    state: present
+#    definition:
+#      apiVersion: cert-manager.io/v1
+#      kind: ClusterIssuer
+#      metadata:
+#        name: vault-etcd-ci
+#        namespace: secrets
+#      spec:
+#        vault:
+#          path: pki/sign/etcd
+#          server: https://vault.secrets.svc:8200
+#          caBundleSecretRef:
+#            name: "vault-ca"
+#            key: "ca.crt"
+#          auth:
+#            kubernetes:
+#              role: issuer
+#              mountPath: /v1/auth/kubernetes
+#              serviceAccountRef:
+#                name: issuer
