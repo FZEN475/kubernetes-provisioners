@@ -793,7 +793,7 @@ webhook:
     timeoutSeconds: 1
 
   nodeSelector:
-    kubernetes.io/hostname: "prod01"
+    kubernetes.io/hostname: "control02"
 
   affinity:
     nodeAffinity:
