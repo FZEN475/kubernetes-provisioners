@@ -114,7 +114,7 @@ echo "Access for telebot-gpt (dev)" >> /tmp/init.log
 vault secrets enable -path=dev kv-v2 || true
 vault policy write telebot-gpt-dev - <<EOF
 path "dev/data/telebot-gpt/*" { capabilities = ["read"] }
-path "database/data/static-creds/telebot-gpt"                        { capabilities = ["read", "list"] }
+path "database/static-creds/telebot-gpt"                        { capabilities = ["read", "list"] }
 EOF
 
 vault write auth/kubernetes/role/telebot-gpt-dev bound_service_account_names="telebot-gpt-dev-sa" bound_service_account_namespaces="dev" policies=telebot-gpt-dev ttl=1h
@@ -126,7 +126,7 @@ echo "Access for telebot-gpt (prod)" >> /tmp/init.log
 vault secrets enable -path=prod kv-v2 || true
 vault policy write telebot-gpt - <<EOF
 path "prod/data/telebot-gpt/*" { capabilities = ["read"] }
-path "database/data/static-creds/telebot-gpt"                        { capabilities = ["read", "list"] }
+path "database/static-creds/telebot-gpt"                        { capabilities = ["read", "list"] }
 EOF
 
 vault write auth/kubernetes/role/telebot-gpt bound_service_account_names="telebot-gpt-sa" bound_service_account_namespaces="prod" policies=telebot-gpt ttl=1h
