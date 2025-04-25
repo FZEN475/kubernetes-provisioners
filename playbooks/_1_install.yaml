@@ -1,30 +1,30 @@
 - hosts: control_main
   become: true
   tasks:
-    - name: Install dependency.
-      ansible.builtin.include_tasks: ./_0_init/_1_install.yaml
-
-    - name: Install NFS provisioner.
-      ansible.builtin.include_tasks: ./_1_NFS/_1_install.yaml
-
-    - name: Install cert-manager.
-      ansible.builtin.include_tasks: ./_2_cert-manager/_1_install.yaml
-    - name: Install certificates.
-      ansible.builtin.include_tasks: ./_2_cert-manager/_2_certificates.yaml
-
-    - name: Install ingress nginx.
-      ansible.builtin.include_tasks: ./_3_ingress/_1_install.yaml
-
-    - name: Install Vault.
-      ansible.builtin.include_tasks: ./_4_vault/_1_install.yaml
-    - name: Create secrets.
-      ansible.builtin.include_tasks: ./_4_vault/_2_secrets.yaml
-
-    - name: Install reloader.
-      ansible.builtin.include_tasks: ./_5_reloader/_1_install.yaml
-
-    - name: Install prometheus.
-      ansible.builtin.include_tasks: ./_6_prometheus/_1_install.yaml
+#    - name: Install dependency.
+#      ansible.builtin.include_tasks: ./_0_init/_1_install.yaml
+#
+#    - name: Install NFS provisioner.
+#      ansible.builtin.include_tasks: ./_1_NFS/_1_install.yaml
+#
+#    - name: Install cert-manager.
+#      ansible.builtin.include_tasks: ./_2_cert-manager/_1_install.yaml
+#    - name: Install certificates.
+#      ansible.builtin.include_tasks: ./_2_cert-manager/_2_certificates.yaml
+#
+#    - name: Install ingress nginx.
+#      ansible.builtin.include_tasks: ./_3_ingress/_1_install.yaml
+#
+#    - name: Install Vault.
+#      ansible.builtin.include_tasks: ./_4_vault/_1_install.yaml
+#    - name: Create secrets.
+#      ansible.builtin.include_tasks: ./_4_vault/_2_secrets.yaml
+#
+#    - name: Install reloader.
+#      ansible.builtin.include_tasks: ./_5_reloader/_1_install.yaml
+#
+#    - name: Install prometheus.
+#      ansible.builtin.include_tasks: ./_6_prometheus/_1_install.yaml
 
     - name: Install dashboard.
       ansible.builtin.include_tasks: ./_7_dashboard/_1_install.yaml
