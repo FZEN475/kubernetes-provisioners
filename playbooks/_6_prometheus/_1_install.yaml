@@ -16,7 +16,7 @@
     chart_ref: prometheus-community/prometheus-operator-crds
     release_namespace: monitoring
     create_namespace: true
-    state: absent
+    state: present
 
 - name: Copy values
   ansible.builtin.copy:
@@ -32,8 +32,6 @@
     release_namespace: monitoring
     create_namespace: true
     wait: true
-    values_files:
-      - /tmp/values_kube_state_metrics.yaml
 
 #- name: Install kube-state-metrics
 #  kubernetes.core.helm:
@@ -79,8 +77,6 @@
     release_namespace: monitoring
     create_namespace: true
     wait: yes
-    values_files:
-      - /tmp/values_prometheus.yaml
 
 #- name: Install prometheus
 #  kubernetes.core.helm:
@@ -139,8 +135,6 @@
     create_namespace: true
     wait: yes
     state: absent
-    values_files:
-      - /tmp/values_prometheus_adapter.yaml
 
 #- name: Install prometheus-adapter
 #  kubernetes.core.helm:
@@ -178,8 +172,6 @@
     release_namespace: monitoring
     create_namespace: true
     state: absent
-    values_files:
-      - /tmp/values_grafana.yaml
 
 #- name: Install grafana
 #  kubernetes.core.helm:
@@ -210,3 +202,11 @@
 #      data:
 #        datasource.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus/config/datasource.yaml') }}"
 #        dashboard.json: "{{ tmp_dashboard_json | to_json }}"
+
+- name: Remove CIRDs prometheus
+  kubernetes.core.helm:
+    name: prometheus-cird
+    chart_ref: prometheus-community/prometheus-operator-crds
+    release_namespace: monitoring
+    create_namespace: true
+    state: absent
