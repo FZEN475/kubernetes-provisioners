@@ -9,6 +9,15 @@
     - {name: "prometheus-community", url: "https://prometheus-community.github.io/helm-charts"}
     - {name: "grafana", url: "https://grafana.github.io/helm-charts"}
 
+
+- name: Remove CIRDs prometheus
+  kubernetes.core.helm:
+    name: prometheus-cird
+    chart_ref: prometheus-community/prometheus-operator-crds
+    release_namespace: monitoring
+    create_namespace: true
+    state: absent
+
 - name: Copy values
   ansible.builtin.copy:
     src: '/source/config/_6_prometheus/_3_values-kube-state-metrics.yaml'
@@ -26,35 +35,35 @@
     values_files:
       - /tmp/values_kube_state_metrics.yaml
 
-- name: Install kube-state-metrics
-  kubernetes.core.helm:
-    name: kube-state-metrics
-    state: present
-    chart_ref: prometheus-community/kube-state-metrics
-    release_namespace: monitoring
-    create_namespace: true
-    wait: true
-    values_files:
-      - /tmp/values_kube_state_metrics.yaml
+#- name: Install kube-state-metrics
+#  kubernetes.core.helm:
+#    name: kube-state-metrics
+#    state: present
+#    chart_ref: prometheus-community/kube-state-metrics
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: true
+#    values_files:
+#      - /tmp/values_kube_state_metrics.yaml
 
-- name: Fix cm kube-state-metrics-rbac-config
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: kube-state-metrics-rbac-config
-        namespace: monitoring
-      data:
-        config-file.yaml: |
-          authorization:
-            resourceAttributes:
-              namespace: monitoring
-              apiVersion: v1
-              resource: services
-              subresource:
-              name: prometheus-kube-state-metrics
+#- name: Fix cm kube-state-metrics-rbac-config
+#  kubernetes.core.k8s:
+#    state: present
+#    definition:
+#      apiVersion: v1
+#      kind: ConfigMap
+#      metadata:
+#        name: kube-state-metrics-rbac-config
+#        namespace: monitoring
+#      data:
+#        config-file.yaml: |
+#          authorization:
+#            resourceAttributes:
+#              namespace: monitoring
+#              apiVersion: v1
+#              resource: services
+#              subresource:
+#              name: prometheus-kube-state-metrics
 
 - name: Copy values
   ansible.builtin.copy:
@@ -73,54 +82,54 @@
     values_files:
       - /tmp/values_prometheus.yaml
 
-- name: Install prometheus
-  kubernetes.core.helm:
-    name: prometheus
-    state: present
-    chart_ref: prometheus-community/prometheus
-    release_namespace: monitoring
-    create_namespace: true
-    wait: yes
-    values_files:
-      - /tmp/values_prometheus.yaml
-
-- name: Fix cm prometheus-prometheus-node-exporter-rbac-config
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: prometheus-prometheus-node-exporter-rbac-config
-        namespace: monitoring
-      data:
-        config-file.yaml: |
-          authorization:
-            resourceAttributes:
-              namespace: monitoring
-              apiVersion: v1
-              resource: services
-              subresource:
-              name: prometheus-prometheus-node-exporter
+#- name: Install prometheus
+#  kubernetes.core.helm:
+#    name: prometheus
+#    state: present
+#    chart_ref: prometheus-community/prometheus
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: yes
+#    values_files:
+#      - /tmp/values_prometheus.yaml
 #
-- name: Update ConfigMap prometheus-server
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: prometheus-server
-        namespace: monitoring
-      data:
-        prometheus.yml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus/config/prometheus.yml') }}"
-        recording_rules.yml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus/config/recording_rules.yml') }}"
-
-- name: Copy values
-  ansible.builtin.copy:
-    src: '/source/config/_6_prometheus/_1_values-prometheus-adapter.yaml'
-    dest: '/tmp/values_prometheus_adapter.yaml'
-    mode: "0640"
+#- name: Fix cm prometheus-prometheus-node-exporter-rbac-config
+#  kubernetes.core.k8s:
+#    state: present
+#    definition:
+#      apiVersion: v1
+#      kind: ConfigMap
+#      metadata:
+#        name: prometheus-prometheus-node-exporter-rbac-config
+#        namespace: monitoring
+#      data:
+#        config-file.yaml: |
+#          authorization:
+#            resourceAttributes:
+#              namespace: monitoring
+#              apiVersion: v1
+#              resource: services
+#              subresource:
+#              name: prometheus-prometheus-node-exporter
+#
+#- name: Update ConfigMap prometheus-server
+#  kubernetes.core.k8s:
+#    state: present
+#    definition:
+#      apiVersion: v1
+#      kind: ConfigMap
+#      metadata:
+#        name: prometheus-server
+#        namespace: monitoring
+#      data:
+#        prometheus.yml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus/config/prometheus.yml') }}"
+#        recording_rules.yml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus/config/recording_rules.yml') }}"
+#
+#- name: Copy values
+#  ansible.builtin.copy:
+#    src: '/source/config/_6_prometheus/_1_values-prometheus-adapter.yaml'
+#    dest: '/tmp/values_prometheus_adapter.yaml'
+#    mode: "0640"
 
 - name: Remove prometheus-adapter
   kubernetes.core.helm:
@@ -133,34 +142,34 @@
     values_files:
       - /tmp/values_prometheus_adapter.yaml
 
-- name: Install prometheus-adapter
-  kubernetes.core.helm:
-    name: prometheus-adapter
-    chart_ref: prometheus-community/prometheus-adapter
-    release_namespace: monitoring
-    create_namespace: true
-    wait: yes
-    state: present
-    values_files:
-      - /tmp/values_prometheus_adapter.yaml
-
-- name: Create ConfigMap prometheus-adapter-rules
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: prometheus-adapter-rules
-        namespace: monitoring
-      data:
-        config.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus/config/adapter-rules.yaml') }}"
-
-- name: Copy values
-  ansible.builtin.copy:
-    src: '/source/config/_6_prometheus/_6_values-grafana.yaml'
-    dest: '/tmp/values_grafana.yaml'
-    mode: "0640"
+#- name: Install prometheus-adapter
+#  kubernetes.core.helm:
+#    name: prometheus-adapter
+#    chart_ref: prometheus-community/prometheus-adapter
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: yes
+#    state: present
+#    values_files:
+#      - /tmp/values_prometheus_adapter.yaml
+#
+#- name: Create ConfigMap prometheus-adapter-rules
+#  kubernetes.core.k8s:
+#    state: present
+#    definition:
+#      apiVersion: v1
+#      kind: ConfigMap
+#      metadata:
+#        name: prometheus-adapter-rules
+#        namespace: monitoring
+#      data:
+#        config.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus/config/adapter-rules.yaml') }}"
+#
+#- name: Copy values
+#  ansible.builtin.copy:
+#    src: '/source/config/_6_prometheus/_6_values-grafana.yaml'
+#    dest: '/tmp/values_grafana.yaml'
+#    mode: "0640"
 
 - name: Remove grafana
   kubernetes.core.helm:
@@ -172,32 +181,32 @@
     values_files:
       - /tmp/values_grafana.yaml
 
-- name: Install grafana
-  kubernetes.core.helm:
-    name: grafana
-    chart_ref: grafana/grafana
-    release_namespace: monitoring
-    create_namespace: true
-    state: present
-    values_files:
-      - /tmp/values_grafana.yaml
-
-- name: Creating tmp_dashboard_json
-  ansible.builtin.set_fact:
-    tmp_dashboard_json: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus/config/dashboard.json') | replace('\n','')  }}"
-
-- name: ConfigMap grafana-config
-  kubernetes.core.k8s:
-    state: present
-    wait: true
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: grafana-config
-        namespace: 'monitoring'
-        labels:
-          grafana-config: ""
-      data:
-        datasource.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus/config/datasource.yaml') }}"
-        dashboard.json: "{{ tmp_dashboard_json | to_json }}"
+#- name: Install grafana
+#  kubernetes.core.helm:
+#    name: grafana
+#    chart_ref: grafana/grafana
+#    release_namespace: monitoring
+#    create_namespace: true
+#    state: present
+#    values_files:
+#      - /tmp/values_grafana.yaml
+#
+#- name: Creating tmp_dashboard_json
+#  ansible.builtin.set_fact:
+#    tmp_dashboard_json: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus/config/dashboard.json') | replace('\n','')  }}"
+#
+#- name: ConfigMap grafana-config
+#  kubernetes.core.k8s:
+#    state: present
+#    wait: true
+#    definition:
+#      apiVersion: v1
+#      kind: ConfigMap
+#      metadata:
+#        name: grafana-config
+#        namespace: 'monitoring'
+#        labels:
+#          grafana-config: ""
+#      data:
+#        datasource.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus/config/datasource.yaml') }}"
+#        dashboard.json: "{{ tmp_dashboard_json | to_json }}"

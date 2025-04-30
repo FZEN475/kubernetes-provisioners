@@ -8,6 +8,7 @@ rule_files:
   - /etc/config/rules
   - /etc/config/alerts
 scrape_configs:
+  -
   - job_name: _0_prometheus
     scheme: https
     tls_config:

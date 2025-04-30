@@ -23,8 +23,10 @@
 #    - name: Install reloader.
 #      ansible.builtin.include_tasks: ./_5_reloader/_1_install.yaml
 #
+    - name: Install prometheus.
+      ansible.builtin.include_tasks: ./_6_prometheus/_1_install.yaml
 #    - name: Install prometheus.
-#      ansible.builtin.include_tasks: ./_6_prometheus/_1_install.yaml
+#      ansible.builtin.include_tasks: ./_6_prometheus/_2_install.yaml
 
-    - name: Install dashboard.
-      ansible.builtin.include_tasks: ./_7_dashboard/_1_install.yaml
+#    - name: Install dashboard.
+#      ansible.builtin.include_tasks: ./_7_dashboard/_1_install.yaml
