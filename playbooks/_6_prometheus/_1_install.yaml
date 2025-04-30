@@ -203,10 +203,10 @@
 #        datasource.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus/config/datasource.yaml') }}"
 #        dashboard.json: "{{ tmp_dashboard_json | to_json }}"
 
-- name: Remove CIRDs prometheus
-  kubernetes.core.helm:
-    name: prometheus-cird
-    chart_ref: prometheus-community/prometheus-operator-crds
-    release_namespace: monitoring
-    create_namespace: true
-    state: absent
+#- name: Remove CIRDs prometheus
+#  kubernetes.core.helm:
+#    name: prometheus-cird
+#    chart_ref: prometheus-community/prometheus-operator-crds
+#    release_namespace: monitoring
+#    create_namespace: true
+#    state: absent
