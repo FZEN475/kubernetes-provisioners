@@ -2558,7 +2558,7 @@ prometheus-node-exporter:
 ## Manages Prometheus and Alertmanager components
 ##
 prometheusOperator:
-  enabled: false
+  enabled: true
 
   ## Use '{{ template "kube-prometheus-stack.fullname" . }}-operator' by default
   fullnameOverride: ""
@@ -3075,7 +3075,7 @@ prometheusOperator:
   serviceMonitor:
     ## If true, create a serviceMonitor for prometheus operator
     ##
-    selfMonitor: true
+    selfMonitor: false
 
     ## Labels for ServiceMonitor
     additionalLabels: {}
