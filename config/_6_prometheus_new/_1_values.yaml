@@ -3916,16 +3916,11 @@ prometheus:
 
     ## WebTLSConfig defines the TLS parameters for HTTPS
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#webtlsconfig
-    web:
-      tlsConfig:
-        cert:
-          secret:
-            key: cm-prometheus-tls
-            name: tls.crt
-        keySecret:
-          secret:
-            key: cm-prometheus-tls
-            name: tls.key
+#    web:
+#      tlsConfig:
+#        caFile: ""
+#        certFile: ""
+#        keyFile: ""
           
 
     ## Exemplars related settings that are runtime reloadable.
@@ -4029,7 +4024,9 @@ prometheus:
     ## reflected in the running Pods. To change the secrets mounted into the Prometheus Pods, the object must be deleted and recreated
     ## with the new list of secrets.
     ##
-    secrets: []
+    secrets:
+      - cm-prometheus-tls
+
 
     ## ConfigMaps is a list of ConfigMaps in the same namespace as the Prometheus object, which shall be mounted into the Prometheus Pods.
     ## The ConfigMaps are mounted into /etc/prometheus/configmaps/.
