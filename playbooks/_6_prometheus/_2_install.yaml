@@ -36,4 +36,4 @@
     create_namespace: true
     wait: true
     values_files:
-      - /tmp/values_kube_state_metrics.yaml
+      - /tmp/values_prometheus.yaml
