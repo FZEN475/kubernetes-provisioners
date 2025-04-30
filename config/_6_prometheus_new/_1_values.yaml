@@ -4073,7 +4073,7 @@ prometheus:
     ##
     serviceMonitorSelector:
       matchLabels:
-        prometheus: true
+        prometheus: "true"
     ## Example which selects ServiceMonitors with label "prometheus" set to "somelabel"
     # serviceMonitorSelector:
     #   matchLabels:
@@ -4098,7 +4098,7 @@ prometheus:
     ##
     podMonitorSelector:
       matchLabels:
-        prometheus: true
+        prometheus: "true"
     ## Example which selects PodMonitors with label "prometheus" set to "somelabel"
     # podMonitorSelector:
     #   matchLabels:
