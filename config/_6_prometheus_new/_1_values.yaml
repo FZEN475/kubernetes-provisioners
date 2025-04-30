@@ -3916,7 +3916,17 @@ prometheus:
 
     ## WebTLSConfig defines the TLS parameters for HTTPS
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#webtlsconfig
-    web: {}
+    web:
+      tlsConfig:
+        cert:
+          secret:
+            key: cm-prometheus-tls
+            name: tls.crt
+        keySecret:
+          secret:
+            key: cm-prometheus-tls
+            name: tls.key
+          
 
     ## Exemplars related settings that are runtime reloadable.
     ## It requires to enable the exemplar storage feature to be effective.
