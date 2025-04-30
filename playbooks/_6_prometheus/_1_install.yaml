@@ -16,7 +16,8 @@
     chart_ref: prometheus-community/prometheus-operator-crds
     release_namespace: monitoring
     create_namespace: true
-    state: present
+    state: absent
+
 
 - name: Copy values
   ansible.builtin.copy:
