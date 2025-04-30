@@ -3491,7 +3491,8 @@ prometheus:
     ## List of IP addresses at which the Prometheus server service is available
     ## Ref: https://kubernetes.io/docs/concepts/services-networking/service/#external-ips
     ##
-    externalIPs: []
+    externalIPs: 
+      - 192.168.2.2
 
     ## Port to expose on each node
     ## Only used if service.type is 'NodePort'
