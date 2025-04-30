@@ -16,6 +16,15 @@
     dest: '/tmp/values_prometheus.yaml'
     mode: "0640"
 
+- name: Remove CIRDs prometheus
+  kubernetes.core.helm:
+    name: prometheus-cird
+    chart_ref: prometheus-community/prometheus-operator-crds
+    release_namespace: monitoring
+    create_namespace: true
+    wait: true
+    state: absent
+
 - name: Remove prometheus
   kubernetes.core.helm:
     name: prometheus
@@ -27,7 +36,7 @@
     values_files:
       - /tmp/values_kube_state_metrics.yaml
 
-- name: Remove prometheus
+- name: Install prometheus
   kubernetes.core.helm:
     name: prometheus
     state: present
