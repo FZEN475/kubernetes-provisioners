@@ -3918,9 +3918,13 @@ prometheus:
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#webtlsconfig
     web:
       tlsConfig:
+        keySecret:
+          key: tls.key
+          name: cm-prometheus-tls
         cert:
-          secret: cm-prometheus-tls
-        keySecret: cm-prometheus-tls
+          secret:
+            key: tls.crt
+            name: cm-prometheus-tls
           
 
     ## Exemplars related settings that are runtime reloadable.
