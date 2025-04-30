@@ -3916,11 +3916,11 @@ prometheus:
 
     ## WebTLSConfig defines the TLS parameters for HTTPS
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#webtlsconfig
-#    web:
-#      tlsConfig:
-#        caFile: ""
-#        certFile: ""
-#        keyFile: ""
+    web:
+      tlsConfig:
+        caFile: "/etc/prometheus/secrets/cm-prometheus-tls/ca.crt"
+        certFile: "/etc/prometheus/secrets/cm-prometheus-tls/tls.crt"
+        keyFile: "/etc/prometheus/secrets/cm-prometheus-tls/tls.key"
           
 
     ## Exemplars related settings that are runtime reloadable.
