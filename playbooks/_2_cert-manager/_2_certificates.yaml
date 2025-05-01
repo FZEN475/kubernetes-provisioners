@@ -47,52 +47,52 @@
 #    state: present
 #  with_items: "{{ certs }}"
 #
-#- name: Remove certs
-#  kubernetes.core.k8s:
-#    state: absent
-#    definition:
-#      apiVersion: cert-manager.io/v1
-#      kind: Certificate
-#      metadata:
-#        name: "cm-{{ item.name }}-tls"
-#        namespace: "{{ item.ns }}"
-#  with_items: "{{ certs }}"
-#
-#- name: Create certs
-#  kubernetes.core.k8s:
-#    state: present
-#    definition:
-#      apiVersion: cert-manager.io/v1
-#      kind: Certificate
-#      metadata:
-#        name: "cm-{{ item.name }}-tls"
-#        namespace: "{{ item.ns }}"
-#      spec:
-#        isCA: false
-#        # Secret names are always required.
-#        secretName: "cm-{{ item.name }}-tls"
-#        secretTemplate:
-#        usages:
-#          - digital signature
-#          - key encipherment
-#          - server auth
-#          - client auth
-#        subject:
-#          organizations:
-#            - cert-manager
-#        dnsNames: "{{ item.dns }}"
-#        ipAddresses:
-#          - 127.0.0.1
-#        emailAddresses:
-#          - admin@fzen.pro
-#        additionalOutputFormats:
-#          - type: CombinedPEM
-#        issuerRef:
-#          name: "{{ item.issuer }}"
-#          kind: ClusterIssuer
-#          group: cert-manager.io
-#  with_items: "{{ certs }}"
-#
+- name: Remove certs
+  kubernetes.core.k8s:
+    state: absent
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: "cm-{{ item.name }}-tls"
+        namespace: "{{ item.ns }}"
+  with_items: "{{ certs }}"
+
+- name: Create certs
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: Certificate
+      metadata:
+        name: "cm-{{ item.name }}-tls"
+        namespace: "{{ item.ns }}"
+      spec:
+        isCA: false
+        # Secret names are always required.
+        secretName: "cm-{{ item.name }}-tls"
+        secretTemplate:
+        usages:
+          - digital signature
+          - key encipherment
+          - server auth
+          - client auth
+        subject:
+          organizations:
+            - cert-manager
+        dnsNames: "{{ item.dns }}"
+        ipAddresses:
+          - 127.0.0.1
+        emailAddresses:
+          - admin@fzen.pro
+        additionalOutputFormats:
+          - type: CombinedPEM
+        issuerRef:
+          name: "{{ item.issuer }}"
+          kind: ClusterIssuer
+          group: cert-manager.io
+  with_items: "{{ certs }}"
+
 #
 #
 #- name: Создание Bundle с сертификатом vault
