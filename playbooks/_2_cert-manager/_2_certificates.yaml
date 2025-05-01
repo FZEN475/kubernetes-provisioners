@@ -3,124 +3,127 @@
 - name: secret facts
   ansible.builtin.set_fact:
     certs:
-      - {name: "ingress", ns: "provisioners",issuer: "root-intermediate0-ci", dns: [
-        'internal-nginx-ingress-nginx-controller.provisioners.svc',
-        'internal-nginx-ingress-nginx-controller-admission.provisioners.svc',
-        'internal-nginx-ingress-nginx-controller-metrics.provisioners.svc',
-        'external-nginx-ingress-nginx-controller.provisioners.svc',
-        'external-nginx-ingress-nginx-controller-admission.provisioners.svc',
-        'external-nginx-ingress-nginx-controller-metrics.provisioners.svc'
-      ]}
-      - {name: "vault", ns: "secrets",issuer: "root-intermediate0-ci", dns: ['vault.fzen.pro','vault.secrets.svc']}
+#      - {name: "ingress", ns: "provisioners",issuer: "root-intermediate0-ci", dns: [
+#        'internal-nginx-ingress-nginx-controller.provisioners.svc',
+#        'internal-nginx-ingress-nginx-controller-admission.provisioners.svc',
+#        'internal-nginx-ingress-nginx-controller-metrics.provisioners.svc',
+#        'external-nginx-ingress-nginx-controller.provisioners.svc',
+#        'external-nginx-ingress-nginx-controller-admission.provisioners.svc',
+#        'external-nginx-ingress-nginx-controller-metrics.provisioners.svc'
+#      ]}
+#      - {name: "vault", ns: "secrets",issuer: "root-intermediate0-ci", dns: ['vault.fzen.pro','vault.secrets.svc']}
       - {name: "prometheus", ns: "monitoring",issuer: "root-intermediate0-ci", dns: [
         'prometheus.fzen.pro',
         'grafana.fzen.pro',
-        'kube-state-metrics.monitoring.svc',
-        'prometheus-adapter.monitoring.svc',
-        'prometheus-prometheus-node-exporter.monitoring.svc',
-        'prometheus-server.monitoring.svc'
+        'prometheus-kube-prometheus-prometheus.monitoring.svc'
       ]}
-      - { name: "client-etcd", ns: "storage",issuer: "vault-etcd-ci", dns: [ 'etcd.fzen.pro' ] }
-      - { name: "kuber", ns: "monitoring",issuer: "root-intermediate0-ci", dns: [ 'kuber.fzen.pro' ] }
-      - { name: "minio", ns: "storage",issuer: "root-intermediate0-ci", dns: [ 'minio.fzen.pro','minio.storage.svc' ] }
-      - { name: "pgsql", ns: "storage",issuer: "root-intermediate0-ci", dns: [ 'pgsql.fzen.pro','postgresql-primary.storage.svc','postgresql-read.storage.svc' ] }
-      - { name: "pgadmin", ns: "storage",issuer: "root-intermediate0-ci", dns: [ 'pgadmin.fzen.pro' ] }
-      - { name: "redis", ns: "storage",issuer: "root-intermediate0-ci", dns: [ 'redis.storage.svc' ] }
-      - { name: "gitlab", ns: "gitlab",issuer: "root-intermediate0-ci", dns: [ '*.pages.fzen.pro',
-                                                                               'gitlab-kas.fzen.pro',
-                                                                               'registry.fzen.pro',
-                                                                               'gitlab.fzen.pro',
-                                                                               'gitlab-gitaly.gitlab.svc',
-                                                                               '*.gitlab-gitaly.gitlab.svc',
-                                                                               'gitlab-gitlab-exporter.gitlab.svc',
-                                                                               '*.gitlab-gitlab-pages.gitlab.svc',
-                                                                               'gitlab-gitlab-pages-metrics.gitlab.svc',
-                                                                               'gitlab-gitlab-shell.gitlab.svc',
-                                                                               'gitlab-kas.gitlab.svc',
-                                                                               'gitlab-registry.gitlab.svc',
-                                                                               'gitlab-webservice-default.gitlab.svc' ] }
-      - { name: "gitlab-agent", ns: "dev",issuer: "root-intermediate0-ci", dns: [ 'gitlab-agent-service.dev.svc' ] }
-      - { name: "gitlab-agent", ns: "prod",issuer: "root-intermediate0-ci", dns: [ 'gitlab-agent-service.prod.svc' ] }
+#      - { name: "client-etcd", ns: "storage",issuer: "vault-etcd-ci", dns: [ 'etcd.fzen.pro' ] }
+#      - { name: "kuber", ns: "monitoring",issuer: "root-intermediate0-ci", dns: [ 'kuber.fzen.pro' ] }
+#      - { name: "minio", ns: "storage",issuer: "root-intermediate0-ci", dns: [ 'minio.fzen.pro','minio.storage.svc' ] }
+#      - { name: "pgsql", ns: "storage",issuer: "root-intermediate0-ci", dns: [ 'pgsql.fzen.pro','postgresql-primary.storage.svc','postgresql-read.storage.svc' ] }
+#      - { name: "pgadmin", ns: "storage",issuer: "root-intermediate0-ci", dns: [ 'pgadmin.fzen.pro' ] }
+#      - { name: "redis", ns: "storage",issuer: "root-intermediate0-ci", dns: [ 'redis.storage.svc' ] }
+#      - { name: "gitlab", ns: "gitlab",issuer: "root-intermediate0-ci", dns: [ '*.pages.fzen.pro',
+#                                                                               'gitlab-kas.fzen.pro',
+#                                                                               'registry.fzen.pro',
+#                                                                               'gitlab.fzen.pro',
+#                                                                               'gitlab-gitaly.gitlab.svc',
+#                                                                               '*.gitlab-gitaly.gitlab.svc',
+#                                                                               'gitlab-gitlab-exporter.gitlab.svc',
+#                                                                               '*.gitlab-gitlab-pages.gitlab.svc',
+#                                                                               'gitlab-gitlab-pages-metrics.gitlab.svc',
+#                                                                               'gitlab-gitlab-shell.gitlab.svc',
+#                                                                               'gitlab-kas.gitlab.svc',
+#                                                                               'gitlab-registry.gitlab.svc',
+#                                                                               'gitlab-webservice-default.gitlab.svc' ] }
+#      - { name: "gitlab-agent", ns: "dev",issuer: "root-intermediate0-ci", dns: [ 'gitlab-agent-service.dev.svc' ] }
+#      - { name: "gitlab-agent", ns: "prod",issuer: "root-intermediate0-ci", dns: [ 'gitlab-agent-service.prod.svc' ] }
 
-- name: Create controllers namespace
-  kubernetes.core.k8s:
-    name: "{{ item.ns }}"
-    api_version: v1
-    kind: Namespace
-    state: present
-  with_items: "{{ certs }}"
+#- name: Create controllers namespace
+#  kubernetes.core.k8s:
+#    name: "{{ item.ns }}"
+#    api_version: v1
+#    kind: Namespace
+#    state: present
+#  with_items: "{{ certs }}"
+#
+#- name: Remove certs
+#  kubernetes.core.k8s:
+#    state: absent
+#    definition:
+#      apiVersion: cert-manager.io/v1
+#      kind: Certificate
+#      metadata:
+#        name: "cm-{{ item.name }}-tls"
+#        namespace: "{{ item.ns }}"
+#  with_items: "{{ certs }}"
+#
+#- name: Create certs
+#  kubernetes.core.k8s:
+#    state: present
+#    definition:
+#      apiVersion: cert-manager.io/v1
+#      kind: Certificate
+#      metadata:
+#        name: "cm-{{ item.name }}-tls"
+#        namespace: "{{ item.ns }}"
+#      spec:
+#        isCA: false
+#        # Secret names are always required.
+#        secretName: "cm-{{ item.name }}-tls"
+#        secretTemplate:
+#        usages:
+#          - digital signature
+#          - key encipherment
+#          - server auth
+#          - client auth
+#        subject:
+#          organizations:
+#            - cert-manager
+#        dnsNames: "{{ item.dns }}"
+#        ipAddresses:
+#          - 127.0.0.1
+#        emailAddresses:
+#          - admin@fzen.pro
+#        additionalOutputFormats:
+#          - type: CombinedPEM
+#        issuerRef:
+#          name: "{{ item.issuer }}"
+#          kind: ClusterIssuer
+#          group: cert-manager.io
+#  with_items: "{{ certs }}"
+#
+#
+#
+#- name: Создание Bundle с сертификатом vault
+#  kubernetes.core.k8s:
+#    state: present
+#    wait: true
+#    definition:
+#      apiVersion: trust.cert-manager.io/v1alpha1
+#      kind: Bundle
+#      metadata:
+#        name: "vault-ca"
+#      spec:
+#        sources:
+#          - useDefaultCAs: false
+#          - secret:
+#              name: "cm-vault-tls"
+#              key: "ca.crt"
+#        target:
+#          secret:
+#            key: "ca.crt"
+#          additionalFormats:
+#            jks:
+#              key: "bundle.jks"
+#            pkcs12:
+#              key: "bundle.p12"
 
-- name: Remove certs
-  kubernetes.core.k8s:
-    state: absent
-    definition:
-      apiVersion: cert-manager.io/v1
-      kind: Certificate
-      metadata:
-        name: "cm-{{ item.name }}-tls"
-        namespace: "{{ item.ns }}"
-  with_items: "{{ certs }}"
-
-- name: Create certs
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: cert-manager.io/v1
-      kind: Certificate
-      metadata:
-        name: "cm-{{ item.name }}-tls"
-        namespace: "{{ item.ns }}"
-      spec:
-        isCA: false
-        # Secret names are always required.
-        secretName: "cm-{{ item.name }}-tls"
-        secretTemplate:
-        usages:
-          - digital signature
-          - key encipherment
-          - server auth
-          - client auth
-        subject:
-          organizations:
-            - cert-manager
-        dnsNames: "{{ item.dns }}"
-        ipAddresses:
-          - 127.0.0.1
-        emailAddresses:
-          - admin@fzen.pro
-        additionalOutputFormats:
-          - type: CombinedPEM
-        issuerRef:
-          name: "{{ item.issuer }}"
-          kind: ClusterIssuer
-          group: cert-manager.io
-  with_items: "{{ certs }}"
 
 
 
-- name: Создание Bundle с сертификатом vault
-  kubernetes.core.k8s:
-    state: present
-    wait: true
-    definition:
-      apiVersion: trust.cert-manager.io/v1alpha1
-      kind: Bundle
-      metadata:
-        name: "vault-ca"
-      spec:
-        sources:
-          - useDefaultCAs: false
-          - secret:
-              name: "cm-vault-tls"
-              key: "ca.crt"
-        target:
-          secret:
-            key: "ca.crt"
-          additionalFormats:
-            jks:
-              key: "bundle.jks"
-            pkcs12:
-              key: "bundle.p12"
+
+
 #          namespaceSelector:
 #            matchLabels:
 #              bundle.ca.vault: "true"
