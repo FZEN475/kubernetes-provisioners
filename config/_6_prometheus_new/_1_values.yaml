@@ -3863,7 +3863,7 @@ prometheus:
     #   relabel configs to apply to samples before ingestion.
     ##
     relabelings:
-      - sourceLabels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_service_port_number]
+      - sourceLabels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_pod_container_port_number]
         separator: .
         regex: (.+);(.+);(.+)
         replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
@@ -4696,7 +4696,7 @@ prometheus:
       namespaceSelector:
         any: true
       relabelings:
-        - sourceLabels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_service_port_number]
+        - sourceLabels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_pod_container_port_number]
           separator: .
           regex: (.+);(.+);(.+)
           replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
