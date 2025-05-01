@@ -166,7 +166,7 @@ customRules: {}
 ## Create default rules for monitoring the cluster
 ##
 defaultRules:
-  create: false
+  create: true
   rules:
     alertmanager: false
     etcd: false
@@ -199,8 +199,8 @@ defaultRules:
     node: false
     nodeExporterAlerting: false
     nodeExporterRecording: false
-    prometheus: false
-    prometheusOperator: false
+    prometheus: true
+    prometheusOperator: true
     windows: false
 
   ## Reduce app namespace alert scope
