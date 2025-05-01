@@ -199,8 +199,8 @@ defaultRules:
     node: false
     nodeExporterAlerting: false
     nodeExporterRecording: false
-    prometheus: true
-    prometheusOperator: true
+    prometheus: false
+    prometheusOperator: false
     windows: false
 
   ## Reduce app namespace alert scope
@@ -3822,7 +3822,7 @@ prometheus:
     ## Additional labels
     ##
     additionalLabels:
-      prometheus: "true"
+      prometheus: "main"
 
     ## SampleLimit defines per-scrape limit on number of scraped samples that will be accepted.
     ##
@@ -4686,6 +4686,12 @@ prometheus:
       endpoints:
         - path: /metrics
           port: metrics
+          scheme: https
+      namespaceSelector:
+        any: true
+    
+    
+    
     ## Name of the ServiceMonitor to create
     ##
     # - name: ""
