@@ -3325,7 +3325,15 @@ prometheusOperator:
 
   ## Additional volume mounts
   ##
-  extraVolumeMounts: []
+  extraVolumeMounts:
+    - name: cm-prometheus-tls
+      mountPath: /etc/tls/private/tls-ca.key
+      subPath: tls.key
+      readOnly: true
+    - name: cm-prometheus-tls
+      mountPath: /etc/tls/private/tls-ca.crt
+      subPath: tls.crt
+      readOnly: true
 
 ## Deploy a Prometheus instance
 ##
