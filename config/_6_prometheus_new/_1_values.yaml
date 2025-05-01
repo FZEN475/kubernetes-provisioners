@@ -3327,31 +3327,31 @@ prometheusOperator:
   ## Additional volumes
   ##
   extraVolumes:
-    - name: cm-prometheus-tls
-      projected:
-        defaultMode: 0600
-        sources:
-          - secret:
-              name: cm-prometheus-tls
-              items:
-                - key: tls.key
-                  path: tls.key
-                  mode: 0600
-                - key: tls.crt
-                  path: tls.crt
-                  mode: 0600
+#    - name: cm-prometheus-tls
+#      projected:
+#        defaultMode: 0600
+#        sources:
+#          - secret:
+#              name: cm-prometheus-tls
+#              items:
+#                - key: tls.key
+#                  path: tls.key
+#                  mode: 0600
+#                - key: tls.crt
+#                  path: tls.crt
+#                  mode: 0600
 
   ## Additional volume mounts
   ##
   extraVolumeMounts:
-    - name: cm-prometheus-tls
-      mountPath: /etc/tls/private/tls-ca.key
-      subPath: tls.key
-      readOnly: true
-    - name: cm-prometheus-tls
-      mountPath: /etc/tls/private/tls-ca.crt
-      subPath: tls.crt
-      readOnly: true
+#    - name: cm-prometheus-tls
+#      mountPath: /etc/tls/private/tls-ca.key
+#      subPath: tls.key
+#      readOnly: true
+#    - name: cm-prometheus-tls
+#      mountPath: /etc/tls/private/tls-ca.crt
+#      subPath: tls.crt
+#      readOnly: true
 
 ## Deploy a Prometheus instance
 ##
