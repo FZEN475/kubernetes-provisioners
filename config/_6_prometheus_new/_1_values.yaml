@@ -3827,11 +3827,11 @@ prometheus:
     labelValueLengthLimit: 0
 
     ## scheme: HTTP scheme to use for scraping. Can be used with `tlsConfig` for example if using istio mTLS.
-    scheme: ""
+    scheme: "HTTPS"
 
     ## tlsConfig: TLS configuration to use when scraping the endpoint. For example if using istio mTLS.
     ## Of type: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#tlsconfig
-    tlsConfig: {}
+    tlsConfig:
 
     bearerTokenFile:
 
@@ -4107,7 +4107,7 @@ prometheus:
     ##
     serviceMonitorSelector:
       matchLabels:
-        prometheus: "true"
+        prometheus: "main"
     ## Example which selects ServiceMonitors with label "prometheus" set to "somelabel"
     # serviceMonitorSelector:
     #   matchLabels:
@@ -4132,7 +4132,7 @@ prometheus:
     ##
     podMonitorSelector:
       matchLabels:
-        prometheus: "true"
+        prometheus: "main"
     ## Example which selects PodMonitors with label "prometheus" set to "somelabel"
     # podMonitorSelector:
     #   matchLabels:
@@ -4657,7 +4657,17 @@ prometheus:
   #      - nodes/proxy
   #    verbs: [ "get", "list", "watch" ]
 
-  additionalServiceMonitors: []
+  additionalServiceMonitors:
+    - name: "cluster-https-sm"
+      additionalLabels:
+        prometheus: "main"
+      targetLabels:
+      selector:
+        matchLabels:
+          monitoring: "true"
+      endpoints:
+        - path: /metrics
+          port: metrics
     ## Name of the ServiceMonitor to create
     ##
     # - name: ""
