@@ -2501,27 +2501,27 @@ kube-state-metrics:
         tlsConfig:
           ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
           
-    ## selfMonitor endpoint
-    metrics:
-      interval: ""
-      scrapeTimeout: ""
-      proxyUrl: ""
-      ## Whether to enable HTTP2 for servicemonitor
-      enableHttp2: true
-      honorLabels: false
-      metricRelabelings: []
-      relabelings: []
-      scheme: "https"
-      ## File to read bearer token for scraping targets
-      bearerTokenFile: "/var/run/secrets/kubernetes.io/serviceaccount/token"
-      ## Secret to mount to read bearer token for scraping targets. The secret needs
-      ## to be in the same namespace as the service monitor and accessible by the
-      ## Prometheus Operator
-      bearerTokenSecret: {}
-      # name: secret-name
-      # key:  key-name
-      tlsConfig:
-        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      ## selfMonitor endpoint
+      metrics:
+        interval: ""
+        scrapeTimeout: ""
+        proxyUrl: ""
+        ## Whether to enable HTTP2 for servicemonitor
+        enableHttp2: true
+        honorLabels: false
+        metricRelabelings: []
+        relabelings: []
+        scheme: "https"
+        ## File to read bearer token for scraping targets
+        bearerTokenFile: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+        ## Secret to mount to read bearer token for scraping targets. The secret needs
+        ## to be in the same namespace as the service monitor and accessible by the
+        ## Prometheus Operator
+        bearerTokenSecret: {}
+        # name: secret-name
+        # key:  key-name
+        tlsConfig:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
   ## Node labels for pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector:
@@ -2722,6 +2722,13 @@ prometheus-node-exporter:
       ## proxyUrl: URL of a proxy that should be used for scraping.
       ##
       proxyUrl: ""
+      
+      scheme: "https"
+        
+      bearerTokenFile: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+
+      tlsConfig:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
 
       ## MetricRelabelConfigs to apply to samples after scraping, but before ingestion.
       ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#relabelconfig
@@ -2756,23 +2763,23 @@ prometheus-node-exporter:
       # attachMetadata:
       #   node: false
 
-#  kubeRBACProxy:
-#    enabled: true
-#    tls:
-#      enabled: true
-#      tlsClientAuth: false
-#  tlsSecret:
-#    enabled: true
-#    ## Key with client CA certificate (optional)
-#    caItem: "ca.crt"
-#    ## Key with certificate
-#    certItem: tls.crt
-#    ## Key with private key
-#    keyItem: tls.key
-#    ## Name of an existing secret
-#    secretName: cm-prometheus-tls
-#    ## Name of the volume to be created
-#    volumeName: cm-prometheus-tls
+  kubeRBACProxy:
+    enabled: true
+    tls:
+      enabled: true
+      tlsClientAuth: false
+  tlsSecret:
+    enabled: true
+    ## Key with client CA certificate (optional)
+    caItem: "ca.crt"
+    ## Key with certificate
+    certItem: tls.crt
+    ## Key with private key
+    keyItem: tls.key
+    ## Name of an existing secret
+    secretName: cm-prometheus-tls
+    ## Name of the volume to be created
+    volumeName: cm-prometheus-tls
 
 ## Manages Prometheus and Alertmanager components
 ##
