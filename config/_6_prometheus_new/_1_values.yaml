@@ -194,7 +194,7 @@ defaultRules:
     kubernetesSystem: false
     kubeSchedulerAlerting: false
     kubeSchedulerRecording: false
-    kubeStateMetrics: false
+    kubeStateMetrics: true
     network: false
     node: false
     nodeExporterAlerting: false
