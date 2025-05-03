@@ -46,3 +46,35 @@
     wait: true
     values_files:
       - /tmp/values_prometheus.yaml
+
+- name: Remove prometheus-adapter
+  kubernetes.core.helm:
+    name: prometheus-adapter
+    chart_ref: prometheus-community/prometheus-adapter
+    release_namespace: monitoring
+    create_namespace: true
+    wait: yes
+    state: absent
+
+- name: Install prometheus-adapter
+  kubernetes.core.helm:
+    name: prometheus-adapter
+    chart_ref: prometheus-community/prometheus-adapter
+    release_namespace: monitoring
+    create_namespace: true
+    wait: yes
+    state: present
+    values_files:
+      - /tmp/values_prometheus_adapter.yaml
+
+- name: Create ConfigMap prometheus-adapter-rules
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: prometheus-adapter-rules
+        namespace: monitoring
+      data:
+        config.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/adapter-rules.yaml') }}"
