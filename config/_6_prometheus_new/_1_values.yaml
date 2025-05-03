@@ -2646,14 +2646,14 @@ kube-state-metrics:
 ## Deploy node exporter as a daemonset to all nodes
 ##
 nodeExporter:
-  enabled: false
+  enabled: true
   operatingSystems:
     linux:
       enabled: true
     aix:
-      enabled: true
+      enabled: false
     darwin:
-      enabled: true
+      enabled: false
 
   ## ForceDeployDashboard Create dashboard configmap even if nodeExporter deployment has been disabled
   ##
@@ -2679,13 +2679,18 @@ prometheus-node-exporter:
       ipFamilyPolicy: "PreferDualStack"
     labels:
       jobLabel: node-exporter
+  rbac:
+    pspEnabled: false
 
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
   prometheus:
     monitor:
       enabled: true
 
       jobLabel: jobLabel
-
+      additionalLabels:
+        prometheus: "main"
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       ##
       interval: ""
@@ -2731,7 +2736,14 @@ prometheus-node-exporter:
       ## RelabelConfigs to apply to samples before scraping
       ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#relabelconfig
       ##
-      relabelings: []
+      relabelings:
+        - sourceLabels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_pod_container_port_number]
+          separator: ;
+          regex: (.+);(.+);(.+)
+          #        replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
+          replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
+          targetLabel: __address__
+          action: replace
       # - sourceLabels: [__meta_kubernetes_pod_node_name]
       #   separator: ;
       #   regex: ^(.*)$
@@ -2744,10 +2756,23 @@ prometheus-node-exporter:
       # attachMetadata:
       #   node: false
 
-  rbac:
-    ## If true, create PSPs for node-exporter
-    ##
-    pspEnabled: false
+  kubeRBACProxy:
+    enabled: true
+    tls:
+      enabled: true
+      tlsClientAuth: false
+  tlsSecret:
+    enabled: true
+    ## Key with client CA certificate (optional)
+    caItem: "ca.crt"
+    ## Key with certificate
+    certItem: tls.crt
+    ## Key with private key
+    keyItem: tls.key
+    ## Name of an existing secret
+    secretName: cm-prometheus-tls
+    ## Name of the volume to be created
+    volumeName: cm-prometheus-tls
 
 ## Manages Prometheus and Alertmanager components
 ##
