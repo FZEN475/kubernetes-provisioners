@@ -2479,6 +2479,9 @@ kube-state-metrics:
       #   replacement: $1
       #   action: replace
 
+      tlsConfig:
+        ca_file: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+
       ## kube-state-metrics endpoint
       http:
         interval: ""
@@ -2498,9 +2501,7 @@ kube-state-metrics:
         bearerTokenSecret: {}
           # name: secret-name
         # key:  key-name
-        tlsConfig:
-          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-          insecure_skip_verify: true
+
           
       ## selfMonitor endpoint
       metrics:
@@ -2521,9 +2522,7 @@ kube-state-metrics:
         bearerTokenSecret: {}
         # name: secret-name
         # key:  key-name
-        tlsConfig:
-          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-          insecure_skip_verify: true
+
   ## Node labels for pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector:
@@ -2730,8 +2729,7 @@ prometheus-node-exporter:
       bearerTokenFile: "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
       tlsConfig:
-        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-        insecure_skip_verify: true
+        ca_file: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 
       ## MetricRelabelConfigs to apply to samples after scraping, but before ingestion.
       ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#relabelconfig
