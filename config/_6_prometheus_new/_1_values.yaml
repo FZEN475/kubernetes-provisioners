@@ -2578,7 +2578,42 @@ kube-state-metrics:
     - name: tls
       secret:
         secretName: cm-prometheus-tls
+  ## Startup probe can optionally be enabled.
+  ##
+  startupProbe:
+    enabled: false
+    failureThreshold: 3
+    httpGet:
+      httpHeaders: []
+      scheme: http
+    initialDelaySeconds: 0
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
 
+  ## Liveness probe
+  ##
+  livenessProbe:
+    failureThreshold: 3
+    httpGet:
+      httpHeaders: []
+      scheme: http
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
+
+  ## Readiness probe
+  ##
+  readinessProbe:
+    failureThreshold: 3
+    httpGet:
+      httpHeaders: []
+      scheme: http
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 5
 
 ## Deploy node exporter as a daemonset to all nodes
 ##
