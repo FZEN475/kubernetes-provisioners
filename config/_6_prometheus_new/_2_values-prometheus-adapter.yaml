@@ -48,7 +48,7 @@ customLabels: {}
 prometheus:
   # Value is templated
   url: https://prometheus-kube-prometheus-prometheus.monitoring.svc
-  port: 80
+  port: 9090
   path: ""
 
 replicas: 1
