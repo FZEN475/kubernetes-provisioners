@@ -2500,6 +2500,28 @@ kube-state-metrics:
         # key:  key-name
         tlsConfig:
           ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+          
+    ## selfMonitor endpoint
+    metrics:
+      interval: ""
+      scrapeTimeout: ""
+      proxyUrl: ""
+      ## Whether to enable HTTP2 for servicemonitor
+      enableHttp2: true
+      honorLabels: false
+      metricRelabelings: []
+      relabelings: []
+      scheme: "https"
+      ## File to read bearer token for scraping targets
+      bearerTokenFile: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+      ## Secret to mount to read bearer token for scraping targets. The secret needs
+      ## to be in the same namespace as the service monitor and accessible by the
+      ## Prometheus Operator
+      bearerTokenSecret: {}
+      # name: secret-name
+      # key:  key-name
+      tlsConfig:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
   ## Node labels for pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector:
