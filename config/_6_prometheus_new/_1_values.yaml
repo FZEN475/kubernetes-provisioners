@@ -194,7 +194,7 @@ defaultRules:
     kubernetesSystem: false
     kubeSchedulerAlerting: false
     kubeSchedulerRecording: false
-    kubeStateMetrics: false
+    kubeStateMetrics: true
     network: false
     node: false
     nodeExporterAlerting: false
@@ -2389,7 +2389,7 @@ kube-state-metrics:
       ## Enable scraping via service monitor
       ## Disable to prevent duplication if you enable prometheusScrape above
       ##
-      enabled: false
+      enabled: true
 
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       ##
@@ -3867,7 +3867,7 @@ prometheus:
         separator: ;
         regex: (.+);(.+);(.+)
 #        replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
-        replacement: $1.$2  # "service.namespace.svc:8080"
+        replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
         targetLabel: __address__
         action: replace
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
@@ -4698,7 +4698,7 @@ prometheus:
         any: true
       relabelings:
         - sourceLabels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_pod_container_port_number]
-          separator: .
+          separator: ;
           regex: (.+);(.+);(.+)
           replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
           targetLabel: __address__
