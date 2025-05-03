@@ -2404,11 +2404,13 @@ kube-state-metrics:
   prometheusScrape: false
   selfMonitor:
     enabled: false
-    telemetryPort: "8080"
-#    telemetryHost: "0.0.0.0"
-#    telemetryNodePort: 0
+    telemetryPort: "9091"
+    telemetryHost: "0.0.0.0"
+    telemetryNodePort: 0
   prometheus:
     monitor:
+      additionalLabels:
+        prometheus: "main"
 
       ## Enable scraping via service monitor
       ## Disable to prevent duplication if you enable prometheusScrape above
