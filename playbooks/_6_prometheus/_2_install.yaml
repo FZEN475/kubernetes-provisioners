@@ -73,14 +73,14 @@
     values_files:
       - /tmp/values_prometheus_adapter.yaml
 
-- name: Create ConfigMap prometheus-adapter-rules
-  kubernetes.core.k8s:
-    state: present
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: prometheus-adapter-rules
-        namespace: monitoring
-      data:
-        config.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/adapter-rules.yaml') }}"
+#- name: Create ConfigMap prometheus-adapter-rules
+#  kubernetes.core.k8s:
+#    state: present
+#    definition:
+#      apiVersion: v1
+#      kind: ConfigMap
+#      metadata:
+#        name: prometheus-adapter-rules
+#        namespace: monitoring
+#      data:
+#        config.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/adapter-rules.yaml') }}"
