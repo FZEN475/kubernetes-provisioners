@@ -2368,7 +2368,7 @@ kubeProxy:
 ## Component scraping kube state metrics
 ##
 kubeStateMetrics:
-  enabled: false
+  enabled: true
 
 ## Configuration for kube-state-metrics subchart
 ##
@@ -2389,7 +2389,7 @@ kube-state-metrics:
       ## Enable scraping via service monitor
       ## Disable to prevent duplication if you enable prometheusScrape above
       ##
-      enabled: true
+      enabled: false
 
       ## Scrape interval. If not set, the Prometheus default scrape interval is used.
       ##
@@ -3864,6 +3864,9 @@ prometheus:
     ##
     relabelings:
       - sourceLabels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_pod_container_port_number]
+        separator: ;
+        regex: (.+);(.+);(.+)
+#        replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
         replacement: $1  # "service.namespace.svc:8080"
         targetLabel: __address__
         action: replace
