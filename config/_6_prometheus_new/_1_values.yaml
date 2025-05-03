@@ -2446,59 +2446,87 @@ kube-state-metrics:
       #   replacement: $1
       #   action: replace
 
-# Configure kube-rbac-proxy. When enabled, creates one kube-rbac-proxy container per exposed HTTP endpoint (metrics and telemetry if enabled).
-# The requests are served through the same service but requests are then HTTPS.
-kubeRBACProxy:
-  enabled: true
-  image:
-    registry: quay.io
-    repository: brancz/kube-rbac-proxy
-    tag: v0.18.2
-    sha: ""
-    pullPolicy: IfNotPresent
+      ## kube-state-metrics endpoint
+      http:
+        interval: ""
+        scrapeTimeout: ""
+        proxyUrl: ""
+        ## Whether to enable HTTP2 for servicemonitor
+        enableHttp2: false
+        honorLabels: false
+        metricRelabelings: []
+        relabelings: []
+        scheme: ""
+        ## File to read bearer token for scraping targets
+        bearerTokenFile: ""
+        ## Secret to mount to read bearer token for scraping targets. The secret needs
+        ## to be in the same namespace as the service monitor and accessible by the
+        ## Prometheus Operator
+        bearerTokenSecret: {}
+          # name: secret-name
+        # key:  key-name
+        tlsConfig:
+          keySecret:
+            key: tls.key
+            name: cm-prometheus-tls
+          cert:
+            secret:
+              key: tls.crt
+              name: cm-prometheus-tls
 
-  # List of additional cli arguments to configure kube-rbac-prxy
-  # for example: --tls-cipher-suites, --log-file, etc.
-  # all the possible args can be found here: https://github.com/brancz/kube-rbac-proxy#usage
-  extraArgs:
-    - --ignore-paths=/healthz,/livez,/readyz
-    - --tls-cert-file=/etc/tls/tls.crt
-    - --tls-private-key-file=/etc/tls/tls.key
-    - --client-ca-file=/etc/tls/ca.crt
-  ## Specify security settings for a Container
-  ## Allows overrides and additional options compared to (Pod) securityContext
-  ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-  containerSecurityContext:
-    readOnlyRootFilesystem: true
-    allowPrivilegeEscalation: false
-    capabilities:
-      drop:
-        - ALL
+  # Configure kube-rbac-proxy. When enabled, creates one kube-rbac-proxy container per exposed HTTP endpoint (metrics and telemetry if enabled).
+  # The requests are served through the same service but requests are then HTTPS.
+  kubeRBACProxy:
+    enabled: true
+    image:
+      registry: quay.io
+      repository: brancz/kube-rbac-proxy
+      tag: v0.18.2
+      sha: ""
+      pullPolicy: IfNotPresent
 
-  resources:
-    requests:
-      cpu: 100m
-      memory: 64Mi
-    # We usually recommend not to specify default resources and to leave this as a conscious
-    # choice for the user. This also increases chances charts run on environments with little
-    # resources, such as Minikube. If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #  cpu: 100m
-    #  memory: 64Mi
-    # requests:
-  #  cpu: 10m
-  #  memory: 32Mi
+    # List of additional cli arguments to configure kube-rbac-prxy
+    # for example: --tls-cipher-suites, --log-file, etc.
+    # all the possible args can be found here: https://github.com/brancz/kube-rbac-proxy#usage
+    extraArgs:
+      - --ignore-paths=/healthz,/livez,/readyz
+      - --tls-cert-file=/etc/tls/tls.crt
+      - --tls-private-key-file=/etc/tls/tls.key
+      - --client-ca-file=/etc/tls/ca.crt
+    ## Specify security settings for a Container
+    ## Allows overrides and additional options compared to (Pod) securityContext
+    ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
 
-  ## volumeMounts enables mounting custom volumes in rbac-proxy containers
-  ## Useful for TLS certificates and keys
-  volumeMounts:
-    - mountPath: /etc/tls
-      name: tls
-      readOnly: true
+    resources:
+      requests:
+        cpu: 100m
+        memory: 64Mi
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+      #  cpu: 100m
+      #  memory: 64Mi
+      # requests:
+    #  cpu: 10m
+    #  memory: 32Mi
 
-  selfMonitor:
-    enabled: false
+    ## volumeMounts enables mounting custom volumes in rbac-proxy containers
+    ## Useful for TLS certificates and keys
+    volumeMounts:
+      - mountPath: /etc/tls
+        name: tls
+        readOnly: true
+
+    selfMonitor:
+      enabled: false
 
 ## Deploy node exporter as a daemonset to all nodes
 ##
