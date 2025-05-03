@@ -2480,7 +2480,7 @@ kube-state-metrics:
       #   action: replace
 
       tlsConfig:
-        ca_file: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+        caFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 
       ## kube-state-metrics endpoint
       http:
@@ -2729,7 +2729,7 @@ prometheus-node-exporter:
       bearerTokenFile: "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
       tlsConfig:
-        ca_file: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+        caFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 
       ## MetricRelabelConfigs to apply to samples after scraping, but before ingestion.
       ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#relabelconfig
