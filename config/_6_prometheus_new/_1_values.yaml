@@ -2376,17 +2376,16 @@ kube-state-metrics:
   namespaceOverride: ""
   rbac:
     create: true
-    useExistingRole: prometheus-sa
     extraRules:
       - apiGroups: [ "monitoring.coreos.com" ]
         resources: [ "prometheuses" ]
         verbs: [ "list", "watch" ]
   serviceAccount:
     # Specifies whether a ServiceAccount should be created, require rbac true
-    create: false
+    create: true
     # The name of the ServiceAccount to use.
     # If not set and create is true, a name is generated using the fullname template
-    name: prometheus-sa
+    name: kube-state-metrics-sa
     # Reference to one or more secrets to be used when pulling images
     # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
     imagePullSecrets: []
