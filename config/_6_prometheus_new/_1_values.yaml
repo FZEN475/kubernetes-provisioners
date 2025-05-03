@@ -172,7 +172,7 @@ defaultRules:
     etcd: false
     configReloaders: false
     general: false
-    k8sContainerCpuUsageSecondsTotal: false
+    k8sContainerCpuUsageSecondsTotal: true
     k8sContainerMemoryCache: false
     k8sContainerMemoryRss: false
     k8sContainerMemorySwap: false
@@ -186,7 +186,7 @@ defaultRules:
     kubeControllerManager: false
     kubelet: false
     kubeProxy: false
-    kubePrometheusGeneral: false
+    kubePrometheusGeneral: true
     kubePrometheusNodeRecording: true
     kubernetesApps: false
     kubernetesResources: false
@@ -194,9 +194,9 @@ defaultRules:
     kubernetesSystem: false
     kubeSchedulerAlerting: false
     kubeSchedulerRecording: false
-    kubeStateMetrics: true
+    kubeStateMetrics: false
     network: false
-    node: false
+    node: true
     nodeExporterAlerting: false
     nodeExporterRecording: false
     prometheus: false
