@@ -4694,7 +4694,8 @@ prometheus:
         - path: /metrics
           port: metrics
           scheme: https
-          caFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+          tlsConfig:
+            caFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
       namespaceSelector:
         any: true
       relabelings:
