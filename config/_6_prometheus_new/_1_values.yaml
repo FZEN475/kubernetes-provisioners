@@ -187,7 +187,7 @@ defaultRules:
     kubelet: false
     kubeProxy: false
     kubePrometheusGeneral: false
-    kubePrometheusNodeRecording: false
+    kubePrometheusNodeRecording: true
     kubernetesApps: false
     kubernetesResources: false
     kubernetesStorage: false
