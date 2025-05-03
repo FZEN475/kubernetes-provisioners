@@ -2376,13 +2376,35 @@ kube-state-metrics:
   namespaceOverride: ""
   rbac:
     create: true
+    useExistingRole: prometheus-sa
+    extraRules:
+      - apiGroups: [ "monitoring.coreos.com" ]
+        resources: [ "prometheuses" ]
+        verbs: [ "list", "watch" ]
+  serviceAccount:
+    # Specifies whether a ServiceAccount should be created, require rbac true
+    create: false
+    # The name of the ServiceAccount to use.
+    # If not set and create is true, a name is generated using the fullname template
+    name: prometheus-sa
+    # Reference to one or more secrets to be used when pulling images
+    # ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+    imagePullSecrets: []
+    # ServiceAccount annotations.
+    # Use case: AWS EKS IAM roles for service accounts
+    # ref: https://docs.aws.amazon.com/eks/latest/userguide/specify-service-account-role.html
+    annotations: {}
+    # If false then the user will opt out of automounting API credentials.
+    automountServiceAccountToken: true
+
   releaseLabel: true
 
   ## Enable scraping via kubernetes-service-endpoints
   ## Disabled by default as we service monitor is enabled below
   ##
   prometheusScrape: false
-
+  selfMonitor:
+    enabled: false
   prometheus:
     monitor:
 
@@ -2473,60 +2495,90 @@ kube-state-metrics:
             secret:
               key: tls.crt
               name: cm-prometheus-tls
+  ## Node labels for pod assignment
+  ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
+  nodeSelector:
+    kubernetes.io/hostname: "control01"
 
-#  # Configure kube-rbac-proxy. When enabled, creates one kube-rbac-proxy container per exposed HTTP endpoint (metrics and telemetry if enabled).
-#  # The requests are served through the same service but requests are then HTTPS.
-#  kubeRBACProxy:
-#    enabled: true
-#    image:
-#      registry: quay.io
-#      repository: brancz/kube-rbac-proxy
-#      tag: v0.18.2
-#      sha: ""
-#      pullPolicy: IfNotPresent
-#
-#    # List of additional cli arguments to configure kube-rbac-prxy
-#    # for example: --tls-cipher-suites, --log-file, etc.
-#    # all the possible args can be found here: https://github.com/brancz/kube-rbac-proxy#usage
-#    extraArgs:
-#      - --ignore-paths=/healthz,/livez,/readyz
-#      - --tls-cert-file=/etc/tls/tls.crt
-#      - --tls-private-key-file=/etc/tls/tls.key
-#      - --client-ca-file=/etc/tls/ca.crt
-#    ## Specify security settings for a Container
-#    ## Allows overrides and additional options compared to (Pod) securityContext
-#    ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
-#    containerSecurityContext:
-#      readOnlyRootFilesystem: true
-#      allowPrivilegeEscalation: false
-#      capabilities:
-#        drop:
-#          - ALL
-#
-#    resources:
-#      requests:
-#        cpu: 100m
-#        memory: 64Mi
-#      # We usually recommend not to specify default resources and to leave this as a conscious
-#      # choice for the user. This also increases chances charts run on environments with little
-#      # resources, such as Minikube. If you do want to specify resources, uncomment the following
-#      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-#      # limits:
-#      #  cpu: 100m
-#      #  memory: 64Mi
-#      # requests:
-#    #  cpu: 10m
-#    #  memory: 32Mi
-#
-#    ## volumeMounts enables mounting custom volumes in rbac-proxy containers
-#    ## Useful for TLS certificates and keys
-#    volumeMounts:
-#      - mountPath: /etc/tls
-#        name: tls
-#        readOnly: true
+  ## Affinity settings for pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                  - linux
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 1
+          preference:
+            matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
 
-    selfMonitor:
-      enabled: false
+  ## Tolerations for pod assignment
+  ## Ref: https://kubernetes.io/docs/concepts/configuration/taint-and-toleration/
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
+  # Configure kube-rbac-proxy. When enabled, creates one kube-rbac-proxy container per exposed HTTP endpoint (metrics and telemetry if enabled).
+  # The requests are served through the same service but requests are then HTTPS.
+  kubeRBACProxy:
+    enabled: true
+    image:
+      registry: quay.io
+      repository: brancz/kube-rbac-proxy
+      tag: v0.18.2
+      sha: ""
+      pullPolicy: IfNotPresent
+
+    # List of additional cli arguments to configure kube-rbac-prxy
+    # for example: --tls-cipher-suites, --log-file, etc.
+    # all the possible args can be found here: https://github.com/brancz/kube-rbac-proxy#usage
+    extraArgs:
+      - --ignore-paths=/healthz,/livez,/readyz
+      - --tls-cert-file=/etc/tls/tls.crt
+      - --tls-private-key-file=/etc/tls/tls.key
+      - --client-ca-file=/etc/tls/ca.crt
+    ## Specify security settings for a Container
+    ## Allows overrides and additional options compared to (Pod) securityContext
+    ## Ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
+    containerSecurityContext:
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+          - ALL
+
+    resources:
+      requests:
+        cpu: 100m
+        memory: 64Mi
+      # We usually recommend not to specify default resources and to leave this as a conscious
+      # choice for the user. This also increases chances charts run on environments with little
+      # resources, such as Minikube. If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+      #  cpu: 100m
+      #  memory: 64Mi
+      # requests:
+    #  cpu: 10m
+    #  memory: 32Mi
+
+    ## volumeMounts enables mounting custom volumes in rbac-proxy containers
+    ## Useful for TLS certificates and keys
+    volumeMounts:
+      - mountPath: /etc/tls
+        name: tls
+        readOnly: true
+  volumes:
+    - name: tls
+      secret:
+        secretName: cm-prometheus-tls
+
 
 ## Deploy node exporter as a daemonset to all nodes
 ##
@@ -4770,22 +4822,24 @@ prometheus:
       selector:
         matchLabels:
           monitoring: "true"
+      namespaceSelector:
+        any: true          
       endpoints:
         - path: /metrics
           port: metrics
           scheme: https
           tlsConfig:
             caFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
-      namespaceSelector:
-        any: true
-      relabelings:
-        - sourceLabels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_pod_container_port_number]
-          separator: ;
-          regex: (.+);(.+);(.+)
-          #        replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
-          replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
-          targetLabel: __address__
-          action: replace
+          relabelings:
+            - sourceLabels: [ __meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_pod_container_port_number ]
+              separator: ;
+              regex: (.+);(.+);(.+)
+              #        replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
+              replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
+              targetLabel: __address__
+              action: replace  
+
+
     
     
     ## Name of the ServiceMonitor to create
