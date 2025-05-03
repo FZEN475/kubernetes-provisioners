@@ -3867,7 +3867,7 @@ prometheus:
         separator: ;
         regex: (.+);(.+);(.+)
         replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
-        target_label: __address__
+        targetLabel: instance
         action: replace
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
     #   separator: ;
