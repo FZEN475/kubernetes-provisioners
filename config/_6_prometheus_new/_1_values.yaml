@@ -2485,7 +2485,7 @@ kube-state-metrics:
         scrapeTimeout: ""
         proxyUrl: ""
         ## Whether to enable HTTP2 for servicemonitor
-        enableHttp2: false
+        enableHttp2: true
         honorLabels: false
         metricRelabelings: []
         relabelings: []
