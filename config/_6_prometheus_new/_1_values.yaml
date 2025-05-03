@@ -1533,7 +1533,7 @@ kubeApiServer:
 ## Component scraping the kubelet and kubelet-hosted cAdvisor
 ##
 kubelet:
-  enabled: false
+  enabled: true
   namespace: kube-system
 
   serviceMonitor:
@@ -1545,7 +1545,6 @@ kubelet:
     ##
     attachMetadata:
       node: false
-
     ## Scrape interval. If not set, the Prometheus default scrape interval is used.
     ##
     interval: ""
@@ -1764,8 +1763,8 @@ kubelet:
 
     ## Additional labels
     ##
-    additionalLabels: {}
-    #  foo: bar
+    additionalLabels:
+      prometheus: "main"
 
     ## defines the labels which are transferred from the associated Kubernetes Service object onto the ingested metrics.
     ## https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#servicemonitor
