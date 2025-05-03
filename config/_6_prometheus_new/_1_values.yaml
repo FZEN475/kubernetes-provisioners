@@ -2404,6 +2404,9 @@ kube-state-metrics:
   prometheusScrape: false
   selfMonitor:
     enabled: false
+    telemetryPort: "8080"
+#    telemetryHost: "0.0.0.0"
+#    telemetryNodePort: 0
   prometheus:
     monitor:
 
@@ -2523,6 +2526,7 @@ kube-state-metrics:
     - key: "node-role.kubernetes.io/control-plane"
       operator: "Exists"
       effect: "NoSchedule"
+  
   # Configure kube-rbac-proxy. When enabled, creates one kube-rbac-proxy container per exposed HTTP endpoint (metrics and telemetry if enabled).
   # The requests are served through the same service but requests are then HTTPS.
   kubeRBACProxy:
