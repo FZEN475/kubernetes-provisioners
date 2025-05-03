@@ -2464,7 +2464,14 @@ kube-state-metrics:
       ## RelabelConfigs to apply to samples before scraping
       ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#relabelconfig
       ##
-      relabelings: []
+      relabelings:
+        - sourceLabels: [ __meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_pod_container_port_number ]
+          separator: ;
+          regex: (.+);(.+);(.+)
+          #        replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
+          replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
+          targetLabel: __address__
+          action: replace
       # - sourceLabels: [__meta_kubernetes_pod_node_name]
       #   separator: ;
       #   regex: ^(.*)$
@@ -2484,7 +2491,7 @@ kube-state-metrics:
         relabelings: []
         scheme: "https"
         ## File to read bearer token for scraping targets
-        bearerTokenFile: ""
+        bearerTokenFile: "/var/run/secrets/kubernetes.io/serviceaccount/token"
         ## Secret to mount to read bearer token for scraping targets. The secret needs
         ## to be in the same namespace as the service monitor and accessible by the
         ## Prometheus Operator
@@ -2492,13 +2499,7 @@ kube-state-metrics:
           # name: secret-name
         # key:  key-name
         tlsConfig:
-          keySecret:
-            key: tls.key
-            name: cm-prometheus-tls
-          cert:
-            secret:
-              key: tls.crt
-              name: cm-prometheus-tls
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
   ## Node labels for pod assignment
   ## Ref: https://kubernetes.io/docs/user-guide/node-selection/
   nodeSelector:

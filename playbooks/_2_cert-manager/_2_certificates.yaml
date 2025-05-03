@@ -15,7 +15,8 @@
       - {name: "prometheus", ns: "monitoring",issuer: "root-intermediate0-ci", dns: [
         'prometheus.fzen.pro',
         'grafana.fzen.pro',
-        'prometheus-kube-prometheus-prometheus.monitoring.svc'
+        'prometheus-kube-prometheus-prometheus.monitoring.svc',
+        'prometheus-kube-state-metrics.monitoring.svc'
       ]}
 #      - { name: "client-etcd", ns: "storage",issuer: "vault-etcd-ci", dns: [ 'etcd.fzen.pro' ] }
 #      - { name: "kuber", ns: "monitoring",issuer: "root-intermediate0-ci", dns: [ 'kuber.fzen.pro' ] }
