@@ -1,5 +1,5 @@
 ---
-- name: Add stable chart repo cert-manager
+- name: Add stable chart repo prometheus-community
   kubernetes.core.helm_repository:
     name: "{{ item.name }}"
     repo_url: "{{ item.url }}"

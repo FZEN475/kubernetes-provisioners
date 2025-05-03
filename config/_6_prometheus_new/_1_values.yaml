@@ -2646,7 +2646,7 @@ kube-state-metrics:
 ## Deploy node exporter as a daemonset to all nodes
 ##
 nodeExporter:
-  enabled: true
+  enabled: false
   operatingSystems:
     linux:
       enabled: true
@@ -2756,23 +2756,23 @@ prometheus-node-exporter:
       # attachMetadata:
       #   node: false
 
-  kubeRBACProxy:
-    enabled: true
-    tls:
-      enabled: true
-      tlsClientAuth: false
-  tlsSecret:
-    enabled: true
-    ## Key with client CA certificate (optional)
-    caItem: "ca.crt"
-    ## Key with certificate
-    certItem: tls.crt
-    ## Key with private key
-    keyItem: tls.key
-    ## Name of an existing secret
-    secretName: cm-prometheus-tls
-    ## Name of the volume to be created
-    volumeName: cm-prometheus-tls
+#  kubeRBACProxy:
+#    enabled: true
+#    tls:
+#      enabled: true
+#      tlsClientAuth: false
+#  tlsSecret:
+#    enabled: true
+#    ## Key with client CA certificate (optional)
+#    caItem: "ca.crt"
+#    ## Key with certificate
+#    certItem: tls.crt
+#    ## Key with private key
+#    keyItem: tls.key
+#    ## Name of an existing secret
+#    secretName: cm-prometheus-tls
+#    ## Name of the volume to be created
+#    volumeName: cm-prometheus-tls
 
 ## Manages Prometheus and Alertmanager components
 ##
