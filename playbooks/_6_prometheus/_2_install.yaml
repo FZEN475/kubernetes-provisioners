@@ -58,7 +58,7 @@
 
 - name: Copy values
   ansible.builtin.copy:
-    src: '/source/config/_6_prometheus_new/_2_values-prometheus-adapter'
+    src: '/source/config/_6_prometheus_new/_2_values-prometheus-adapter.yaml'
     dest: '/tmp/values_prometheus_adapter.yaml'
     mode: "0640"
 
