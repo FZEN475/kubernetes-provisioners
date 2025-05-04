@@ -1258,6 +1258,21 @@ grafana:
     ##
     pspEnabled: false
 
+  readinessProbe:
+    httpGet:
+      scheme: HTTPS
+      path: /api/health
+      port: 3000
+
+  livenessProbe:
+    httpGet:
+      scheme: HTTPS
+      path: /api/health
+      port: 3000
+    initialDelaySeconds: 60
+    timeoutSeconds: 30
+    failureThreshold: 10
+
   ingress:
     enabled: true
     # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
