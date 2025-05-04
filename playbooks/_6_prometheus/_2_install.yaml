@@ -1,86 +1,78 @@
 ---
-- name: Add stable chart repo prometheus-community
-  kubernetes.core.helm_repository:
-    name: "{{ item.name }}"
-    repo_url: "{{ item.url }}"
-    repo_state: "present"
-    force_update: true
-  with_items:
-    - {name: "prometheus-community", url: "https://prometheus-community.github.io/helm-charts"}
-    - {name: "grafana", url: "https://grafana.github.io/helm-charts"}
+#- name: Add stable chart repo prometheus-community
+#  kubernetes.core.helm_repository:
+#    name: "{{ item.name }}"
+#    repo_url: "{{ item.url }}"
+#    repo_state: "present"
+#    force_update: true
+#  with_items:
+#    - {name: "prometheus-community", url: "https://prometheus-community.github.io/helm-charts"}
+#    - {name: "grafana", url: "https://grafana.github.io/helm-charts"}
+#
 
+- name: Remove prometheus-adapter
+  kubernetes.core.helm:
+    name: prometheus-adapter
+    chart_ref: prometheus-community/prometheus-adapter
+    release_namespace: monitoring
+    create_namespace: true
+    wait: yes
+    state: absent
 
 - name: Copy values
   ansible.builtin.copy:
-    src: '/source/config/_6_prometheus_new/_1_values.yaml'
-    dest: '/tmp/values_prometheus.yaml'
+    src: '/source/config/_6_prometheus_new/_2_values-prometheus-adapter.yaml'
+    dest: '/tmp/values_prometheus_adapter.yaml'
     mode: "0640"
 
-- name: Remove CIRDs prometheus
+- name: Install prometheus-adapter
   kubernetes.core.helm:
-    name: prometheus-cird
-    chart_ref: prometheus-community/prometheus-operator-crds
+    name: prometheus-adapter
+    chart_ref: prometheus-community/prometheus-adapter
     release_namespace: monitoring
     create_namespace: true
-    wait: true
-    state: absent
-
-- name: Remove prometheus
-  kubernetes.core.helm:
-    name: prometheus
-    state: absent
-    chart_ref: prometheus-community/kube-prometheus-stack
-    release_namespace: monitoring
-    create_namespace: true
-    wait: true
-    values_files:
-      - /tmp/values_kube_state_metrics.yaml
-
-- name: Install prometheus
-  kubernetes.core.helm:
-    name: prometheus
+    wait: yes
     state: present
-    chart_ref: prometheus-community/kube-prometheus-stack
-    release_namespace: monitoring
-    create_namespace: true
-    wait: true
     values_files:
-      - /tmp/values_prometheus.yaml
+      - /tmp/values_prometheus_adapter.yaml
 
-#- name: Remove prometheus-adapter
-#  kubernetes.core.helm:
-#    name: prometheus-adapter
-#    chart_ref: prometheus-community/prometheus-adapter
-#    release_namespace: monitoring
-#    create_namespace: true
-#    wait: yes
-#    state: absent
-#
 #- name: Copy values
 #  ansible.builtin.copy:
-#    src: '/source/config/_6_prometheus_new/_2_values-prometheus-adapter.yaml'
-#    dest: '/tmp/values_prometheus_adapter.yaml'
+#    src: '/source/config/_6_prometheus_new/_1_values.yaml'
+#    dest: '/tmp/values_prometheus.yaml'
 #    mode: "0640"
 #
-#- name: Install prometheus-adapter
+#- name: Remove CIRDs prometheus
 #  kubernetes.core.helm:
-#    name: prometheus-adapter
-#    chart_ref: prometheus-community/prometheus-adapter
+#    name: prometheus-cird
+#    chart_ref: prometheus-community/prometheus-operator-crds
 #    release_namespace: monitoring
 #    create_namespace: true
-#    wait: yes
-#    state: present
+#    wait: true
+#    state: absent
+#
+#- name: Remove prometheus
+#  kubernetes.core.helm:
+#    name: prometheus
+#    state: absent
+#    chart_ref: prometheus-community/kube-prometheus-stack
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: true
 #    values_files:
-#      - /tmp/values_prometheus_adapter.yaml
-
-#- name: Create ConfigMap prometheus-adapter-rules
-#  kubernetes.core.k8s:
+#      - /tmp/values_kube_state_metrics.yaml
+#
+#- name: Install prometheus
+#  kubernetes.core.helm:
+#    name: prometheus
 #    state: present
-#    definition:
-#      apiVersion: v1
-#      kind: ConfigMap
-#      metadata:
-#        name: prometheus-adapter-rules
-#        namespace: monitoring
-#      data:
-#        config.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/adapter-rules.yaml') }}"
+#    chart_ref: prometheus-community/kube-prometheus-stack
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: true
+#    values_files:
+#      - /tmp/values_prometheus.yaml
+
+
+
+
