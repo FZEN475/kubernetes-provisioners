@@ -201,7 +201,7 @@ defaultRules:
     nodeExporterRecording: false
     prometheus: false
     prometheusOperator: false
-    windows: false
+    windows: true
 
   ## Reduce app namespace alert scope
   appNamespacesTarget: ".*"
@@ -1222,7 +1222,7 @@ alertmanager:
 ## Using default values from https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
 ##
 grafana:
-  enabled: false
+  enabled: true
   namespaceOverride: ""
 
   ## ForceDeployDatasources Create datasource configmap even if grafana deployment has been disabled
@@ -1235,7 +1235,7 @@ grafana:
 
   ## Deploy default dashboards
   ##
-  defaultDashboardsEnabled: true
+  defaultDashboardsEnabled: false
 
   ## Timezone for the default dashboards
   ## Other options are: browser or a specific timezone, i.e. Europe/Luxembourg
@@ -1259,42 +1259,42 @@ grafana:
     pspEnabled: false
 
   ingress:
-    ## If true, Grafana Ingress will be created
-    ##
-    enabled: false
-
-    ## IngressClassName for Grafana Ingress.
-    ## Should be provided if Ingress is enable.
-    ##
-    # ingressClassName: nginx
-
-    ## Annotations for Grafana Ingress
-    ##
-    annotations: {}
-      # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-
-    ## Labels to be added to the Ingress
-    ##
+    enabled: true
+    # For Kubernetes >= 1.18 you should specify the ingress-controller via the field ingressClassName
+    # See https://kubernetes.io/blog/2020/04/02/improvements-to-the-ingress-api-in-kubernetes-1.18/#specifying-the-class-of-an-ingress
+    ingressClassName: "internal-nginx"
+    # Values can be templated
+    annotations:
+      kubernetes.io/ingress.class: internal-nginx
+      nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
     labels: {}
-
-    ## Hostnames.
-    ## Must be provided if Ingress is enable.
-    ##
-    # hosts:
-    #   - grafana.domain.com
-    hosts: []
-
-    ## Path for grafana ingress
     path: /
-
-    ## TLS configuration for grafana Ingress
-    ## Secret must be manually created in the namespace
-    ##
-    tls: []
-    # - secretName: grafana-general-tls
-    #   hosts:
-    #   - grafana.example.com
+  
+    # pathType is only for k8s >= 1.1=
+    pathType: Prefix
+  
+    hosts:
+      - grafana.fzen.pro
+    ## Extra paths to prepend to every host configuration. This is useful when working with annotation based services.
+    extraPaths: []
+    # - path: /*
+    #   backend:
+    #     serviceName: ssl-redirect
+    #     servicePort: use-annotation
+    ## Or for k8s > 1.19
+    # - path: /*
+    #   pathType: Prefix
+    #   backend:
+    #     service:
+    #       name: ssl-redirect
+    #       port:
+    #         name: use-annotation
+  
+  
+    tls:
+      - secretName: cm-prometheus-tls
+        hosts:
+          - grafana.fzen.pro
 
   # # To make Grafana persistent (Using Statefulset)
   # #
@@ -1308,9 +1308,43 @@ grafana:
   #   finalizers:
   #     - kubernetes.io/pvc-protection
 
+  # Use an existing secret for the admin user.
+  admin:
+    ## Name of the secret. Can be templated.
+    existingSecret: grafana-secrets
+    userKey: adminUser
+    passwordKey: adminPassword
+
   serviceAccount:
     create: true
     autoMount: true
+
+  resources:
+    requests:
+      cpu: 200m
+      memory: 200Mi
+
+  nodeSelector:
+    kubernetes.io/hostname: "control01"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: kubernetes.io/os
+                operator: In
+                values:
+                  - linux
+      preferredDuringSchedulingIgnoredDuringExecution:
+        - weight: 1
+          preference:
+            matchExpressions:
+              - key: node-role.kubernetes.io/control-plane
+                operator: Exists
+  tolerations:
+    - key: "node-role.kubernetes.io/control-plane"
+      operator: "Exists"
+      effect: "NoSchedule"
 
   sidecar:
     dashboards:
@@ -1381,6 +1415,47 @@ grafana:
         handleGrafanaManagedAlerts: false
         implementation: prometheus
 
+  ## Additional grafana server secret mounts
+  # Defines additional mounts with secrets. Secrets must be manually created in the namespace.
+  extraSecretMounts:
+    - name: secret-files
+      mountPath: /tmp/certs/
+      subPath: ""
+      secretName: cm-prometheus-tls
+      readOnly: true
+    - name: ca
+      mountPath: /etc/ssl/certs/ca.crt
+      subPath: "ca.crt"
+      secretName: cm-prometheus-tls
+      readOnly: true
+
+  ## Grafana's primary configuration
+  ## NOTE: values in map will be converted to ini format
+  ## ref: http://docs.grafana.org/installation/configuration/
+  ##
+  grafana.ini:
+    paths:
+      data: /var/lib/grafana/
+      logs: /var/log/grafana
+      plugins: /var/lib/grafana/plugins
+      provisioning: /etc/grafana/provisioning
+    analytics:
+      check_for_updates: true
+    log:
+      level: warn
+      mode: console
+    grafana_net:
+      url: https://grafana.net
+    server:
+      http_addr:
+      #    http_port: 443
+      domain: fzen.pro
+      root_url: https://grafana.fzen.pro
+      cert_key: /tmp/certs/tls.key
+      cert_file: /tmp/certs/tls.crt
+      enforce_domain: False
+      protocol: https
+
   extraConfigmapMounts: []
   # - name: certs-configmap
   #   mountPath: /etc/grafana/ssl/
@@ -1424,7 +1499,7 @@ grafana:
     # If true, a ServiceMonitor CRD is created for a prometheus operator
     # https://github.com/prometheus-operator/prometheus-operator
     #
-    enabled: true
+    enabled: false
 
     # Path to use for scraping metrics. Might be different if server.root_url is set
     # in grafana.ini
