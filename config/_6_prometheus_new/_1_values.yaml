@@ -316,14 +316,14 @@ additionalPrometheusRules: []
 
 ## Provide custom recording or alerting rules to be deployed into the cluster.
 ##
-additionalPrometheusRulesMap: {}
-#  top:
-#    groups:
-#      - name: "v1beta1.metrics.k8s.io"
-#        rules:
-#          - expr: |
-#              max(label_replace(kube_pod_info, "pod", "$1", "pod", "(.*)")) by (node, namespace, pod)
-#            record: 'node_namespace_pod:kube_pod_info:'
+additionalPrometheusRulesMap: 
+  top:
+    groups:
+      - name: "v1beta1.metrics.k8s.io"
+        rules:
+          - expr: |
+              max(label_replace(kube_pod_info, "pod", "$1", "pod", "(.*)")) by (node, namespace, pod)
+            record: 'node_namespace_pod:kube_pod_info:'
 #  rule-name:
 #    groups:
 #    - name: my_group
