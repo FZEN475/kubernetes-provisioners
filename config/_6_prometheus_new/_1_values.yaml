@@ -197,8 +197,8 @@ defaultRules:
     kubeStateMetrics: true
     network: true
     node: true
-    nodeExporterAlerting: false
-    nodeExporterRecording: false
+    nodeExporterAlerting: true
+    nodeExporterRecording: true
     prometheus: false
     prometheusOperator: false
     windows: true
@@ -1384,8 +1384,8 @@ grafana:
         allowUiUpdates: false
     datasources:
       enabled: true
-      defaultDatasourceEnabled: true
-      isDefaultDatasource: true
+      defaultDatasourceEnabled: false
+      isDefaultDatasource: false
 
       name: Prometheus
       uid: prometheus
@@ -1465,7 +1465,8 @@ grafana:
       http_addr:
       #    http_port: 443
       domain: fzen.pro
-      root_url: https://grafana.fzen.pro
+      root_url: "https://%(domain)s/prometheus/grafana"
+      serve_from_sub_path: true
       cert_key: /tmp/certs/tls.key
       cert_file: /tmp/certs/tls.crt
       enforce_domain: False
@@ -1542,6 +1543,8 @@ grafana:
     #   targetLabel: nodename
     #   replacement: $1
     #   action: replace
+
+  dashboards: {}
 
 ## Flag to disable all the kubernetes component scrapers
 ##
