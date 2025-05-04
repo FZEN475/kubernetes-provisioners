@@ -307,11 +307,13 @@ defaultRules:
 ## Deprecated way to provide custom recording or alerting rules to be deployed into the cluster.
 ##
 additionalPrometheusRules:
-  - name: "v1beta1.metrics.k8s.io"
-    rules:
-      - expr: |
-          max(label_replace(kube_pod_info, "pod", "$1", "pod", "(.*)")) by (node, namespace, pod)
-        record: 'node_namespace_pod:kube_pod_info:'
+  - name: top
+    groups:
+      - name: "v1beta1.metrics.k8s.io"
+        rules:
+          - expr: |
+              max(label_replace(kube_pod_info, "pod", "$1", "pod", "(.*)")) by (node, namespace, pod)
+            record: 'node_namespace_pod:kube_pod_info:'
 #  - name: my-rule-file
 #    groups:
 #      - name: my_group
