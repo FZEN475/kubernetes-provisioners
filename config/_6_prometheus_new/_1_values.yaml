@@ -1365,7 +1365,10 @@ grafana:
     dashboards:
       enabled: true
       label: grafana_dashboard
-      labelValue: "1"
+      labelValue: ""
+      env:
+        REQ_SKIP_TLS_VERIFY: true
+      reloadURL: "https://localhost:3000/api/admin/provisioning/dashboards/reload"
       # Allow discovery in all namespaces for dashboards
       searchNamespace: ALL
 
@@ -1416,7 +1419,7 @@ grafana:
       createPrometheusReplicasDatasources: false
       prometheusServiceName: prometheus-operated
       label: grafana_datasource
-      labelValue: "1"
+      labelValue: ""
       reloadURL: "https://localhost:3000/api/admin/provisioning/datasources/reload"
       ## Field with internal link pointing to existing data source in Grafana.
       ## Can be provisioned via additionalDataSources
@@ -2851,6 +2854,12 @@ prometheus-node-exporter:
           replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
           targetLabel: __address__
           action: replace
+        - sourceLabels:
+            - __meta_kubernetes_endpoint_node_name
+          targetLabel: node
+          action: replace
+          regex: (.+)
+          replacement: ${1}
       # - sourceLabels: [__meta_kubernetes_pod_node_name]
       #   separator: ;
       #   regex: ^(.*)$
