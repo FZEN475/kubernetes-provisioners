@@ -1386,7 +1386,8 @@ grafana:
       enabled: true
       defaultDatasourceEnabled: false
       isDefaultDatasource: false
-
+      env:
+        REQ_SKIP_TLS_VERIFY: true
       name: Prometheus
       uid: prometheus
 
