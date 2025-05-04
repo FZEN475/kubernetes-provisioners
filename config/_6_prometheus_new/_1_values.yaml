@@ -1416,7 +1416,7 @@ grafana:
       prometheusServiceName: prometheus-operated
       label: grafana_datasource
       labelValue: "1"
-
+      reloadURL: "https://localhost:3000/api/admin/provisioning/datasources/reload"
       ## Field with internal link pointing to existing data source in Grafana.
       ## Can be provisioned via additionalDataSources
       exemplarTraceIdDestinations: {}
@@ -1465,8 +1465,7 @@ grafana:
       http_addr:
       #    http_port: 443
       domain: fzen.pro
-      root_url: "https://%(domain)s/prometheus/grafana"
-      serve_from_sub_path: true
+      root_url: https://grafana.fzen.pro
       cert_key: /tmp/certs/tls.key
       cert_file: /tmp/certs/tls.crt
       enforce_domain: False
