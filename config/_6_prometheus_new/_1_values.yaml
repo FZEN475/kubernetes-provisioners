@@ -2869,8 +2869,8 @@ prometheus-node-exporter:
 
       ## Attach node metadata to discovered targets. Requires Prometheus v2.35.0 and above.
       ##
-      # attachMetadata:
-      #   node: false
+      attachMetadata:
+        node: true
 
   kubeRBACProxy:
     enabled: true
