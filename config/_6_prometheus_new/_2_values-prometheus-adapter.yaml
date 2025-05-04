@@ -144,7 +144,7 @@ readinessProbe:
 startupProbe: {}
 
 rules:
-  default: true
+  default: false
 #
 #  custom:
 #    - seriesQuery: '{__name__=~"^container_.*",container!="POD",namespace!="",pod!=""}'
