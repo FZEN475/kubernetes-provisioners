@@ -166,9 +166,12 @@ rules:
 #  existing: "prometheus-adapter-rules"
 #
   external:
-    - metricsQuery: 'sum(ssh_active_sessions{namespace=~"dev"})'
+    - seriesQuery: 'ssh_active_sessions'
+      metricsQuery: 'sum(ssh_active_sessions{namespace=~"dev"})'
       name:
         as: "ssh_active_sessions_external"
+      resources:
+        namespaced: false
 
   resource:
     cpu:
