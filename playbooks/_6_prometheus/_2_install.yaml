@@ -13,96 +13,96 @@
 
 
 
-
-- name: Remove CIRDs prometheus
-  kubernetes.core.helm:
-    name: prometheus-cird
-    chart_ref: prometheus-community/prometheus-operator-crds
-    release_namespace: monitoring
-    create_namespace: true
-    wait: true
-    state: absent
-
-- name: Copy values
-  ansible.builtin.copy:
-    src: '/source/config/_6_prometheus_new/_1_values.yaml'
-    dest: '/tmp/values_prometheus.yaml'
-    mode: "0640"
-
-- name: Remove prometheus
-  kubernetes.core.helm:
-    name: prometheus
-    state: absent
-    chart_ref: prometheus-community/kube-prometheus-stack
-    release_namespace: monitoring
-    create_namespace: true
-    wait: true
-    values_files:
-      - /tmp/values_kube_state_metrics.yaml
-
-- name: Install prometheus
-  kubernetes.core.helm:
-    name: prometheus
-    state: present
-    chart_ref: prometheus-community/kube-prometheus-stack
-    release_namespace: monitoring
-    create_namespace: true
-    wait: true
-    values_files:
-      - /tmp/values_prometheus.yaml
-
-- name: ConfigMap grafana-config
-  kubernetes.core.k8s:
-    state: present
-    wait: true
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: grafana-datasource
-        namespace: 'monitoring'
-        labels:
-          grafana_datasource: ""
-      data:
-        datasource.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/datasource.yaml') }}"
-
-- name: Creating tmp_dashboard_json
-  ansible.builtin.set_fact:
-    tmp_dashboard_json: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/kube-state-metrics-dashboard.json') | replace('\n','')  }}"
-
-- name: ConfigMap grafana-config
-  kubernetes.core.k8s:
-    state: present
-    wait: true
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: grafana-dashboard
-        namespace: 'monitoring'
-        labels:
-          grafana_dashboard: ""
-      data:
-        dashboard.json: "{{ tmp_dashboard_json | to_json }}"
-
-- name: Creating tmp_dashboard_json
-  ansible.builtin.set_fact:
-    tmp_dashboard_json: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/custom-dashboard.json') | replace('\n','')  }}"
-
-- name: ConfigMap grafana-config
-  kubernetes.core.k8s:
-    state: present
-    wait: true
-    definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: grafana-dashboard-test
-        namespace: 'monitoring'
-        labels:
-          grafana_dashboard: ""
-      data:
-        dashboard.json: "{{ tmp_dashboard_json | to_json }}"
+#
+#- name: Remove CIRDs prometheus
+#  kubernetes.core.helm:
+#    name: prometheus-cird
+#    chart_ref: prometheus-community/prometheus-operator-crds
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: true
+#    state: absent
+#
+#- name: Copy values
+#  ansible.builtin.copy:
+#    src: '/source/config/_6_prometheus_new/_1_values.yaml'
+#    dest: '/tmp/values_prometheus.yaml'
+#    mode: "0640"
+#
+#- name: Remove prometheus
+#  kubernetes.core.helm:
+#    name: prometheus
+#    state: absent
+#    chart_ref: prometheus-community/kube-prometheus-stack
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: true
+#    values_files:
+#      - /tmp/values_kube_state_metrics.yaml
+#
+#- name: Install prometheus
+#  kubernetes.core.helm:
+#    name: prometheus
+#    state: present
+#    chart_ref: prometheus-community/kube-prometheus-stack
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: true
+#    values_files:
+#      - /tmp/values_prometheus.yaml
+#
+#- name: ConfigMap grafana-config
+#  kubernetes.core.k8s:
+#    state: present
+#    wait: true
+#    definition:
+#      apiVersion: v1
+#      kind: ConfigMap
+#      metadata:
+#        name: grafana-datasource
+#        namespace: 'monitoring'
+#        labels:
+#          grafana_datasource: ""
+#      data:
+#        datasource.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/datasource.yaml') }}"
+#
+#- name: Creating tmp_dashboard_json
+#  ansible.builtin.set_fact:
+#    tmp_dashboard_json: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/kube-state-metrics-dashboard.json') | replace('\n','')  }}"
+#
+#- name: ConfigMap grafana-config
+#  kubernetes.core.k8s:
+#    state: present
+#    wait: true
+#    definition:
+#      apiVersion: v1
+#      kind: ConfigMap
+#      metadata:
+#        name: grafana-dashboard
+#        namespace: 'monitoring'
+#        labels:
+#          grafana_dashboard: ""
+#      data:
+#        dashboard.json: "{{ tmp_dashboard_json | to_json }}"
+#
+#- name: Creating tmp_dashboard_json
+#  ansible.builtin.set_fact:
+#    tmp_dashboard_json: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/custom-dashboard.json') | replace('\n','')  }}"
+#
+#- name: ConfigMap grafana-config
+#  kubernetes.core.k8s:
+#    state: present
+#    wait: true
+#    definition:
+#      apiVersion: v1
+#      kind: ConfigMap
+#      metadata:
+#        name: grafana-dashboard-test
+#        namespace: 'monitoring'
+#        labels:
+#          grafana_dashboard: ""
+#      data:
+#        dashboard.json: "{{ tmp_dashboard_json | to_json }}"
 
 - name: Remove prometheus-adapter
   kubernetes.core.helm:

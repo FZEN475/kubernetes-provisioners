@@ -166,13 +166,10 @@ rules:
 #  existing: "prometheus-adapter-rules"
 #
   external:
-    - metricsQuery: 'ssh_active_sessions{}'
+    - metricsQuery: 'sum(ssh_active_sessions{namespace=~"dev"})'
       name:
         as: "ssh_active_sessions_external"
-        matches: "ssh_active_sessions"
-      resources:
-        namespaced: false
-      seriesQuery: sum(<<.Series>>{<<.LabelMatchers>>})
+
   resource:
     cpu:
       containerLabel: container
