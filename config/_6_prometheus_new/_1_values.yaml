@@ -2558,7 +2558,10 @@ kube-state-metrics:
       ## MetricRelabelConfigs to apply to samples after scraping, but before ingestion.
       ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#relabelconfig
       ##
-      metricRelabelings: []
+      metricRelabelings:
+        - sourceLabels: []
+          targetLabel: cluster
+          replacement: 'main'
       # - action: keep
       #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
       #   sourceLabels: [__name__]
@@ -2567,6 +2570,7 @@ kube-state-metrics:
       ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#relabelconfig
       ##
       relabelings:
+
         - sourceLabels: [ __meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_pod_container_port_number ]
           separator: ;
           regex: (.+);(.+);(.+)
