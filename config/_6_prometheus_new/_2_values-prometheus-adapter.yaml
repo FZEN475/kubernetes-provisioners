@@ -172,7 +172,7 @@ rules:
         matches: "ssh_active_sessions"
       resources:
         namespaced: false
-      seriesQuery: 'sum(<<.Series>>{<<.LabelMatchers>>,namespace="dev"})'
+      seriesQuery: sum(<<.Series>>{<<.LabelMatchers>>})
   resource:
     cpu:
       containerLabel: container
