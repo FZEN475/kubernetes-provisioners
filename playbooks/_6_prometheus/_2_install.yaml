@@ -66,7 +66,7 @@
 
 - name: Creating tmp_dashboard_json
   ansible.builtin.set_fact:
-    tmp_dashboard_json: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/dashboard.json') | replace('\n','')  }}"
+    tmp_dashboard_json: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/kube-state-metrics-dashboard.json') | replace('\n','')  }}"
 
 - name: ConfigMap grafana-config
   kubernetes.core.k8s:
@@ -83,29 +83,48 @@
       data:
         dashboard.json: "{{ tmp_dashboard_json | to_json }}"
 
-#- name: Remove prometheus-adapter
-#  kubernetes.core.helm:
-#    name: prometheus-adapter
-#    chart_ref: prometheus-community/prometheus-adapter
-#    release_namespace: monitoring
-#    create_namespace: true
-#    wait: yes
-#    state: absent
-#
-#- name: Copy values
-#  ansible.builtin.copy:
-#    src: '/source/config/_6_prometheus_new/_2_values-prometheus-adapter.yaml'
-#    dest: '/tmp/values_prometheus_adapter.yaml'
-#    mode: "0640"
-#
-#- name: Install prometheus-adapter
-#  kubernetes.core.helm:
-#    name: prometheus-adapter
-#    chart_ref: prometheus-community/prometheus-adapter
-#    release_namespace: monitoring
-#    create_namespace: true
-#    wait: yes
-#    state: present
-#    values_files:
-#      - /tmp/values_prometheus_adapter.yaml
+- name: Creating tmp_dashboard_json
+  ansible.builtin.set_fact:
+    tmp_dashboard_json: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/custom-dashboard.json') | replace('\n','')  }}"
+
+- name: ConfigMap grafana-config
+  kubernetes.core.k8s:
+    state: present
+    wait: true
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: grafana-dashboard-test
+        namespace: 'monitoring'
+        labels:
+          grafana_dashboard: ""
+      data:
+        dashboard.json: "{{ tmp_dashboard_json | to_json }}"
+
+- name: Remove prometheus-adapter
+  kubernetes.core.helm:
+    name: prometheus-adapter
+    chart_ref: prometheus-community/prometheus-adapter
+    release_namespace: monitoring
+    create_namespace: true
+    wait: yes
+    state: absent
+
+- name: Copy values
+  ansible.builtin.copy:
+    src: '/source/config/_6_prometheus_new/_2_values-prometheus-adapter.yaml'
+    dest: '/tmp/values_prometheus_adapter.yaml'
+    mode: "0640"
+
+- name: Install prometheus-adapter
+  kubernetes.core.helm:
+    name: prometheus-adapter
+    chart_ref: prometheus-community/prometheus-adapter
+    release_namespace: monitoring
+    create_namespace: true
+    wait: yes
+    state: present
+    values_files:
+      - /tmp/values_prometheus_adapter.yaml
 
