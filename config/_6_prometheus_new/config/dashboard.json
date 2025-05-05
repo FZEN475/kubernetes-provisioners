@@ -4101,8 +4101,8 @@
       },
       {
         "current": {
-          "value": "${VAR_DATASOURCE}",
-          "text": "${VAR_DATASOURCE}",
+          "value": "prometheus",
+          "text": "prometheus",
           "selected": false
         },
         "error": null,
@@ -4111,12 +4111,12 @@
         "name": "datasource",
         "options": [
           {
-            "value": "${VAR_DATASOURCE}",
-            "text": "${VAR_DATASOURCE}",
+            "value": "prometheus",
+            "text": "prometheus",
             "selected": false
           }
         ],
-        "query": "${VAR_DATASOURCE}",
+        "query": "prometheus",
         "skipUrlSync": false,
         "type": "constant"
       }
