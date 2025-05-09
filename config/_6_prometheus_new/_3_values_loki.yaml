@@ -43,10 +43,27 @@ global:
 #          key: minio_secret_key
   # -- Common volumes to add to all pods directly managed by this chart.
   # scope: admin-api, backend, bloom-builder, bloom-gateway, bloom-planner, compactor, distributor, index-gateway, ingester, overrides-exporter, pattern-ingester, querier, query-frontend, query-scheduler, read, ruler, write.
-  extraVolumes: []
+  extraVolumes:
+    - name: tls
+      secret:
+        secretName: cm-prometheus-tls
+        items:
+          - key: tls.crt
+            path: tls.crt
+          - key: tls.key
+            path: tls.key
+          - key: ca.crt
+            path: ca.crt
   # -- Common mount points to add to all pods directly managed by this chart.
   # scope: admin-api, backend, bloom-builder, bloom-gateway, bloom-planner, compactor, distributor, index-gateway, ingester, overrides-exporter, pattern-ingester, querier, query-frontend, query-scheduler, read, ruler, write.
-  extraVolumeMounts: []
+  extraVolumeMounts:
+    - name: tls
+      mountPath: /tmp/certs/
+      readOnly: true
+    - name: tls
+      mountPath: /etc/ssl/certs/ca.crt
+      subPath: ca.crt
+      readOnly: true
 # -- Overrides the chart's name
 nameOverride: null
 # -- Overrides the chart's computed fullname
