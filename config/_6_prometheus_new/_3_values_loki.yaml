@@ -28,7 +28,7 @@ global:
   # extraEnvFrom:
   #   - secretRef:
   #       name: mysecret
-  extraEnvFrom: {}
+  extraEnvFrom: []
 #    - name: AWS_ACCESS_KEY_ID
 #      valueFrom:
 #        secretKeyRef:
