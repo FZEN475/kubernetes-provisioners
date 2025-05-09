@@ -500,7 +500,7 @@ loki:
       - from: 2023-01-01  # Дата начала использования схемы
         store: tsdb  # Используем BoltDB для индексов
         object_store: aws  # Тип хранилища (aws = S3)
-        schema: v11
+        schema: v13
         index:
           prefix: loki_index_  # Префикс для индексов
           period: 24h  # Период ротации индексов
