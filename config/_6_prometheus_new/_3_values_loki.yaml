@@ -1410,7 +1410,7 @@ migrate:
 # Configuration for the single binary node(s)
 singleBinary:
   # -- Number of replicas for the single binary
-  replicas: 0
+  replicas: 1
   autoscaling:
     # -- Enable autoscaling
     enabled: false
@@ -2297,7 +2297,7 @@ querier:
 # -- Configuration for the query-frontend
 queryFrontend:
   # -- Number of replicas for the query-frontend
-  replicas: 0
+  replicas: 1
   # -- hostAliases to add
   hostAliases: []
   #  - ip: 1.2.3.4
@@ -2391,7 +2391,7 @@ queryScheduler:
   # -- Number of replicas for the query-scheduler.
   # It should be lower than `-querier.max-concurrent` to avoid generating back-pressure in queriers;
   # it's also recommended that this value evenly divides the latter
-  replicas: 0
+  replicas: 1
   # -- hostAliases to add
   hostAliases: []
   #  - ip: 1.2.3.4
@@ -2453,7 +2453,7 @@ queryScheduler:
 # -- Configuration for the index-gateway
 indexGateway:
   # -- Number of replicas for the index-gateway
-  replicas: 0
+  replicas: 1
   # -- Whether the index gateway should join the memberlist hashring
   joinMemberlist: true
   # -- hostAliases to add
@@ -2545,7 +2545,7 @@ indexGateway:
 # -- Configuration for the compactor
 compactor:
   # -- Number of replicas for the compactor
-  replicas: 0
+  replicas: 1
   # -- hostAliases to add
   hostAliases: []
   #  - ip: 1.2.3.4
@@ -2653,7 +2653,7 @@ compactor:
 # -- Configuration for the bloom-gateway
 bloomGateway:
   # -- Number of replicas for the bloom-gateway
-  replicas: 0
+  replicas: 1
   # -- hostAliases to add
   hostAliases: []
   #  - ip: 1.2.3.4
@@ -2752,7 +2752,7 @@ bloomGateway:
 # -- Configuration for the bloom-planner
 bloomPlanner:
   # -- Number of replicas for the bloom-planner
-  replicas: 0
+  replicas: 1
   # -- hostAliases to add
   hostAliases: []
   #  - ip: 1.2.3.4
@@ -2851,7 +2851,7 @@ bloomPlanner:
 # -- Configuration for the bloom-builder
 bloomBuilder:
   # -- Number of replicas for the bloom-builder
-  replicas: 0
+  replicas: 1
   # -- hostAliases to add
   hostAliases: []
   #  - ip: 1.2.3.4
@@ -2941,7 +2941,7 @@ bloomBuilder:
 # -- Configuration for the pattern ingester
 patternIngester:
   # -- Number of replicas for the pattern ingester
-  replicas: 0
+  replicas: 1
   # -- hostAliases to add
   hostAliases: []
   #  - ip: 1.2.3.4
@@ -3053,7 +3053,7 @@ ruler:
   # -- The ruler component is optional and can be disabled if desired.
   enabled: true
   # -- Number of replicas for the ruler
-  replicas: 0
+  replicas: 1
   # -- hostAliases to add
   hostAliases: []
   #  - ip: 1.2.3.4
@@ -3203,7 +3203,7 @@ overridesExporter:
   # -- The overrides-exporter component is optional and can be disabled if desired.
   enabled: false
   # -- Number of replicas for the overrides-exporter
-  replicas: 0
+  replicas: 1
   # -- hostAliases to add
   hostAliases: []
   #  - ip: 1.2.3.4
