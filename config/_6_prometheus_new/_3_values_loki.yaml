@@ -373,7 +373,7 @@ loki:
   # -- Check https://grafana.com/docs/loki/latest/configuration/#common_config for more info on how to provide a common configuration
   commonConfig:
     path_prefix: /var/loki
-    replication_factor: 3
+    replication_factor: 1
     compactor_address: '{{ include "loki.compactorAddress" . }}'
   # -- Storage config. Providing this will automatically populate all necessary storage configs in the templated config.
   # -- In case of using thanos storage, enable use_thanos_objstore and the configuration should be done inside the object_store section.
@@ -386,7 +386,8 @@ loki:
     #   admin: FIXME
     bucketNames:
       chunks: "loki-data"
-    type: s3
+    type: 'filesystem'
+#    type: s3
     s3:
       s3: null
       endpoint: null
@@ -499,7 +500,8 @@ loki:
     configs:
       - from: 2023-01-01  # Дата начала использования схемы
         store: tsdb  # Используем BoltDB для индексов
-        object_store: aws  # Тип хранилища (aws = S3)
+        object_store: filesystem
+        #        object_store: aws  # Тип хранилища (aws = S3)
         schema: v11
         index:
           prefix: loki_index_  # Префикс для индексов
