@@ -340,25 +340,29 @@ loki:
   # Should authentication be enabled
   auth_enabled: true
   # -- memberlist configuration (overrides embedded default)
-  memberlistConfig: {}
+  memberlistConfig:
+    join_members:
+      - "loki-memberlist.monitoring.svc"  # Headless Service
+    bind_port: 7946
+    advertise_port: 7946
   # -- Extra memberlist configuration
   extraMemberlistConfig: {}
   # -- Tenants list to be created on nginx htpasswd file, with name and password keys
   tenants: []
   # -- Check https://grafana.com/docs/loki/latest/configuration/#server for more info on the server configuration.
-  server: {}
-#    http_listen_port: 3100
-#    http_tls_config: &tls_server_config
-#      cert_file: /etc/loki/cert.pem
-#      key_file: /etc/loki/key.pem
-#
-#    grpc_listen_port: 9095
-#    grpc_tls_config:
-#      client_ca_file: "{{ loki_ca_cert }}"
-#      cert_file: "{{ loki_cert }}"
-#      key_file: "{{ loki_cert_key }}"
-#    http_server_read_timeout: 600s
-#    http_server_write_timeout: 600s
+  server: 
+    http_listen_port: 3100
+    http_tls_config:
+      client_ca_file: /tmp/certs/ca.crt
+      cert_file: /tmp/certs/tls.crt
+      key_file: /tmp/certs/tls.key
+    grpc_listen_port: 9095
+    grpc_tls_config:
+      client_ca_file: /tmp/certs/ca.crt
+      cert_file: /tmp/certs/tls.crt
+      key_file: /tmp/certs/tls.key
+    http_server_read_timeout: 600s
+    http_server_write_timeout: 600s
   # -- Limits config
   limits_config: {}
 #    reject_old_samples: true
