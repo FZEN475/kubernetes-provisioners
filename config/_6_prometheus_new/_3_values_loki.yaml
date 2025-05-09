@@ -382,6 +382,8 @@ loki:
     #   chunks: FIXME
     #   ruler: FIXME
     #   admin: FIXME
+    bucketNames:
+      chunks: "loki-data"
     type: s3
     s3:
       s3: null
