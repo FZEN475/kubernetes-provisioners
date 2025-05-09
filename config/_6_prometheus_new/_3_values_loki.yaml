@@ -493,15 +493,15 @@ loki:
       timeout: "500ms"
       default_validity: "12h"
   # -- Check https://grafana.com/docs/loki/latest/configuration/#schema_config for more info on how to configure schemas
-  schemaConfig: {}
-#    configs:
-#      - from: 2023-01-01  # Дата начала использования схемы
-#        store: tsdb  # Используем BoltDB для индексов
-#        object_store: aws  # Тип хранилища (aws = S3)
-#        schema: v11
-#        index:
-#          prefix: loki_index_  # Префикс для индексов
-#          period: 24h  # Период ротации индексов
+  schemaConfig:
+    configs:
+      - from: 2023-01-01  # Дата начала использования схемы
+        store: tsdb  # Используем BoltDB для индексов
+        object_store: aws  # Тип хранилища (aws = S3)
+        schema: v11
+        index:
+          prefix: loki_index_  # Префикс для индексов
+          period: 24h  # Период ротации индексов
   # -- a real Loki install requires a proper schemaConfig defined above this, however for testing or playing around
   # you can enable useTestSchema
   useTestSchema: false
@@ -523,13 +523,13 @@ loki:
   # -- Additional query scheduler config
   query_scheduler: {}
   # -- Additional storage config
-  storage_config: {}
-#    aws:
-#      s3: https://minio.example.com  # HTTPS endpoint
-#      bucketnames: loki-data
-#      region: minio-default
-#      s3forcepathstyle: true
-#      insecure: false  # Включаем проверку TLS (true только для HTTP!)
+  storage_config:
+    aws:
+      s3: https://minio.example.com  # HTTPS endpoint
+      bucketnames: loki-data
+      region: minio-default
+      s3forcepathstyle: true
+      insecure: false  # Включаем проверку TLS (true только для HTTP!)
       
   # --  Optional compactor configuration
   compactor: {}
