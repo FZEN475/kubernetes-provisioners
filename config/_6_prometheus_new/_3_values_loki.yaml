@@ -386,8 +386,7 @@ loki:
     #   admin: FIXME
     bucketNames:
       chunks: "loki-data"
-    type: 'filesystem'
-#    type: s3
+    type: s3
     s3:
       s3: null
       endpoint: null
@@ -500,8 +499,7 @@ loki:
     configs:
       - from: 2023-01-01  # Дата начала использования схемы
         store: tsdb  # Используем BoltDB для индексов
-        object_store: filesystem
-        #        object_store: aws  # Тип хранилища (aws = S3)
+        object_store: aws  # Тип хранилища (aws = S3)
         schema: v11
         index:
           prefix: loki_index_  # Префикс для индексов
@@ -545,7 +543,7 @@ loki:
   # --  Optional Loki UI: Provides access to a operators UI for Loki distributed. When enabled UI will be available at /ui/ of loki-gateway
   ui:
     # Disabled by default for backwards compatibility. Enable to use the Loki UI.
-    enabled: true
+    enabled: false
     gateway:
       # enable gateway proxying to UI under /ui
       enabled: true
