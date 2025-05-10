@@ -433,8 +433,8 @@ loki:
     type: s3
     s3:
       s3: null
-      endpoint: null
-      region: null
+      endpoint: https://minio.storage.svc:9000
+      region: us-east-1
       secretAccessKey: null
       accessKeyId: null
       signatureVersion: null
@@ -562,15 +562,15 @@ loki:
           period: 24h
   # -- Check https://grafana.com/docs/loki/latest/configuration/#ruler for more info on configuring ruler
   rulerConfig:
-    storage:
-      type: s3
-      s3:
-#        s3: https://minio.storage.svc:9000  # HTTPS endpoint
-        s3: s3://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@minio.storage.svc:9000/loki-ruler
-        bucketnames: loki-ruler
-        region: us-east-1
-        s3forcepathstyle: true
-        insecure: false  # Включаем проверку TLS (true только для HTTP!)
+#    storage:
+#      type: s3
+#      s3:
+##        s3: https://minio.storage.svc:9000  # HTTPS endpoint
+#        s3: s3://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@minio.storage.svc:9000/loki-ruler
+#        bucketnames: loki-ruler
+#        region: us-east-1
+#        s3forcepathstyle: true
+#        insecure: false  # Включаем проверку TLS (true только для HTTP!)
     wal:
       dir: /var/loki/ruler-wal
   # -- Structured loki configuration, takes precedence over `loki.config`, `loki.schemaConfig`, `loki.storageConfig`
@@ -589,13 +589,13 @@ loki:
       tls_server_name: 'loki-query-frontend'
   # -- Additional storage config
   storage_config:
-    aws:
-#      s3: https://minio.storage.svc:9000  # HTTPS endpoint
-      s3: s3://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@minio.storage.svc:9000/loki-data
-      bucketnames: loki-data
-      region: us-east-1
-      s3forcepathstyle: true
-      insecure: false  # Включаем проверку TLS (true только для HTTP!)
+#    aws:
+##      s3: https://minio.storage.svc:9000  # HTTPS endpoint
+#      s3: s3://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@minio.storage.svc:9000/loki-data
+#      bucketnames: loki-data
+#      region: us-east-1
+#      s3forcepathstyle: true
+#      insecure: false  # Включаем проверку TLS (true только для HTTP!)
     bloom_shipper:
       working_directory: /var/loki/data/bloomshipper
     boltdb_shipper:
