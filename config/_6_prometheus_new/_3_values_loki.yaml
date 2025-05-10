@@ -363,11 +363,8 @@ loki:
     bind_port: 7946
     advertise_port: 7946
     tls_enabled: true
-    client_auth_type: RequireAndVerifyClientCert
-    client_ca_file: /tmp/certs/ca.crt
     tls_cert_path: /tmp/certs/tls.crt
     tls_key_path: /tmp/certs/tls.key
-    tls_insecure_skip_verify: false
   # -- Extra memberlist configuration
   extraMemberlistConfig: {}
   # -- Tenants list to be created on nginx htpasswd file, with name and password keys
