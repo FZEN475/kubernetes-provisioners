@@ -1869,7 +1869,7 @@ backend:
       valueFrom:
         secretKeyRef:
           name: loki-minio-secrets  # Имя Kubernetes Secret
-          key: secretKey
+          key: AWS_SECRET_ACCESS_KEY
   # -- Environment variables from secrets or configmaps to add to the backend pods
   extraEnvFrom: []
   # -- Init containers to add to the backend pods
