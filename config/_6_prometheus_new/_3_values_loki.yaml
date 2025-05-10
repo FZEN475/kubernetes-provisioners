@@ -182,7 +182,7 @@ loki:
     {{- end}}
     
     clients:
-      - url: https://loki-backend-headless:3100/loki/api/v1/push
+      - url: https://loki-backend-headless.monitoring.svc:3100/loki/api/v1/push
     
     pattern_ingester:
       enabled: {{ .Values.loki.pattern_ingester.enabled }}
