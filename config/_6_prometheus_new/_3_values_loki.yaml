@@ -1864,7 +1864,7 @@ backend:
   # -- Environment variables to add to the backend pods
   extraEnv: []
   # -- Environment variables from secrets or configmaps to add to the backend pods
-  extraEnvFrom: []
+#  extraEnvFrom: []
   # -- Init containers to add to the backend pods
   initContainers: []
   # -- Containers to add to the backend pods
