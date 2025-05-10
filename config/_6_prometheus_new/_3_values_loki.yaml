@@ -544,14 +544,10 @@ loki:
   # -- Check https://grafana.com/docs/loki/latest/configuration/#ruler for more info on configuring ruler
   rulerConfig:
     storage:
+      type: s3
       s3:
-        region: us-east-1
-        regionendpoint: https://minio.storage.svc:9000
-        bucket: loki-ruler
-        rootdirectory: /
-        encrypt: false
-        v4auth: true
-        secure: true
+        s3: https://minio.storage.svc:9000
+        bucketnames: loki-ruler
     wal:
       dir: /var/loki/ruler-wal
   # -- Structured loki configuration, takes precedence over `loki.config`, `loki.schemaConfig`, `loki.storageConfig`
