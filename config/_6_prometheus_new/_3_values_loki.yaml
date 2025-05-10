@@ -372,17 +372,17 @@ loki:
   # -- Check https://grafana.com/docs/loki/latest/configuration/#server for more info on the server configuration.
   server: 
     http_listen_port: 3100
-    http_tls_config:
-      client_auth_type: RequireAndVerifyClientCert
-      client_ca_file: /tmp/certs/ca.crt
-      cert_file: /tmp/certs/tls.crt
-      key_file: /tmp/certs/tls.key
+#    http_tls_config:
+#      client_auth_type: RequireAndVerifyClientCert
+#      client_ca_file: /tmp/certs/ca.crt
+#      cert_file: /tmp/certs/tls.crt
+#      key_file: /tmp/certs/tls.key
     grpc_listen_port: 9095
-    grpc_tls_config:
-      client_auth_type: RequireAndVerifyClientCert
-      client_ca_file: /tmp/certs/ca.crt
-      cert_file: /tmp/certs/tls.crt
-      key_file: /tmp/certs/tls.key
+#    grpc_tls_config:
+#      client_auth_type: RequireAndVerifyClientCert
+#      client_ca_file: /tmp/certs/ca.crt
+#      cert_file: /tmp/certs/tls.crt
+#      key_file: /tmp/certs/tls.key
     http_server_read_timeout: 600s
     http_server_write_timeout: 600s
   # -- Limits config
@@ -400,7 +400,7 @@ loki:
   commonConfig:
     path_prefix: /var/loki
     replication_factor: 1
-    compactor_address: 'https://loki-backend.monitoring.svc:3100'
+#    compactor_address: 'https://loki-backend.monitoring.svc:3100'
   # -- Storage config. Providing this will automatically populate all necessary storage configs in the templated config.
   # -- In case of using thanos storage, enable use_thanos_objstore and the configuration should be done inside the object_store section.
   storage:
@@ -627,17 +627,17 @@ loki:
     scheduler_address: '{{ include "loki.querySchedulerAddress" . }}'
     tail_proxy_url: '{{ include "loki.querierAddress" . }}'
     compress_responses: true
-    grpc_client_config:
-      tls_ca_path: /tls/ca.crt
-      tls_cert_path: /tls/tls.crt
-      tls_enabled: true
-      tls_key_path: /tls/tls.key
+#    grpc_client_config:
+#      tls_ca_path: /tls/ca.crt
+#      tls_cert_path: /tls/tls.crt
+#      tls_enabled: true
+#      tls_key_path: /tls/tls.key
 #      tls_server_name: 'loki-query-frontend'
     log_queries_longer_than: 15s
-    tail_tls_config:
-      tls_ca_path: /tls/ca.crt
-      tls_cert_path: /tls/tls.crt
-      tls_key_path: /tls/tls.key
+#    tail_tls_config:
+#      tls_ca_path: /tls/ca.crt
+#      tls_cert_path: /tls/tls.crt
+#      tls_key_path: /tls/tls.key
   frontend_worker:
     scheduler_address: '{{ include "loki.querySchedulerAddress" . }}'
   # -- Optional distributor configuration
