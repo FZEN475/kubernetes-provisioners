@@ -362,9 +362,9 @@ loki:
       - "loki-memberlist.monitoring.svc"  # Headless Service
     bind_port: 7946
     advertise_port: 7946
-    tls_enabled: true
-    tls_cert_path: /tmp/certs/tls.crt
-    tls_key_path: /tmp/certs/tls.key
+#    tls_enabled: true
+#    tls_cert_path: /tmp/certs/tls.crt
+#    tls_key_path: /tmp/certs/tls.key
   # -- Extra memberlist configuration
   extraMemberlistConfig: {}
   # -- Tenants list to be created on nginx htpasswd file, with name and password keys
