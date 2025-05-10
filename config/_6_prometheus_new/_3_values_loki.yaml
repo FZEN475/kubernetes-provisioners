@@ -205,6 +205,12 @@ loki:
       {{- tpl (. | toYaml) $ | nindent 4 }}
     {{- end }}
 
+    ingester_client:
+      tls_enabled: true
+      tls_cert_path: /tmp/certs/tls.crt
+      tls_key_path: /tmp/certs/tls.key
+      tls_insecure_skip_verify: true
+
     {{- if .Values.loki.commonConfig}}
     common:
     {{- toYaml .Values.loki.commonConfig | nindent 2}}
