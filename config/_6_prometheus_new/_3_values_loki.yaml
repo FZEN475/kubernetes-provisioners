@@ -23,20 +23,20 @@ global:
     - -log.level=debug
   # -- Common environment variables to add to all pods directly managed by this chart.
   # scope: admin-api, backend, bloom-builder, bloom-gateway, bloom-planner, compactor, distributor, index-gateway, ingester, overrides-exporter, pattern-ingester, querier, query-frontend, query-scheduler, read, ruler, write.
-  extraEnv: []
+  extraEnv:
+    - name: AWS_ACCESS_KEY_ID
+      value: "loki"
   # -- Common source of environment injections to add to all pods directly managed by this chart.
   # scope: admin-api, backend, bloom-builder, bloom-gateway, bloom-planner, compactor, distributor, index-gateway, ingester, overrides-exporter, pattern-ingester, querier, query-frontend, query-scheduler, read, ruler, write.
   # For example to inject values from a Secret, use:
   # extraEnvFrom:
   #   - secretRef:
   #       name: mysecret
-  extraEnvFrom: 
-    - name: AWS_ACCESS_KEY_ID
-      value: "loki"
+  extraEnvFrom:
     - name: AWS_SECRET_ACCESS_KEY
       valueFrom:
         secretKeyRef:
-          name: minio-loki-secrets  # Имя Kubernetes Secret
+          name: loki-minio-secrets  # Имя Kubernetes Secret
           key: secretKey
   # -- Common volumes to add to all pods directly managed by this chart.
   # scope: admin-api, backend, bloom-builder, bloom-gateway, bloom-planner, compactor, distributor, index-gateway, ingester, overrides-exporter, pattern-ingester, querier, query-frontend, query-scheduler, read, ruler, write.
