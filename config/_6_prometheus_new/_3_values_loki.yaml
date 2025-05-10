@@ -554,8 +554,6 @@ loki:
   query_scheduler: {}
   # -- Additional storage config
   storage_config:
-    grpc_store:
-      address: https://loki-backend.monitoring.svc:9095
     aws:
       s3: https://minio.monitoring.svc:9000  # HTTPS endpoint
       bucketnames: loki-data
@@ -573,7 +571,7 @@ loki:
       up_to: 3
     tsdb_shipper:
       index_gateway_client:
-        server_address: dns+loki-backend.monitoring.svc:9095
+        server_address: dns+loki-backend-headless.monitoring.svc:9095
 
   # --  Optional compactor configuration
   compactor: {}
