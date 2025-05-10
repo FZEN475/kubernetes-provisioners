@@ -400,7 +400,7 @@ loki:
   commonConfig:
     path_prefix: /var/loki
     replication_factor: 1
-    compactor_address: '{{ include "loki.compactorAddress" . }}'
+    compactor_address: 'https://loki-backend.monitoring.svc:3100'
   # -- Storage config. Providing this will automatically populate all necessary storage configs in the templated config.
   # -- In case of using thanos storage, enable use_thanos_objstore and the configuration should be done inside the object_store section.
   storage:
@@ -557,7 +557,7 @@ loki:
     aws:
       s3: https://minio.monitoring.svc:9000  # HTTPS endpoint
       bucketnames: loki-data
-      region: minio-default
+      region: us-east-1
       s3forcepathstyle: true
       insecure: false  # Включаем проверку TLS (true только для HTTP!)
     bloom_shipper:
