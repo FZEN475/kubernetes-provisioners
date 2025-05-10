@@ -362,6 +362,10 @@ loki:
       - "loki-memberlist.monitoring.svc"  # Headless Service
     bind_port: 7946
     advertise_port: 7946
+    tls_enabled: true
+    tls_cert_path: "{{ loki_cert }}"
+    tls_key_path: "{{ loki_cert_key }}"
+    tls_insecure_skip_verify: false
   # -- Extra memberlist configuration
   extraMemberlistConfig: {}
   # -- Tenants list to be created on nginx htpasswd file, with name and password keys
@@ -611,6 +615,18 @@ loki:
   frontend:
     scheduler_address: '{{ include "loki.querySchedulerAddress" . }}'
     tail_proxy_url: '{{ include "loki.querierAddress" . }}'
+    compress_responses: true
+    grpc_client_config:
+      tls_ca_path: /tls/ca.crt
+      tls_cert_path: /tls/tls.crt
+      tls_enabled: true
+      tls_key_path: /tls/tls.key
+      tls_server_name: 'loki-query-frontend'
+    log_queries_longer_than: 15s
+    tail_tls_config:
+      tls_ca_path: /tls/ca.crt
+      tls_cert_path: /tls/tls.crt
+      tls_key_path: /tls/tls.key
   frontend_worker:
     scheduler_address: '{{ include "loki.querySchedulerAddress" . }}'
   # -- Optional distributor configuration
@@ -1723,9 +1739,26 @@ read:
   # -- Lifecycle for the read container
   lifecycle: {}
   # -- Volume mounts to add to the read pods
-  extraVolumeMounts: []
+  extraVolumeMounts:
+    - name: tls
+      mountPath: /tmp/certs/
+      readOnly: true
+    - name: tls
+      mountPath: /etc/ssl/certs/ca.crt
+      subPath: ca.crt
+      readOnly: true
   # -- Volumes to add to the read pods
-  extraVolumes: []
+  extraVolumes:
+    - name: tls
+      secret:
+        secretName: cm-prometheus-tls
+        items:
+          - key: tls.crt
+            path: tls.crt
+          - key: tls.key
+            path: tls.key
+          - key: ca.crt
+            path: ca.crt
   # -- Resource requests and limits for the read
   resources: {}
   # -- Grace period to allow the read to shutdown before it is killed
