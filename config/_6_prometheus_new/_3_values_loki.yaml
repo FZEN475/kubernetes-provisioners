@@ -547,7 +547,7 @@ loki:
       type: s3
       s3:
         s3: https://minio.storage.svc:9000  # HTTPS endpoint
-        bucketnames: loki-data
+        bucketnames: loki-ruler
         region: us-east-1
         s3forcepathstyle: true
         insecure: false  # Включаем проверку TLS (true только для HTTP!)
