@@ -359,9 +359,9 @@ loki:
       - "loki-memberlist.monitoring.svc"  # Headless Service
     bind_port: 7946
     advertise_port: 7946
-    tls_enabled: true
-    tls_cert_path: /tmp/certs/tls.crt
-    tls_key_path: /tmp/certs/tls.key
+#    tls_enabled: true
+#    tls_cert_path: /tmp/certs/tls.crt
+#    tls_key_path: /tmp/certs/tls.key
   # -- Extra memberlist configuration
   extraMemberlistConfig: {}
   # -- Tenants list to be created on nginx htpasswd file, with name and password keys
@@ -369,17 +369,17 @@ loki:
   # -- Check https://grafana.com/docs/loki/latest/configuration/#server for more info on the server configuration.
   server: 
     http_listen_port: 3100
-    http_tls_config:
-#      client_auth_type: RequireAndVerifyClientCert
-#      client_ca_file: /tmp/certs/ca.crt
-      cert_file: /tmp/certs/tls.crt
-      key_file: /tmp/certs/tls.key
-    grpc_listen_port: 9095
-#    grpc_tls_config:
+#    http_tls_config:
 #      client_auth_type: RequireAndVerifyClientCert
 #      client_ca_file: /tmp/certs/ca.crt
 #      cert_file: /tmp/certs/tls.crt
 #      key_file: /tmp/certs/tls.key
+    grpc_listen_port: 9095
+    grpc_tls_config:
+#      client_auth_type: RequireAndVerifyClientCert
+#      client_ca_file: /tmp/certs/ca.crt
+      cert_file: /tmp/certs/tls.crt
+      key_file: /tmp/certs/tls.key
     http_server_read_timeout: 600s
     http_server_write_timeout: 600s
   # -- Limits config
@@ -632,11 +632,11 @@ loki:
     scheduler_address: '{{ include "loki.querySchedulerAddress" . }}'
     tail_proxy_url: '{{ include "loki.querierAddress" . }}'
     compress_responses: true
-#    grpc_client_config:
+    grpc_client_config:
 #      tls_ca_path: /tls/ca.crt
-#      tls_cert_path: /tls/tls.crt
-#      tls_enabled: true
-#      tls_key_path: /tls/tls.key
+      tls_cert_path: /tls/tls.crt
+      tls_enabled: true
+      tls_key_path: /tls/tls.key
 #      tls_server_name: 'loki-query-frontend'
     log_queries_longer_than: 15s
 #    tail_tls_config:
