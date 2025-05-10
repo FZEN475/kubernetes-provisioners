@@ -552,7 +552,7 @@ loki:
   # -- Additional storage config
   storage_config:
     aws:
-      s3: https://minio.monitoring.svc:9000  # HTTPS endpoint
+      s3: https://minio.storage.svc:9000  # HTTPS endpoint
       bucketnames: loki-data
       region: us-east-1
       s3forcepathstyle: true
