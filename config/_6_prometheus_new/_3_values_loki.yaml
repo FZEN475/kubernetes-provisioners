@@ -672,9 +672,9 @@ loki:
     compress_responses: true
     grpc_client_config:
 #      tls_ca_path: /tls/ca.crt
-      tls_cert_path: /tls/tls.crt
+      tls_cert_path: /tmp/certs/tls.crt
       tls_enabled: true
-      tls_key_path: /tls/tls.key
+      tls_key_path: /tmp/certs/tls.key
       tls_insecure_skip_verify: true
       tls_server_name: 'loki-query-frontend'
     log_queries_longer_than: 15s
@@ -686,9 +686,9 @@ loki:
 #    scheduler_address: '{{ include "loki.querySchedulerAddress" . }}'
     scheduler_address: ''
     grpc_client_config:
-      tls_cert_path: /tls/tls.crt
+      tls_cert_path: /tmp/certs/tls.crt
       tls_enabled: true
-      tls_key_path: /tls/tls.key
+      tls_key_path: /tmp/certs/tls.key
       tls_insecure_skip_verify: true
       tls_server_name: 'loki-query-frontend'
   # -- Optional distributor configuration
