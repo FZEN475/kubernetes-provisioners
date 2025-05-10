@@ -554,6 +554,8 @@ loki:
   query_scheduler: {}
   # -- Additional storage config
   storage_config:
+    grpc_store:
+      address: https://loki-backend.monitoring.svc:9095
     aws:
       s3: https://minio.monitoring.svc:9000  # HTTPS endpoint
       bucketnames: loki-data
