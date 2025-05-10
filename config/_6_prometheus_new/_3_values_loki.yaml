@@ -1864,7 +1864,7 @@ backend:
   # -- Environment variables to add to the backend pods
   extraEnv:
     - name: AWS_ACCESS_KEY_ID
-      value: "loki"
+      value: "loki-sa"
     - name: AWS_SECRET_ACCESS_KEY
       valueFrom:
         secretKeyRef:
