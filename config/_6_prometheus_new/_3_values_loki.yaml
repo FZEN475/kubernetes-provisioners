@@ -37,7 +37,9 @@ global:
   # extraEnvFrom:
   #   - secretRef:
   #       name: mysecret
-#  extraEnvFrom: []
+  extraEnvFrom:
+    - secretRef:
+        name: loki-minio-secrets
   # -- Common volumes to add to all pods directly managed by this chart.
   # scope: admin-api, backend, bloom-builder, bloom-gateway, bloom-planner, compactor, distributor, index-gateway, ingester, overrides-exporter, pattern-ingester, querier, query-frontend, query-scheduler, read, ruler, write.
   extraVolumes:
