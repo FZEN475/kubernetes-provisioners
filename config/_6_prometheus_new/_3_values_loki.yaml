@@ -562,22 +562,15 @@ loki:
           period: 24h
   # -- Check https://grafana.com/docs/loki/latest/configuration/#ruler for more info on configuring ruler
   rulerConfig:
-    ring:
-      kvstore:
-        store: memberlist
-    rule_path: /tmp/loki/scratch
     storage:
-      local:
-        directory: /etc/loki/rules
-      type: local
-#    storage:
-#      type: s3
-#      s3:
+      type: s3
+      s3:
 #        s3: https://minio.storage.svc:9000  # HTTPS endpoint
-#        bucketnames: loki-ruler
-#        region: us-east-1
-#        s3forcepathstyle: true
-#        insecure: false  # Включаем проверку TLS (true только для HTTP!)
+        s3: s3://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@minio.storage.svc:9000/loki-ruler
+        bucketnames: loki-ruler
+        region: us-east-1
+        s3forcepathstyle: true
+        insecure: false  # Включаем проверку TLS (true только для HTTP!)
     wal:
       dir: /var/loki/ruler-wal
   # -- Structured loki configuration, takes precedence over `loki.config`, `loki.schemaConfig`, `loki.storageConfig`
@@ -597,7 +590,8 @@ loki:
   # -- Additional storage config
   storage_config:
     aws:
-      s3: https://minio.storage.svc:9000  # HTTPS endpoint
+#      s3: https://minio.storage.svc:9000  # HTTPS endpoint
+      s3: s3://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@minio.storage.svc:9000/loki-data
       bucketnames: loki-data
       region: us-east-1
       s3forcepathstyle: true
