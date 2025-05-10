@@ -370,8 +370,8 @@ loki:
   auth_enabled: true
   # -- memberlist configuration (overrides embedded default)
   memberlistConfig:
-    service:
-      publishNotReadyAddresses: false
+#    service:
+#      publishNotReadyAddresses: false
     join_members:
       - "loki-memberlist.monitoring.svc"  # Headless Service
     bind_port: 7946
