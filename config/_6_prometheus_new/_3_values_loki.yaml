@@ -23,9 +23,9 @@ global:
     - -log.level=debug
   # -- Common environment variables to add to all pods directly managed by this chart.
   # scope: admin-api, backend, bloom-builder, bloom-gateway, bloom-planner, compactor, distributor, index-gateway, ingester, overrides-exporter, pattern-ingester, querier, query-frontend, query-scheduler, read, ruler, write.
-  extraEnv:
-    - name: AWS_ACCESS_KEY_ID
-      value: "loki"
+#  extraEnv:
+#    - name: AWS_ACCESS_KEY_ID
+#      value: "loki"
 #    - name: AWS_SECRET_ACCESS_KEY
 #      valueFrom:
 #        secretKeyRef:
