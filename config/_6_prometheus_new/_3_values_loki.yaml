@@ -377,14 +377,12 @@ loki:
       client_ca_file: /tmp/certs/ca.crt
       cert_file: /tmp/certs/tls.crt
       key_file: /tmp/certs/tls.key
-      tls_insecure_skip_verify: false
     grpc_listen_port: 9095
     grpc_tls_config:
       client_auth_type: RequireAndVerifyClientCert
       client_ca_file: /tmp/certs/ca.crt
       cert_file: /tmp/certs/tls.crt
       key_file: /tmp/certs/tls.key
-      tls_insecure_skip_verify: false
     http_server_read_timeout: 600s
     http_server_write_timeout: 600s
   # -- Limits config
