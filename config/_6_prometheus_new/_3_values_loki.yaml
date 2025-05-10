@@ -570,6 +570,10 @@ loki:
   structuredConfig: {}
   # -- Additional query scheduler config
   query_scheduler:
+    use_scheduler_ring: true
+    scheduler_ring:
+      kvstore:
+        store: memberlist
     grpc_client_config:
       tls_enabled: true
       tls_cert_path: /tmp/certs/tls.crt
@@ -653,7 +657,9 @@ loki:
   index_gateway:
     mode: simple
   frontend:
-    scheduler_address: '{{ include "loki.querySchedulerAddress" . }}'
+#    scheduler_address: '{{ include "loki.querySchedulerAddress" . }}'
+#    tail_proxy_url: '{{ include "loki.querierAddress" . }}'
+    scheduler_address: ''
     tail_proxy_url: '{{ include "loki.querierAddress" . }}'
     compress_responses: true
     grpc_client_config:
@@ -668,7 +674,8 @@ loki:
 #      tls_cert_path: /tls/tls.crt
 #      tls_key_path: /tls/tls.key
   frontend_worker:
-    scheduler_address: '{{ include "loki.querySchedulerAddress" . }}'
+#    scheduler_address: '{{ include "loki.querySchedulerAddress" . }}'
+    scheduler_address: ''
     grpc_client_config:
       tls_cert_path: /tls/tls.crt
       tls_enabled: true
