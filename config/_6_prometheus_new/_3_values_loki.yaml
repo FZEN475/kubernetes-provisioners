@@ -556,7 +556,12 @@ loki:
   # -- Structured loki configuration, takes precedence over `loki.config`, `loki.schemaConfig`, `loki.storageConfig`
   structuredConfig: {}
   # -- Additional query scheduler config
-  query_scheduler: {}
+  query_scheduler:
+    grpc_client_config:
+      tls_enabled: true
+      tls_cert_path: /tmp/certs/tls.crt
+      tls_key_path: /tmp/certs/tls.key
+      tls_insecure_skip_verify: true
   # -- Additional storage config
   storage_config:
     aws:
@@ -583,6 +588,12 @@ loki:
   # --  Optional pattern ingester configuration
   pattern_ingester:
     enabled: true
+    client_config:
+      grpc_client_config:
+        tls_enabled: true
+        tls_cert_path: /tmp/certs/tls.crt
+        tls_key_path: /tmp/certs/tls.key
+        tls_insecure_skip_verify: true
   # --  Optional analytics configuration
   analytics: {}
   # --  Optional Loki UI: Provides access to a operators UI for Loki distributed. When enabled UI will be available at /ui/ of loki-gateway
