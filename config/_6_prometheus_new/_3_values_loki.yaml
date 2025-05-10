@@ -30,17 +30,14 @@ global:
   # extraEnvFrom:
   #   - secretRef:
   #       name: mysecret
-  extraEnvFrom: []
-#    - name: AWS_ACCESS_KEY_ID
-#      valueFrom:
-#        secretKeyRef:
-#          name: loki-secrets  # Имя Kubernetes Secret
-#          key: minio_access_key
-#    - name: AWS_SECRET_ACCESS_KEY
-#      valueFrom:
-#        secretKeyRef:
-#          name: loki-secrets  # Имя Kubernetes Secret
-#          key: minio_secret_key
+  extraEnvFrom: 
+    - name: AWS_ACCESS_KEY_ID
+      value: "loki"
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: minio-loki-secrets  # Имя Kubernetes Secret
+          key: secretKey
   # -- Common volumes to add to all pods directly managed by this chart.
   # scope: admin-api, backend, bloom-builder, bloom-gateway, bloom-planner, compactor, distributor, index-gateway, ingester, overrides-exporter, pattern-ingester, querier, query-frontend, query-scheduler, read, ruler, write.
   extraVolumes:
