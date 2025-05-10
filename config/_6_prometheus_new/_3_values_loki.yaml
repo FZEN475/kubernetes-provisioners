@@ -546,8 +546,11 @@ loki:
     storage:
       type: s3
       s3:
-        s3: https://minio.storage.svc:9000
-        bucketnames: loki-ruler
+        s3: https://minio.storage.svc:9000  # HTTPS endpoint
+        bucketnames: loki-data
+        region: us-east-1
+        s3forcepathstyle: true
+        insecure: false  # Включаем проверку TLS (true только для HTTP!)
     wal:
       dir: /var/loki/ruler-wal
   # -- Structured loki configuration, takes precedence over `loki.config`, `loki.schemaConfig`, `loki.storageConfig`
