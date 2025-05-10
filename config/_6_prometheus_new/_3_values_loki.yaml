@@ -1862,7 +1862,14 @@ backend:
   # -- Additional CLI args for the backend
   extraArgs: []
   # -- Environment variables to add to the backend pods
-  extraEnv: []
+  extraEnv:
+    - name: AWS_ACCESS_KEY_ID
+      value: "loki"
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: loki-minio-secrets  # Имя Kubernetes Secret
+          key: secretKey
   # -- Environment variables from secrets or configmaps to add to the backend pods
 #  extraEnvFrom: []
   # -- Init containers to add to the backend pods
