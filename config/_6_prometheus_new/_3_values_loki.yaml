@@ -560,18 +560,18 @@ loki:
       region: minio-default
       s3forcepathstyle: true
       insecure: false  # Включаем проверку TLS (true только для HTTP!)
-      bloom_shipper:
-        working_directory: /var/loki/data/bloomshipper
-      boltdb_shipper:
-        index_gateway_client:
-          server_address: dns+loki-backend-headless.monitoring.svc:9095
-      hedging:
-        at: 250ms
-        max_per_second: 20
-        up_to: 3
-      tsdb_shipper:
-        index_gateway_client:
-          server_address: dns+loki-backend-headless.monitoring.svc:9095
+    bloom_shipper:
+      working_directory: /var/loki/data/bloomshipper
+    boltdb_shipper:
+      index_gateway_client:
+        server_address: dns+loki-backend-headless.monitoring.svc:9095
+    hedging:
+      at: 250ms
+      max_per_second: 20
+      up_to: 3
+    tsdb_shipper:
+      index_gateway_client:
+        server_address: dns+loki-backend-headless.monitoring.svc:9095
 
   # --  Optional compactor configuration
   compactor: {}
