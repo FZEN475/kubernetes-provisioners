@@ -211,6 +211,7 @@ loki:
         tls_cert_path: /tmp/certs/tls.crt
         tls_key_path: /tmp/certs/tls.key
         tls_insecure_skip_verify: true
+        tls_server_name: 'loki-query-frontend'
 
     {{- if .Values.loki.commonConfig}}
     common:
@@ -315,6 +316,7 @@ loki:
       tls_cert_path: /tmp/certs/tls.crt
       tls_key_path: /tmp/certs/tls.key
       tls_insecure_skip_verify: true
+      tls_server_name: 'loki-query-frontend'
 
     {{- with .Values.loki.analytics }}
     analytics:
@@ -375,6 +377,7 @@ loki:
     tls_enabled: true
     tls_cert_path: /tmp/certs/tls.crt
     tls_key_path: /tmp/certs/tls.key
+    tls_server_name: 'loki-query-frontend'
   # -- Extra memberlist configuration
   extraMemberlistConfig: {}
   # -- Tenants list to be created on nginx htpasswd file, with name and password keys
@@ -579,6 +582,7 @@ loki:
       tls_cert_path: /tmp/certs/tls.crt
       tls_key_path: /tmp/certs/tls.key
       tls_insecure_skip_verify: true
+      tls_server_name: 'loki-query-frontend'
   # -- Additional storage config
   storage_config:
     aws:
@@ -611,6 +615,7 @@ loki:
         tls_cert_path: /tmp/certs/tls.crt
         tls_key_path: /tmp/certs/tls.key
         tls_insecure_skip_verify: true
+        tls_server_name: 'loki-query-frontend'
   # --  Optional analytics configuration
   analytics: {}
   # --  Optional Loki UI: Provides access to a operators UI for Loki distributed. When enabled UI will be available at /ui/ of loki-gateway
@@ -667,7 +672,7 @@ loki:
       tls_cert_path: /tls/tls.crt
       tls_enabled: true
       tls_key_path: /tls/tls.key
-#      tls_server_name: 'loki-query-frontend'
+      tls_server_name: 'loki-query-frontend'
     log_queries_longer_than: 15s
 #    tail_tls_config:
 #      tls_ca_path: /tls/ca.crt
@@ -680,6 +685,7 @@ loki:
       tls_cert_path: /tls/tls.crt
       tls_enabled: true
       tls_key_path: /tls/tls.key
+      tls_server_name: 'loki-query-frontend'
   # -- Optional distributor configuration
   distributor: {}
 #    # Режим репликации (сколько копий лога сохранять)
