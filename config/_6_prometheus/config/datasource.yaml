@@ -7,10 +7,3 @@ datasources:
     isDefault: true
     secureJsonData:
       tlsCACert: '/run/secrets/kubernetes.io/serviceaccount/ca.crt'
-  - name: Loki
-    type: loki
-    access: proxy
-    url: https://loki-read.monitoring.svc:3100
-    jsonData:
-      timeout: 60
-      maxLines: 1000
