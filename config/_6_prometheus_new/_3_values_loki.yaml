@@ -93,6 +93,7 @@ loki:
     httpGet:
       path: /ready
       port: http-metrics
+      scheme: HTTPS
     initialDelaySeconds: 30
     timeoutSeconds: 1
   image:
@@ -1322,7 +1323,6 @@ gateway: #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     httpGet:
       path: /
       port: http-metrics
-      scheme: HTTPS
     initialDelaySeconds: 15
     timeoutSeconds: 1
   nginxConfig:
