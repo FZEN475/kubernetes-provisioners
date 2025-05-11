@@ -912,7 +912,7 @@ test:
 # The Loki canary pushes logs to and queries from this loki installation to test
 # that it's working correctly
 lokiCanary:
-  enabled: false
+  enabled: true
   # -- If true, the canary will send directly to Loki via the address configured for verification --
   # -- If false, it will write to stdout and an Agent will be needed to scrape and send the logs --
   push: true
