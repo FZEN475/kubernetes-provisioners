@@ -293,7 +293,7 @@ serviceMonitor:
   # https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api.md#servicemonitorspec
   targetLabels: []
   # -- ServiceMonitor will use http by default, but you can pick https as well
-  scheme: http
+  scheme: https
   # -- ServiceMonitor will use these tlsConfig settings to make the health check requests
   tlsConfig: null
   # -- Prometheus rules will be deployed for alerting purposes
