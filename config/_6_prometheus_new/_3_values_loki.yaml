@@ -613,7 +613,7 @@ loki:
   compactor: {}
   # --  Optional pattern ingester configuration
   pattern_ingester:
-    enabled: true
+    enabled: false
     client_config:
       grpc_client_config:
         tls_enabled: true
