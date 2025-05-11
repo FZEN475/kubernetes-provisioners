@@ -206,13 +206,13 @@ loki:
       {{- tpl (. | toYaml) $ | nindent 4 }}
     {{- end }}
 
-    ingester_client:
-      grpc_client_config:
-        tls_enabled: true
-        tls_cert_path: /tmp/certs/tls.crt
-        tls_key_path: /tmp/certs/tls.key
-        tls_insecure_skip_verify: true
-        tls_server_name: 'loki-query-frontend'
+#    ingester_client:
+#      grpc_client_config:
+#        tls_enabled: true
+#        tls_cert_path: /tmp/certs/tls.crt
+#        tls_key_path: /tmp/certs/tls.key
+#        tls_insecure_skip_verify: true
+#        tls_server_name: 'loki-query-frontend'
 
     {{- if .Values.loki.commonConfig}}
     common:
@@ -312,12 +312,12 @@ loki:
       {{- tpl (. | toYaml) $ | nindent 4 }}
     {{- end }}
 
-    compactor_grpc_client:
-      tls_enabled: true
-      tls_cert_path: /tmp/certs/tls.crt
-      tls_key_path: /tmp/certs/tls.key
-      tls_insecure_skip_verify: true
-      tls_server_name: 'loki-query-frontend'
+#    compactor_grpc_client:
+#      tls_enabled: true
+#      tls_cert_path: /tmp/certs/tls.crt
+#      tls_key_path: /tmp/certs/tls.key
+#      tls_insecure_skip_verify: true
+#      tls_server_name: 'loki-query-frontend'
 
     {{- with .Values.loki.analytics }}
     analytics:
