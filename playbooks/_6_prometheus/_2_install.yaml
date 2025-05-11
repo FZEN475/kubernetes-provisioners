@@ -51,20 +51,20 @@
 #    values_files:
 #      - /tmp/values_prometheus.yaml
 #
-#- name: ConfigMap grafana-config
-#  kubernetes.core.k8s:
-#    state: present
-#    wait: true
-#    definition:
-#      apiVersion: v1
-#      kind: ConfigMap
-#      metadata:
-#        name: grafana-datasource
-#        namespace: 'monitoring'
-#        labels:
-#          grafana_datasource: ""
-#      data:
-#        datasource.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/datasource.yaml') }}"
+- name: ConfigMap grafana-config
+  kubernetes.core.k8s:
+    state: present
+    wait: true
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: grafana-datasource
+        namespace: 'monitoring'
+        labels:
+          grafana_datasource: ""
+      data:
+        datasource.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/datasource.yaml') }}"
 #
 #- name: Creating tmp_dashboard_json
 #  ansible.builtin.set_fact:
@@ -131,31 +131,31 @@
 #      - /tmp/values_prometheus_adapter.yaml
 
 
-- name: Remove loki
-  kubernetes.core.helm:
-    name: loki
-    chart_ref: grafana/loki
-    release_namespace: monitoring
-    create_namespace: true
-    wait: yes
-    state: absent
-
-- name: Copy values
-  ansible.builtin.copy:
-    src: '/source/config/_6_prometheus_new/_3_values_loki.yaml'
-    dest: '/tmp/values_loki.yaml'
-    mode: "0640"
-
-- name: Install loki
-  kubernetes.core.helm:
-    name: loki
-    chart_ref: grafana/loki
-    release_namespace: monitoring
-    create_namespace: true
-    wait: yes
-    state: present
-    values_files:
-      - /tmp/values_loki.yaml
+#- name: Remove loki
+#  kubernetes.core.helm:
+#    name: loki
+#    chart_ref: grafana/loki
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: yes
+#    state: absent
+#
+#- name: Copy values
+#  ansible.builtin.copy:
+#    src: '/source/config/_6_prometheus_new/_3_values_loki.yaml'
+#    dest: '/tmp/values_loki.yaml'
+#    mode: "0640"
+#
+#- name: Install loki
+#  kubernetes.core.helm:
+#    name: loki
+#    chart_ref: grafana/loki
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: yes
+#    state: present
+#    values_files:
+#      - /tmp/values_loki.yaml
 
 
 #- name: Remove promtail
