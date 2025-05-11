@@ -162,8 +162,8 @@ resources: {}
 
 # -- The security context for pods
 podSecurityContext:
-  runAsUser: 1001
-  runAsGroup: 1001
+  runAsUser: 0
+  runAsGroup: 0
 
 # -- The security context for containers
 containerSecurityContext:
