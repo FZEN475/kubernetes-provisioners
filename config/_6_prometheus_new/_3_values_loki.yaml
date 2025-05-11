@@ -543,7 +543,7 @@ loki:
     configs:
       - from: 2023-01-01  # Дата начала использования схемы
         store: tsdb  # Используем BoltDB для индексов
-        object_store: aws  # Тип хранилища (aws = S3)
+        object_store: s3  # Тип хранилища (aws = S3)
         schema: v13
         index:
           prefix: loki_index_  # Префикс для индексов
@@ -1670,7 +1670,14 @@ write:
   # -- Additional CLI args for the write
   extraArgs: []
   # -- Environment variables to add to the write pods
-  extraEnv: []
+  extraEnv:
+    - name: AWS_ACCESS_KEY_ID
+      value: "loki-sa"
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: loki-minio-secrets  # Имя Kubernetes Secret
+          key: AWS_SECRET_ACCESS_KEY
   # -- Environment variables from secrets or configmaps to add to the write pods
   extraEnvFrom: []
   # -- Lifecycle for the write container
@@ -1797,7 +1804,14 @@ read:
   # -- Containers to add to the read pods
   extraContainers: []
   # -- Environment variables to add to the read pods
-  extraEnv: []
+  extraEnv:
+    - name: AWS_ACCESS_KEY_ID
+      value: "loki-sa"
+    - name: AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: loki-minio-secrets  # Имя Kubernetes Secret
+          key: AWS_SECRET_ACCESS_KEY
   # -- Environment variables from secrets or configmaps to add to the read pods
   extraEnvFrom: []
   # -- Lifecycle for the read container
