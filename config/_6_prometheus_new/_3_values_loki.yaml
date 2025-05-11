@@ -388,11 +388,11 @@ loki:
   # -- Check https://grafana.com/docs/loki/latest/configuration/#server for more info on the server configuration.
   server: 
     http_listen_port: 3100
-#    http_tls_config:
+    http_tls_config:
 #      client_auth_type: RequireAndVerifyClientCert
 #      client_ca_file: /tmp/certs/ca.crt
-#      cert_file: /tmp/certs/tls.crt
-#      key_file: /tmp/certs/tls.key
+      cert_file: /tmp/certs/tls.crt
+      key_file: /tmp/certs/tls.key
     grpc_listen_port: 9095
     grpc_tls_config:
 #      client_auth_type: RequireAndVerifyClientCert
@@ -1322,6 +1322,7 @@ gateway: #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     httpGet:
       path: /
       port: http-metrics
+      scheme: HTTPS
     initialDelaySeconds: 15
     timeoutSeconds: 1
   nginxConfig:
