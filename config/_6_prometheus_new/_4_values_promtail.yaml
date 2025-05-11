@@ -146,6 +146,7 @@ readinessProbe:
   httpGet:
     path: "{{ printf `%s/ready` .Values.httpPathPrefix }}"
     port: http-metrics
+    scheme: HTTPS
   initialDelaySeconds: 10
   periodSeconds: 10
   successThreshold: 1
@@ -241,10 +242,27 @@ defaultVolumeMounts:
     readOnly: true
 
 # Extra volumes to be added in addition to those specified under `defaultVolumes`.
-extraVolumes: []
+extraVolumes:
+  - name: tls
+    secret:
+      secretName: cm-prometheus-tls
+      items:
+        - key: tls.crt
+          path: tls.crt
+        - key: tls.key
+          path: tls.key
+        - key: ca.crt
+          path: ca.crt
 
 # Extra volume mounts together. Corresponds to `extraVolumes`.
-extraVolumeMounts: []
+extraVolumeMounts:
+  - name: tls
+    mountPath: /tmp/certs/
+    readOnly: true
+  - name: tls
+    mountPath: /etc/ssl/certs/ca.crt
+    subPath: ca.crt
+    readOnly: true
 
 # Extra args for the Promtail container.
 extraArgs: []
@@ -552,7 +570,10 @@ config:
       http_path_prefix: {{ . }}
       {{- end }}
       {{- tpl .Values.config.snippets.extraServerConfigs . | nindent 2 }}
-
+      http_tls_config:
+        cert_file: /tmp/certs/tls.crt
+        key_file: /tmp/certs/tls.key
+    
     clients:
       {{- tpl (toYaml .Values.config.clients) . | nindent 2 }}
 
