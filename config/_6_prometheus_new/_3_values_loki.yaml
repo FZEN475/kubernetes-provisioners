@@ -417,7 +417,7 @@ loki:
   commonConfig:
     path_prefix: /var/loki
     replication_factor: 1
-    compactor_address: 'https://loki-backend.monitoring.svc:3100'
+#    compactor_address: 'https://loki-backend.monitoring.svc:3100'
   # -- Storage config. Providing this will automatically populate all necessary storage configs in the templated config.
   # -- In case of using thanos storage, enable use_thanos_objstore and the configuration should be done inside the object_store section.
   storage:
