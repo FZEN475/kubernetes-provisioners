@@ -652,13 +652,13 @@ loki:
 #    # Порт для HTTP (внешние запросы)
 #    http_listen_port: 3100
   # --  Optional ingester configuration
-  ingester:
-    grpc_client_config:
-      #      tls_ca_path: /tls/ca.crt
-      tls_cert_path: /tmp/certs/tls.crt
-      tls_enabled: true
-      tls_key_path: /tmp/certs/tls.key
-      tls_insecure_skip_verify: true
+#  ingester:
+#    grpc_client_config:
+#      #      tls_ca_path: /tls/ca.crt
+#      tls_cert_path: /tmp/certs/tls.crt
+#      tls_enabled: true
+#      tls_key_path: /tmp/certs/tls.key
+#      tls_insecure_skip_verify: true
 #    # Размер чанка перед записью в хранилище (в байтах)
 #    chunk_block_size: 262144  # 256KB
 #    # Максимальный возраст чанка перед сбросом
