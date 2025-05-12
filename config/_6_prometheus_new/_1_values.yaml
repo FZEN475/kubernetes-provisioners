@@ -878,7 +878,7 @@ alertmanager:
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#relabelconfig
     ##
     metricRelabelings:
-      - sourceLabels: [ ]
+      - sourceLabels: []
         targetLabel: cluster
         replacement: 'main'
     # - action: keep
@@ -977,7 +977,9 @@ alertmanager:
 
     ## AlertmanagerConfigs to be selected to merge and configure Alertmanager with.
     ##
-    alertmanagerConfigSelector: {}
+    alertmanagerConfigSelector:
+      matchLabels:
+        alertmanager_config: ""
     ## Example which selects all alertmanagerConfig resources
     ## with label "alertconfig" with values any of "example-config" or "example-config-2"
     # alertmanagerConfigSelector:
@@ -1072,6 +1074,7 @@ alertmanager:
     ## Of type: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#tlsconfig
     tlsConfig:
       caFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+      insecure_skip_verify: true
 
     ## If set to true all actions on the underlying managed objects are not going to be performed, except for delete actions.
     ##
@@ -4844,10 +4847,6 @@ prometheus:
     ## configs are going to break Prometheus after the upgrade.
     ##
     additionalAlertRelabelConfigs:
-     - separator: ;
-       regex: prometheus_replica
-       replacement: $1
-       action: labeldrop
      - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_pod_container_port_number]
        separator: ;
        regex: (.+);(.+);(.+)

@@ -96,7 +96,7 @@
         dashboard03.json: "{{ tmp_loki_dashboard_json | to_json }}"
 
 
-- name: ConfigMap grafana-config
+- name: ConfigMap alertmanager-config
   kubernetes.core.k8s:
     state: absent
     wait: true
@@ -104,11 +104,12 @@
       apiVersion: v1
       kind: ConfigMap
       metadata:
-        name: grafana-dashboard-test
+        name: alertmanager-config
         namespace: 'monitoring'
         labels:
-          grafana_dashboard: ""
-
+          alertmanager_config: ""
+      data:
+        alertmanager.yml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/alertmanager.yml') }}"
 
 #- name: Remove prometheus-adapter
 #  kubernetes.core.helm:
