@@ -51,6 +51,25 @@
 #    values_files:
 #      - /tmp/values_prometheus.yaml
 #
+#- name: ConfigMap grafana-config
+#  kubernetes.core.k8s:
+#    state: present
+#    wait: true
+#    definition:
+#      apiVersion: v1
+#      kind: ConfigMap
+#      metadata:
+#        name: grafana-datasource
+#        namespace: 'monitoring'
+#        labels:
+#          grafana_datasource: ""
+#      data:
+#        datasource.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/datasource.yaml') }}"
+#
+- name: Creating tmp_dashboard_json
+  ansible.builtin.set_fact:
+    tmp_dashboard_json: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/kube-state-metrics-dashboard.json') | replace('\n','')  }}"
+
 - name: ConfigMap grafana-config
   kubernetes.core.k8s:
     state: present
@@ -59,50 +78,31 @@
       apiVersion: v1
       kind: ConfigMap
       metadata:
-        name: grafana-datasource
+        name: grafana-dashboard
         namespace: 'monitoring'
         labels:
-          grafana_datasource: ""
+          grafana_dashboard: ""
       data:
-        datasource.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/datasource.yaml') }}"
-#
-#- name: Creating tmp_dashboard_json
-#  ansible.builtin.set_fact:
-#    tmp_dashboard_json: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/kube-state-metrics-dashboard.json') | replace('\n','')  }}"
-#
-#- name: ConfigMap grafana-config
-#  kubernetes.core.k8s:
-#    state: present
-#    wait: true
-#    definition:
-#      apiVersion: v1
-#      kind: ConfigMap
-#      metadata:
-#        name: grafana-dashboard
-#        namespace: 'monitoring'
-#        labels:
-#          grafana_dashboard: ""
-#      data:
-#        dashboard.json: "{{ tmp_dashboard_json | to_json }}"
-#
-#- name: Creating tmp_dashboard_json
-#  ansible.builtin.set_fact:
-#    tmp_dashboard_json: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/custom-dashboard.json') | replace('\n','')  }}"
-#
-#- name: ConfigMap grafana-config
-#  kubernetes.core.k8s:
-#    state: present
-#    wait: true
-#    definition:
-#      apiVersion: v1
-#      kind: ConfigMap
-#      metadata:
-#        name: grafana-dashboard-test
-#        namespace: 'monitoring'
-#        labels:
-#          grafana_dashboard: ""
-#      data:
-#        dashboard.json: "{{ tmp_dashboard_json | to_json }}"
+        dashboard.json: "{{ tmp_dashboard_json | to_json }}"
+
+- name: Creating tmp_dashboard_json
+  ansible.builtin.set_fact:
+    tmp_dashboard_json: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/custom-dashboard.json') | replace('\n','')  }}"
+
+- name: ConfigMap grafana-config
+  kubernetes.core.k8s:
+    state: present
+    wait: true
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: grafana-dashboard-test
+        namespace: 'monitoring'
+        labels:
+          grafana_dashboard: ""
+      data:
+        dashboard.json: "{{ tmp_dashboard_json | to_json }}"
 
 #- name: Remove prometheus-adapter
 #  kubernetes.core.helm:
