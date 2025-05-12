@@ -402,11 +402,11 @@ loki:
 #      cert_file: /tmp/certs/tls.crt
 #      key_file: /tmp/certs/tls.key
     grpc_listen_port: 9095
-#    grpc_tls_config:
-##      client_auth_type: RequireAndVerifyClientCert
-##      client_ca_file: /tmp/certs/ca.crt
-#      cert_file: /tmp/certs/tls.crt
-#      key_file: /tmp/certs/tls.key
+    grpc_tls_config:
+#      client_auth_type: RequireAndVerifyClientCert
+#      client_ca_file: /tmp/certs/ca.crt
+      cert_file: /tmp/certs/tls.crt
+      key_file: /tmp/certs/tls.key
     http_server_read_timeout: 600s
     http_server_write_timeout: 600s
   # -- Limits config
@@ -673,19 +673,19 @@ loki:
   # --  Optional index gateway configuration
   index_gateway:
     mode: simple
-  frontend:
+  frontend: #
 #    scheduler_address: '{{ include "loki.querySchedulerAddress" . }}'
 #    tail_proxy_url: '{{ include "loki.querierAddress" . }}'
     scheduler_address: ''
     tail_proxy_url: '{{ include "loki.querierAddress" . }}'
     compress_responses: true
-#    grpc_client_config:
-##      tls_ca_path: /tls/ca.crt
-#      tls_cert_path: /tmp/certs/tls.crt
-#      tls_enabled: true
-#      tls_key_path: /tmp/certs/tls.key
-#      tls_insecure_skip_verify: true
-#      tls_server_name: 'loki-query-frontend'
+    grpc_client_config:
+#      tls_ca_path: /tls/ca.crt
+      tls_cert_path: /tmp/certs/tls.crt
+      tls_enabled: true
+      tls_key_path: /tmp/certs/tls.key
+      tls_insecure_skip_verify: true
+      tls_server_name: 'loki-query-frontend'
     log_queries_longer_than: 15s
 #    tail_tls_config:
 #      tls_ca_path: /tls/ca.crt
