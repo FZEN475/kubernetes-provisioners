@@ -108,8 +108,7 @@
         namespace: 'monitoring'
         labels:
           grafana_dashboard: ""
-      data:
-        dashboard02.json: "{{ tmp_dashboard_json | to_json }}"
+
 
 #- name: Remove prometheus-adapter
 #  kubernetes.core.helm:
