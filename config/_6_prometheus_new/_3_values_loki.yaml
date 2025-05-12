@@ -364,14 +364,12 @@ loki:
         tls_cert_path: /tmp/certs/tls.crt
         tls_key_path: /tmp/certs/tls.key
         tls_insecure_skip_verify: true
-        tls_server_name: 'loki-query-frontend'
 
 #    compactor_grpc_client:
 #      tls_enabled: true
 #      tls_cert_path: /tmp/certs/tls.crt
 #      tls_key_path: /tmp/certs/tls.key
 #      tls_insecure_skip_verify: true
-#      tls_server_name: 'loki-query-frontend'
 
 
   # Should authentication be enabled
@@ -388,7 +386,7 @@ loki:
     tls_cert_path: /tmp/certs/tls.crt
     tls_key_path: /tmp/certs/tls.key
     tls_insecure_skip_verify: true
-    tls_server_name: 'loki-query-frontend'
+#    tls_server_name: 'loki-query-frontend'
   # -- Extra memberlist configuration
   extraMemberlistConfig: {}
   # -- Tenants list to be created on nginx htpasswd file, with name and password keys
@@ -588,11 +586,11 @@ loki:
 #    scheduler_ring:
 #      kvstore:
 #        store: memberlist
-#    grpc_client_config:
-#      tls_enabled: true
-#      tls_cert_path: /tmp/certs/tls.crt
-#      tls_key_path: /tmp/certs/tls.key
-#      tls_insecure_skip_verify: true
+    grpc_client_config:
+      tls_enabled: true
+      tls_cert_path: /tmp/certs/tls.crt
+      tls_key_path: /tmp/certs/tls.key
+      tls_insecure_skip_verify: true
 #      tls_server_name: 'loki-query-frontend'
   # -- Additional storage config
   storage_config:
@@ -631,7 +629,7 @@ loki:
         tls_cert_path: /tmp/certs/tls.crt
         tls_key_path: /tmp/certs/tls.key
         tls_insecure_skip_verify: true
-        tls_server_name: 'loki-query-frontend'
+#        tls_server_name: 'loki-query-frontend'
   # --  Optional analytics configuration
   analytics: {}
   # --  Optional Loki UI: Provides access to a operators UI for Loki distributed. When enabled UI will be available at /ui/ of loki-gateway
