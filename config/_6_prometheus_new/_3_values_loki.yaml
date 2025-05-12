@@ -699,7 +699,7 @@ loki:
 #      tls_enabled: true
 #      tls_key_path: /tmp/certs/tls.key
 #      tls_insecure_skip_verify: true
-#      tls_server_name: 'loki-query-frontend'
+##      tls_server_name: 'loki-query-frontend'
   # -- Optional distributor configuration
   distributor: {}
 #    # Режим репликации (сколько копий лога сохранять)
