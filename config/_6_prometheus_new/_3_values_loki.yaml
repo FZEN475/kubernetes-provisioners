@@ -615,7 +615,11 @@ loki:
     tsdb_shipper:
       index_gateway_client:
         server_address: dns+loki-backend-headless.monitoring.svc:9095
-
+        grpc_client_config:
+          tls_enabled: true
+          tls_cert_path: /tmp/certs/tls.crt
+          tls_key_path: /tmp/certs/tls.key
+          tls_insecure_skip_verify: true
   # --  Optional compactor configuration
   compactor: {}
   # --  Optional pattern ingester configuration
