@@ -18,6 +18,7 @@
         'prometheus-kube-prometheus-prometheus.monitoring.svc',
         'prometheus-kube-state-metrics.monitoring.svc',
         'prometheus-prometheus-node-exporter.monitoring.svc',
+        'prometheus-kube-prometheus-alertmanager.monitoring.svc',
         'loki-memberlist.monitoring.svc',
         'loki-write.monitoring.svc',
         'loki-read.monitoring.svc'

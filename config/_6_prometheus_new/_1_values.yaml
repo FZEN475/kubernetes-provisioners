@@ -4843,12 +4843,17 @@ prometheus:
     ## possibility to break upgrades of Prometheus. It is advised to review Prometheus release notes to ensure that no incompatible alert relabel
     ## configs are going to break Prometheus after the upgrade.
     ##
-    additionalAlertRelabelConfigs: []
-    # - separator: ;
-    #   regex: prometheus_replica
-    #   replacement: $1
-    #   action: labeldrop
-
+    additionalAlertRelabelConfigs:
+     - separator: ;
+       regex: prometheus_replica
+       replacement: $1
+       action: labeldrop
+     - source_labels: [__meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_pod_container_port_number]
+       separator: ;
+       regex: (.+);(.+);(.+)
+       target_label: __address__
+       replacement: $1.$2.svc:$3
+       action: replace
     ## If additional alert relabel configurations are already deployed in a single secret, or you want to manage
     ## them separately from the helm deployment, you can use this section.
     ## Expected values are the secret name and key
