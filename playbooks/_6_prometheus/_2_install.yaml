@@ -98,7 +98,7 @@
 
 - name: ConfigMap alertmanager-config
   kubernetes.core.k8s:
-    state: absent
+    state: present
     wait: true
     definition:
       apiVersion: v1
