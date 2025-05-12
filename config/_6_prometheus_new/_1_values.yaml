@@ -397,7 +397,7 @@ alertmanager:
 
   ## Deploy alertmanager
   ##
-  enabled: false
+  enabled: true
 
   # Optional: Override the namespace where Alertmanager will be deployed.
   namespaceOverride: ""
@@ -833,7 +833,8 @@ alertmanager:
 
     ## Additional labels
     ##
-    additionalLabels: {}
+    additionalLabels:
+      prometheus: "main"
 
     ## SampleLimit defines per-scrape limit on number of scraped samples that will be accepted.
     ##
@@ -860,7 +861,7 @@ alertmanager:
     proxyUrl: ""
 
     ## scheme: HTTP scheme to use for scraping. Can be used with `tlsConfig` for example if using istio mTLS.
-    scheme: ""
+    scheme: "HTTPS"
 
     ## enableHttp2: Whether to enable HTTP2.
     ## See https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#endpoint
@@ -868,14 +869,18 @@ alertmanager:
 
     ## tlsConfig: TLS configuration to use when scraping the endpoint. For example if using istio mTLS.
     ## Of type: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#tlsconfig
-    tlsConfig: {}
+    tlsConfig:
+      caFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 
     bearerTokenFile:
 
     ## MetricRelabelConfigs to apply to samples after scraping, but before ingestion.
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#relabelconfig
     ##
-    metricRelabelings: []
+    metricRelabelings:
+      - sourceLabels: [ ]
+        targetLabel: cluster
+        replacement: 'main'
     # - action: keep
     #   regex: 'kube_(daemonset|deployment|pod|namespace|node|statefulset).+'
     #   sourceLabels: [__name__]
@@ -883,7 +888,14 @@ alertmanager:
     ## RelabelConfigs to apply to samples before scraping
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#relabelconfig
     ##
-    relabelings: []
+    relabelings:
+      - sourceLabels: [ __meta_kubernetes_service_name, __meta_kubernetes_namespace, __meta_kubernetes_pod_container_port_number ]
+        separator: ;
+        regex: (.+);(.+);(.+)
+        #        replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
+        replacement: $1.$2.svc:$3  # "service.namespace.svc:8080"
+        targetLabel: __address__
+        action: replace
     # - sourceLabels: [__meta_kubernetes_pod_node_name]
     #   separator: ;
     #   regex: ^(.*)$
@@ -953,7 +965,15 @@ alertmanager:
 
     ## WebTLSConfig defines the TLS parameters for HTTPS
     ## ref: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#alertmanagerwebspec
-    web: {}
+    web:
+      tlsConfig:
+        keySecret:
+          key: tls.key
+          name: cm-prometheus-tls
+        cert:
+          secret:
+            key: tls.crt
+            name: cm-prometheus-tls
 
     ## AlertmanagerConfigs to be selected to merge and configure Alertmanager with.
     ##
@@ -1046,11 +1066,12 @@ alertmanager:
     routePrefix: /
 
     ## scheme: HTTP scheme to use. Can be used with `tlsConfig` for example if using istio mTLS.
-    scheme: ""
+    scheme: "HTTPS"
 
     ## tlsConfig: TLS configuration to use when connect to the endpoint. For example if using istio mTLS.
     ## Of type: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#tlsconfig
-    tlsConfig: {}
+    tlsConfig:
+      caFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 
     ## If set to true all actions on the underlying managed objects are not going to be performed, except for delete actions.
     ##
@@ -1059,7 +1080,8 @@ alertmanager:
     ## Define which Nodes the Pods are scheduled on.
     ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector
     ##
-    nodeSelector: {}
+    nodeSelector:
+      kubernetes.io/hostname: "control01"
 
     ## Define resources requests and limits for single Pods.
     ## ref: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
@@ -1083,7 +1105,21 @@ alertmanager:
     ## Assign custom affinity rules to the alertmanager instance
     ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
     ##
-    affinity: {}
+    affinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+            - matchExpressions:
+                - key: kubernetes.io/os
+                  operator: In
+                  values:
+                    - linux
+        preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+                - key: node-role.kubernetes.io/control-plane
+                  operator: Exists
     # nodeAffinity:
     #   requiredDuringSchedulingIgnoredDuringExecution:
     #     nodeSelectorTerms:
@@ -1097,7 +1133,10 @@ alertmanager:
     ## If specified, the pod's tolerations.
     ## ref: https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/
     ##
-    tolerations: []
+    tolerations:
+      - key: "node-role.kubernetes.io/control-plane"
+        operator: "Exists"
+        effect: "NoSchedule"
     # - key: "key"
     #   operator: "Equal"
     #   value: "value"

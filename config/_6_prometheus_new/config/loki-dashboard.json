@@ -205,7 +205,7 @@
         "label": "Loki",
         "name": "Loki",
         "options": [],
-        "query": "Loki",
+        "query": "loki",
         "refresh": 1,
         "regex": "",
         "type": "datasource"
@@ -263,7 +263,10 @@
           "text": ["stdout", "stderr"],
           "value": ["stdout", "stderr"]
         },
-        "datasource": "$datasource",
+        "datasource": {
+          "type": "loki",
+          "uid": "${Loki}"
+        },
         "definition": "label_values(stream)",
         "description": null,
         "error": null,

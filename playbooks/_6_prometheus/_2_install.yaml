@@ -23,33 +23,33 @@
 #    wait: true
 #    state: absent
 #
-#- name: Copy values
-#  ansible.builtin.copy:
-#    src: '/source/config/_6_prometheus_new/_1_values.yaml'
-#    dest: '/tmp/values_prometheus.yaml'
-#    mode: "0640"
-#
-#- name: Remove prometheus
-#  kubernetes.core.helm:
-#    name: prometheus
-#    state: absent
-#    chart_ref: prometheus-community/kube-prometheus-stack
-#    release_namespace: monitoring
-#    create_namespace: true
-#    wait: true
-#    values_files:
-#      - /tmp/values_kube_state_metrics.yaml
-#
-#- name: Install prometheus
-#  kubernetes.core.helm:
-#    name: prometheus
-#    state: present
-#    chart_ref: prometheus-community/kube-prometheus-stack
-#    release_namespace: monitoring
-#    create_namespace: true
-#    wait: true
-#    values_files:
-#      - /tmp/values_prometheus.yaml
+- name: Remove prometheus
+  kubernetes.core.helm:
+    name: prometheus
+    state: absent
+    chart_ref: prometheus-community/kube-prometheus-stack
+    release_namespace: monitoring
+    create_namespace: true
+    wait: true
+    values_files:
+      - /tmp/values_kube_state_metrics.yaml  
+  
+- name: Copy values
+  ansible.builtin.copy:
+    src: '/source/config/_6_prometheus_new/_1_values.yaml'
+    dest: '/tmp/values_prometheus.yaml'
+    mode: "0640"
+
+- name: Install prometheus
+  kubernetes.core.helm:
+    name: prometheus
+    state: present
+    chart_ref: prometheus-community/kube-prometheus-stack
+    release_namespace: monitoring
+    create_namespace: true
+    wait: true
+    values_files:
+      - /tmp/values_prometheus.yaml
 #
 #- name: ConfigMap grafana-config
 #  kubernetes.core.k8s:
