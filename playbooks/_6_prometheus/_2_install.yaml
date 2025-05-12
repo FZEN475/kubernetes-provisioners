@@ -83,7 +83,7 @@
         labels:
           grafana_dashboard: ""
       data:
-        dashboard.json: "{{ tmp_dashboard_json | to_json }}"
+        dashboard01.json: "{{ tmp_dashboard_json | to_json }}"
 
 - name: Creating tmp_dashboard_json
   ansible.builtin.set_fact:
@@ -102,7 +102,7 @@
         labels:
           grafana_dashboard: ""
       data:
-        dashboard.json: "{{ tmp_dashboard_json | to_json }}"
+        dashboard02.json: "{{ tmp_dashboard_json | to_json }}"
 
 #- name: Remove prometheus-adapter
 #  kubernetes.core.helm:
