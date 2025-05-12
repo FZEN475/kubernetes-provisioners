@@ -1073,8 +1073,9 @@ alertmanager:
     ## tlsConfig: TLS configuration to use when connect to the endpoint. For example if using istio mTLS.
     ## Of type: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#tlsconfig
     tlsConfig:
-      caFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
       insecure_skip_verify: true
+      caFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
+
 
     ## If set to true all actions on the underlying managed objects are not going to be performed, except for delete actions.
     ##
@@ -4409,6 +4410,15 @@ prometheus:
     ## Default configuration will connect to the alertmanager deployed as part of this release
     ##
     alertingEndpoints: []
+#      - apiVersion: v2
+#        name: prometheus-kube-prometheus-alertmanager
+#        namespace: monitoring
+#        pathPrefix: /
+#        port: http-web
+#        scheme: HTTPS
+#        tlsConfig:
+#          caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+#          insecure_skip_verify: true
     # - name: ""
     #   namespace: ""
     #   port: http
@@ -4821,14 +4831,14 @@ prometheus:
     ## feature may expose the possibility to break upgrades of Prometheus. It is advised to review Prometheus release
     ## notes to ensure that no incompatible AlertManager configs are going to break Prometheus after the upgrade.
     ##
-    additionalAlertManagerConfigs: []
-    # - consul_sd_configs:
-    #   - server: consul.dev.test:8500
-    #     scheme: http
-    #     datacenter: dev
-    #     tag_separator: ','
-    #     services:
-    #       - metrics-prometheus-alertmanager
+    additionalAlertManagerConfigs:
+      - consul_sd_configs:
+        - server: consul.dev.test:8500
+          scheme: http
+          datacenter: dev
+          tag_separator: ','
+          services:
+            - metrics-prometheus-alertmanager
 
     ## If additional alertmanager configurations are already deployed in a single secret, or you want to manage
     ## them separately from the helm deployment, you can use this section.
