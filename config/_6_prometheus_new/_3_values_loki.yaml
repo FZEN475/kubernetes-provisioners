@@ -93,7 +93,7 @@ loki:
     httpGet:
       path: /ready
       port: http-metrics
-      scheme: HTTP
+      scheme: HTTPS
     initialDelaySeconds: 30
     timeoutSeconds: 1
   image:
