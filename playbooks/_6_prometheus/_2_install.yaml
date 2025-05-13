@@ -215,7 +215,7 @@
                   name: "alert-manager-secrets"
                 apiURL: "https://api.telegram.org"
                 message_thread_id: '2'
-                message: "🚨 Alertmanager 🚨\n--\n🔺 Alertname: {{ .GroupLabels.alertname}}\n🔺 Severity: {{ .CommonLabels.severity }}\n📌 {{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+                message: !unsafe "🚨 Alertmanager 🚨\n--\n🔺 Alertname: {{ .GroupLabels.alertname}}\n🔺 Severity: {{ .CommonLabels.severity }}\n📌 {{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
 #                message: |-
 #                  {{ if eq .Status "firing" }}🔴{{ else }}🟢{{ end }} [{{ .Status | toUpper }}]
 #                  {{ range .Alerts }}
