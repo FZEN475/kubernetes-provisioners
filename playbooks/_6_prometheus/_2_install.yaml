@@ -207,12 +207,8 @@
         receivers:
           - name: "telegram-notifications"
             telegramConfigs:
-              - botToken:
-                  key: "bot-token"
-                  name: "alert-manager-secrets"
-                chatID:
-                  key: "chat-id"
-                  name: "alert-manager-secrets"
+              - bot_token: "7909294571:AAENOMhcAKYjtV8WeoFb2tfG4iJZU3kZ1GM"
+                chat_id: "-1002513698810"
                 apiURL: "https://api.telegram.org"
                 message_thread_id: '2'
                 message: !unsafe "🚨 Alertmanager 🚨\n--\n🔺 Alertname: {{ .GroupLabels.alertname}}\n🔺 Severity: {{ .CommonLabels.severity }}\n📌 {{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
