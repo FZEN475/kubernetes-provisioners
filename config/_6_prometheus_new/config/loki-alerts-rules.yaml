@@ -4,9 +4,7 @@ groups:
       # Правило 1: Алерт при >10 ошибках за 5 минут
       - alert: HighErrorRate
         expr: |
-          count_over_time(
-            {job=~".+"}  |= "error" [5m]
-          ) > 1
+          sum(count_over_time({namespace=~".+"} |= `error` [30m])) > bool 1
         for: 1m  # Держаться 1 минуту перед отправкой
         labels:
           severity: "critical"
@@ -21,6 +19,7 @@ groups:
       # Правило 2: Алерт при >30 предупреждениях за 5 минут
       - alert: HighWarnRate
         expr: |
+          sum(count_over_time({namespace=~".+"} |= `warn` [30m])) > bool 1
           count_over_time(
             {job=~".+"} |= "warn" [5m]
           ) > 1
