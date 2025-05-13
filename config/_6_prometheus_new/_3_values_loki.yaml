@@ -3751,7 +3751,9 @@ minio:
   address: null
 # Create extra manifests via values. Would be passed through `tpl` for templating
 # objects can also be provided as multiline strings, useful for templating field names
-extraObjects: []
+extraObjects:
+
+
 # - apiVersion: v1
 #   kind: ConfigMap
 #   metadata:
