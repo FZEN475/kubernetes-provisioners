@@ -213,7 +213,7 @@
                 chatID: -1002513698810
                 apiURL: "https://api.telegram.org"
                 messageThreadID: 2
-                message: "ALERT: {{ .CommonLabels.alertname }} ({{ .CommonLabels.severity }})"
+                message: !unsafe "ALERT: {{ .CommonLabels.alertname }} ({{ .CommonLabels.severity }})"
                 parse_mode: "HTML"  # Проще, чем MarkdownV2
 #                message: !unsafe "🚨 Alertmanager 🚨\n--\n🔺 Alertname: {{ .GroupLabels.alertname}}\n🔺 Severity: {{ .CommonLabels.severity }}\n📌 {{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
 #                message: |-
