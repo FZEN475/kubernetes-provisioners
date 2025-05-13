@@ -20,9 +20,6 @@ groups:
       - alert: HighWarnRate
         expr: |
           sum(count_over_time({namespace=~".+"} |= `warn` [30m])) > bool 1
-          count_over_time(
-            {job=~".+"} |= "warn" [5m]
-          ) > 1
         for: 1m
         labels:
           severity: "warning"
