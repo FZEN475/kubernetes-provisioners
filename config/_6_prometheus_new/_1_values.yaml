@@ -4409,16 +4409,27 @@ prometheus:
     ##
     ## Default configuration will connect to the alertmanager deployed as part of this release
     ##
-    alertingEndpoints: []
-#      - apiVersion: v2
-#        name: prometheus-kube-prometheus-alertmanager
-#        namespace: monitoring
-#        pathPrefix: /
-#        port: http-web
-#        scheme: HTTPS
-#        tlsConfig:
-#          caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-#          insecure_skip_verify: true
+    alertingEndpoints:
+    - tls_config:
+        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        insecure_skip_verify: true
+      follow_redirects: true
+      enable_http2: true
+      scheme: HTTPS
+      path_prefix: /
+      timeout: 10s
+      api_version: v2
+      relabel_configs:
+        - source_labels: [__meta_kubernetes_service_name]
+          separator: ;
+          regex: prometheus-kube-prometheus-alertmanager
+          replacement: $1
+          action: keep
+        - source_labels: [__meta_kubernetes_endpoint_port_name]
+          separator: ;
+          regex: http-web
+          replacement: $1
+          action: keep
     # - name: ""
     #   namespace: ""
     #   port: http
