@@ -5,8 +5,8 @@ groups:
       - alert: HighErrorRate
         expr: |
           count_over_time(
-            {job=~".+"} | json | level="error" [5m]
-          ) > 10
+            {job=~".+"}  |= "error" [5m]
+          ) > 1
         for: 1m  # Держаться 1 минуту перед отправкой
         labels:
           severity: "critical"
@@ -22,8 +22,8 @@ groups:
       - alert: HighWarnRate
         expr: |
           count_over_time(
-            {job=~".+"} | json | level="warn" [5m]
-          ) > 30
+            {job=~".+"} |= "warn" [5m]
+          ) > 1
         for: 1m
         labels:
           severity: "warning"
