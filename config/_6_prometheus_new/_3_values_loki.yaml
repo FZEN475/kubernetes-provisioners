@@ -579,9 +579,8 @@ loki:
     alertmanager_url: "https://alertmanager-operated.monitoring.svc:9093/api/v2/alerts"
     enable_alertmanager_v2: true
     alertmanager_client:
-      tls_config:
-        ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt  # Используем CA кластера
-        insecure_skip_verify: false  # Не пропускать проверку (лучше false для безопасности)
+      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt  # Используем CA кластера
+      insecure_skip_verify: false  # Не пропускать проверку (лучше false для безопасности)
     wal:
       dir: /var/loki/ruler-wal
   # -- Structured loki configuration, takes precedence over `loki.config`, `loki.schemaConfig`, `loki.storageConfig`
