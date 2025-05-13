@@ -977,9 +977,9 @@ alertmanager:
 
     ## AlertmanagerConfigs to be selected to merge and configure Alertmanager with.
     ##
-    alertmanagerConfigSelector:
-      matchLabels:
-        alertmanager_config: ""
+    alertmanagerConfigSelector: {}
+#      matchLabels:
+#        alertmanager_config: ""
     ## Example which selects all alertmanagerConfig resources
     ## with label "alertconfig" with values any of "example-config" or "example-config-2"
     # alertmanagerConfigSelector:
