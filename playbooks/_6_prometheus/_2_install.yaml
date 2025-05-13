@@ -214,14 +214,16 @@
                   key: "chat-id"
                   name: "alert-manager-secrets"
                 apiURL: "https://api.telegram.org"
-                message: |-
-                  {{ if eq .Status "firing" }}🔴{{ else }}🟢{{ end }} [{{ .Status | toUpper }}]
-                  {{ range .Alerts }}
-                  *Alert:* {{ .Labels.alertname }}
-                  *Severity:* {{ .Labels.severity }}
-                  {{ if .Annotations.summary }}*Summary:* {{ .Annotations.summary }}{{ end }}
-                  {{ if .Annotations.description }}*Details:* {{ .Annotations.description }}{{ end }}
-                  {{ end }}
+                message_thread_id: '2'
+                message: "🚨 Alertmanager 🚨\n--\n🔺 Alertname: {{ .GroupLabels.alertname}}\n🔺 Severity: {{ .CommonLabels.severity }}\n📌 {{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+#                message: |-
+#                  {{ if eq .Status "firing" }}🔴{{ else }}🟢{{ end }} [{{ .Status | toUpper }}]
+#                  {{ range .Alerts }}
+#                  *Alert:* {{ .Labels.alertname }}
+#                  *Severity:* {{ .Labels.severity }}
+#                  {{ if .Annotations.summary }}*Summary:* {{ .Annotations.summary }}{{ end }}
+#                  {{ if .Annotations.description }}*Details:* {{ .Annotations.description }}{{ end }}
+#                  {{ end }}
                 sendResolved: true
                 parseMode: "MarkdownV2"  # Поддержка форматирования (Markdown/V2)
         route:
