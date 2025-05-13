@@ -210,9 +210,9 @@
               - botToken:
                   key: "bot-token"
                   name: "alert-manager-secrets"
-                chatID: "-1002513698810"
+                chatID: -1002513698810
                 apiURL: "https://api.telegram.org"
-                messageThreadID: '2'
+                messageThreadID: 2
                 message: !unsafe "🚨 Alertmanager 🚨\n--\n🔺 Alertname: {{ .GroupLabels.alertname}}\n🔺 Severity: {{ .CommonLabels.severity }}\n📌 {{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
 #                message: |-
 #                  {{ if eq .Status "firing" }}🔴{{ else }}🟢{{ end }} [{{ .Status | toUpper }}]
