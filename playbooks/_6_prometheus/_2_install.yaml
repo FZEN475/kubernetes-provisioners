@@ -23,33 +23,33 @@
 #    wait: true
 #    state: absent
 #
-- name: Remove prometheus
-  kubernetes.core.helm:
-    name: prometheus
-    state: absent
-    chart_ref: prometheus-community/kube-prometheus-stack
-    release_namespace: monitoring
-    create_namespace: true
-    wait: true
-    values_files:
-      - /tmp/values_kube_state_metrics.yaml
-
-- name: Copy values
-  ansible.builtin.copy:
-    src: '/source/config/_6_prometheus_new/_1_values.yaml'
-    dest: '/tmp/values_prometheus.yaml'
-    mode: "0640"
-
-- name: Install prometheus
-  kubernetes.core.helm:
-    name: prometheus
-    state: present
-    chart_ref: prometheus-community/kube-prometheus-stack
-    release_namespace: monitoring
-    create_namespace: true
-    wait: true
-    values_files:
-      - /tmp/values_prometheus.yaml
+#- name: Remove prometheus
+#  kubernetes.core.helm:
+#    name: prometheus
+#    state: absent
+#    chart_ref: prometheus-community/kube-prometheus-stack
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: true
+#    values_files:
+#      - /tmp/values_kube_state_metrics.yaml
+#
+#- name: Copy values
+#  ansible.builtin.copy:
+#    src: '/source/config/_6_prometheus_new/_1_values.yaml'
+#    dest: '/tmp/values_prometheus.yaml'
+#    mode: "0640"
+#
+#- name: Install prometheus
+#  kubernetes.core.helm:
+#    name: prometheus
+#    state: present
+#    chart_ref: prometheus-community/kube-prometheus-stack
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: true
+#    values_files:
+#      - /tmp/values_prometheus.yaml
 #
 #- name: ConfigMap grafana-config
 #  kubernetes.core.k8s:
@@ -213,7 +213,9 @@
                 chatID: -1002513698810
                 apiURL: "https://api.telegram.org"
                 messageThreadID: 2
-                message: !unsafe "🚨 Alertmanager 🚨\n--\n🔺 Alertname: {{ .GroupLabels.alertname}}\n🔺 Severity: {{ .CommonLabels.severity }}\n📌 {{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
+                message: "ALERT: {{ .CommonLabels.alertname }} ({{ .CommonLabels.severity }})"
+                parse_mode: "HTML"  # Проще, чем MarkdownV2
+#                message: !unsafe "🚨 Alertmanager 🚨\n--\n🔺 Alertname: {{ .GroupLabels.alertname}}\n🔺 Severity: {{ .CommonLabels.severity }}\n📌 {{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
 #                message: |-
 #                  {{ if eq .Status "firing" }}🔴{{ else }}🟢{{ end }} [{{ .Status | toUpper }}]
 #                  {{ range .Alerts }}
@@ -223,7 +225,7 @@
 #                  {{ if .Annotations.description }}*Details:* {{ .Annotations.description }}{{ end }}
 #                  {{ end }}
                 sendResolved: true
-                parseMode: "MarkdownV2"  # Поддержка форматирования (Markdown/V2)
+#                parseMode: "MarkdownV2"  # Поддержка форматирования (Markdown/V2)
         route:
           groupBy: ['alertname']
           receiver: "telegram-notifications"
