@@ -190,3 +190,40 @@
 #    state: present
 #    values_files:
 #      - /tmp/values_promtail.yaml
+
+- name: ConfigMap alertmanager-config
+  kubernetes.core.k8s:
+    state: present
+    wait: true
+    definition:
+      apiVersion: monitoring.coreos.com/v1alpha1
+      kind: AlertmanagerConfig
+      metadata:
+        name: telegram-alerts
+        namespace: monitoring
+        labels:
+          alertmanager_config: ""
+      spec:
+        receivers:
+          - name: "telegram-notifications"
+            telegramConfigs:
+              - botToken:
+                  key: "bot-token"
+                  name: "alert-manager-secrets"
+                chatID:
+                  key: "chat-id"
+                  name: "alert-manager-secrets"
+                apiURL: "https://api.telegram.org"
+                message: |-
+                  {{ if eq .Status "firing" }}🔴{{ else }}🟢{{ end }} [{{ .Status | toUpper }}]
+                  {{ range .Alerts }}
+                  *Alert:* {{ .Labels.alertname }}
+                  *Severity:* {{ .Labels.severity }}
+                  {{ if .Annotations.summary }}*Summary:* {{ .Annotations.summary }}{{ end }}
+                  {{ if .Annotations.description }}*Details:* {{ .Annotations.description }}{{ end }}
+                  {{ end }}
+                sendResolved: true
+                parseMode: "MarkdownV2"  # Поддержка форматирования (Markdown/V2)
+        route:
+          groupBy: ['alertname']
+          receiver: "telegram-notifications"
