@@ -1073,7 +1073,7 @@ alertmanager:
     ## tlsConfig: TLS configuration to use when connect to the endpoint. For example if using istio mTLS.
     ## Of type: https://github.com/prometheus-operator/prometheus-operator/blob/main/Documentation/api-reference/api.md#tlsconfig
     tlsConfig:
-      insecure_skip_verify: true
+      insecureSkipVerify: true
       caFile: "/var/run/secrets/kubernetes.io/serviceaccount/ca.crt"
 
 
@@ -4409,16 +4409,16 @@ prometheus:
     ##
     ## Default configuration will connect to the alertmanager deployed as part of this release
     ##
-    alertingEndpoints:
-      - apiVersion: v2
-        name: prometheus-kube-prometheus-alertmanager
-        namespace: monitoring
-        pathPrefix: /
-        port: http-web
-        scheme: HTTPS
-        tlsConfig:
-          caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-          insecure_skip_verify: true
+    alertingEndpoints: []
+#      - apiVersion: v2
+#        name: prometheus-kube-prometheus-alertmanager
+#        namespace: monitoring
+#        pathPrefix: /
+#        port: http-web
+#        scheme: HTTPS
+#        tlsConfig:
+#          insecure_skip_verify: true
+#          caFile: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
     # - name: ""
     #   namespace: ""
     #   port: http

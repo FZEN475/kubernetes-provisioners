@@ -1,0 +1,36 @@
+groups:
+  - name: logs-error-warn-alerts
+    rules:
+      # Правило 1: Алерт при >10 ошибках за 5 минут
+      - alert: HighErrorRate
+        expr: |
+          count_over_time(
+            {job=~".+"} | json | level="error" [5m]
+          ) > 10
+        for: 1m  # Держаться 1 минуту перед отправкой
+        labels:
+          severity: "critical"
+          namespace: "monitoring"  # Чтобы Alertmanager отправил в Telegram
+        annotations:
+          summary: "High ERROR log rate ({{ $value }} lines in 5m)"
+          description: |
+            🚨 More than 10 ERROR logs in 5 minutes.
+            **Job:** {{ $labels.job }}
+            **Namespace:** {{ $labels.namespace | default "unknown" }}
+
+      # Правило 2: Алерт при >30 предупреждениях за 5 минут
+      - alert: HighWarnRate
+        expr: |
+          count_over_time(
+            {job=~".+"} | json | level="warn" [5m]
+          ) > 30
+        for: 1m
+        labels:
+          severity: "warning"
+          namespace: "monitoring"
+        annotations:
+          summary: "High WARN log rate ({{ $value }} lines in 5m)"
+          description: |
+            ⚠ More than 30 WARN logs in 5 minutes.
+            **Job:** {{ $labels.job }}
+            **Namespace:** {{ $labels.namespace | default "unknown" }}

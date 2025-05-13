@@ -138,31 +138,31 @@
 #      - /tmp/values_prometheus_adapter.yaml
 
 
-#- name: Remove loki
-#  kubernetes.core.helm:
-#    name: loki
-#    chart_ref: grafana/loki
-#    release_namespace: monitoring
-#    create_namespace: true
-#    wait: yes
-#    state: absent
-#
-#- name: Copy values
-#  ansible.builtin.copy:
-#    src: '/source/config/_6_prometheus_new/_3_values_loki.yaml'
-#    dest: '/tmp/values_loki.yaml'
-#    mode: "0640"
-#
-#- name: Install loki
-#  kubernetes.core.helm:
-#    name: loki
-#    chart_ref: grafana/loki
-#    release_namespace: monitoring
-#    create_namespace: true
-#    wait: yes
-#    state: present
-#    values_files:
-#      - /tmp/values_loki.yaml
+- name: Remove loki
+  kubernetes.core.helm:
+    name: loki
+    chart_ref: grafana/loki
+    release_namespace: monitoring
+    create_namespace: true
+    wait: yes
+    state: absent
+
+- name: Copy values
+  ansible.builtin.copy:
+    src: '/source/config/_6_prometheus_new/_3_values_loki.yaml'
+    dest: '/tmp/values_loki.yaml'
+    mode: "0640"
+
+- name: Install loki
+  kubernetes.core.helm:
+    name: loki
+    chart_ref: grafana/loki
+    release_namespace: monitoring
+    create_namespace: true
+    wait: yes
+    state: present
+    values_files:
+      - /tmp/values_loki.yaml
 
 
 #- name: Remove promtail
@@ -213,19 +213,19 @@
                 chatID: "-1002513698810"
                 apiURL: "https://api.telegram.org"
                 messageThreadID: 2
-                message: !unsafe "ALERT: {{ .CommonLabels.alertname }} ({{ .CommonLabels.severity }})"
-                parse_mode: "HTML"  # Проще, чем MarkdownV2
+#                message: !unsafe "ALERT: {{ .CommonLabels.alertname }} ({{ .CommonLabels.severity }})"
+#                parse_mode: "HTML"  # Проще, чем MarkdownV2
 #                message: !unsafe "🚨 Alertmanager 🚨\n--\n🔺 Alertname: {{ .GroupLabels.alertname}}\n🔺 Severity: {{ .CommonLabels.severity }}\n📌 {{ range .Alerts }}{{ .Annotations.summary }}\n{{ end }}"
-#                message: |-
-#                  {{ if eq .Status "firing" }}🔴{{ else }}🟢{{ end }} [{{ .Status | toUpper }}]
-#                  {{ range .Alerts }}
-#                  *Alert:* {{ .Labels.alertname }}
-#                  *Severity:* {{ .Labels.severity }}
-#                  {{ if .Annotations.summary }}*Summary:* {{ .Annotations.summary }}{{ end }}
-#                  {{ if .Annotations.description }}*Details:* {{ .Annotations.description }}{{ end }}
-#                  {{ end }}
+                message: !unsafe |-
+                  {{ if eq .Status "firing" }}🔴{{ else }}🟢{{ end }} [{{ .Status | toUpper }}]
+                  {{ range .Alerts }}
+                  *Alert:* {{ .Labels.alertname }}
+                  *Severity:* {{ .Labels.severity }}
+                  {{ if .Annotations.summary }}*Summary:* {{ .Annotations.summary }}{{ end }}
+                  {{ if .Annotations.description }}*Details:* {{ .Annotations.description }}{{ end }}
+                  {{ end }}
                 sendResolved: true
-#                parseMode: "MarkdownV2"  # Поддержка форматирования (Markdown/V2)
+                parseMode: "MarkdownV2"  # Поддержка форматирования (Markdown/V2)
         route:
           groupBy: ['alertname']
           receiver: "telegram-notifications"
