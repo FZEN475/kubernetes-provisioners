@@ -14,6 +14,7 @@
 #      - {name: "vault", ns: "secrets",issuer: "root-intermediate0-ci", dns: ['vault.fzen.pro','vault.secrets.svc']}
       - {name: "prometheus", ns: "monitoring",issuer: "root-intermediate0-ci", dns: [
         'prometheus.fzen.pro',
+        'alertmanager.fzen.pro',
         'grafana.fzen.pro',
         'prometheus-kube-prometheus-prometheus.monitoring.svc',
         'prometheus-kube-state-metrics.monitoring.svc',
