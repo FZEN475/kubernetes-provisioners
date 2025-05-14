@@ -1509,7 +1509,7 @@ ingress:
       - /prometheus/api/v1/alerts
   # -- Hosts configuration for the ingress, passed through the `tpl` function to allow templating
   hosts:
-    - loki.example.com
+    - loki.fzen.pro
   # -- TLS configuration for the ingress. Hosts passed through the `tpl` function to allow templating
   tls:
     - secretName: cm-prometheus-tls
