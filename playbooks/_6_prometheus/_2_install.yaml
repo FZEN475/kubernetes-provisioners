@@ -23,33 +23,33 @@
 #    wait: true
 #    state: absent
 #
-- name: Remove prometheus
-  kubernetes.core.helm:
-    name: prometheus
-    state: absent
-    chart_ref: prometheus-community/kube-prometheus-stack
-    release_namespace: monitoring
-    create_namespace: true
-    wait: true
-    values_files:
-      - /tmp/values_kube_state_metrics.yaml
-
-- name: Copy values
-  ansible.builtin.copy:
-    src: '/source/config/_6_prometheus_new/_1_values.yaml'
-    dest: '/tmp/values_prometheus.yaml'
-    mode: "0640"
-
-- name: Install prometheus
-  kubernetes.core.helm:
-    name: prometheus
-    state: present
-    chart_ref: prometheus-community/kube-prometheus-stack
-    release_namespace: monitoring
-    create_namespace: true
-    wait: true
-    values_files:
-      - /tmp/values_prometheus.yaml
+#- name: Remove prometheus
+#  kubernetes.core.helm:
+#    name: prometheus
+#    state: absent
+#    chart_ref: prometheus-community/kube-prometheus-stack
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: true
+#    values_files:
+#      - /tmp/values_kube_state_metrics.yaml
+#
+#- name: Copy values
+#  ansible.builtin.copy:
+#    src: '/source/config/_6_prometheus_new/_1_values.yaml'
+#    dest: '/tmp/values_prometheus.yaml'
+#    mode: "0640"
+#
+#- name: Install prometheus
+#  kubernetes.core.helm:
+#    name: prometheus
+#    state: present
+#    chart_ref: prometheus-community/kube-prometheus-stack
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: true
+#    values_files:
+#      - /tmp/values_prometheus.yaml
 #
 #- name: ConfigMap grafana-config
 #  kubernetes.core.k8s:
@@ -154,31 +154,31 @@
 #      - /tmp/values_prometheus_adapter.yaml
 
 
-- name: Remove loki
-  kubernetes.core.helm:
-    name: loki
-    chart_ref: grafana/loki
-    release_namespace: monitoring
-    create_namespace: true
-    wait: yes
-    state: absent
-
-- name: Copy values
-  ansible.builtin.copy:
-    src: '/source/config/_6_prometheus_new/_3_values_loki.yaml'
-    dest: '/tmp/values_loki.yaml'
-    mode: "0640"
-
-- name: Install loki
-  kubernetes.core.helm:
-    name: loki
-    chart_ref: grafana/loki
-    release_namespace: monitoring
-    create_namespace: true
-    wait: yes
-    state: present
-    values_files:
-      - /tmp/values_loki.yaml
+#- name: Remove loki
+#  kubernetes.core.helm:
+#    name: loki
+#    chart_ref: grafana/loki
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: yes
+#    state: absent
+#
+#- name: Copy values
+#  ansible.builtin.copy:
+#    src: '/source/config/_6_prometheus_new/_3_values_loki.yaml'
+#    dest: '/tmp/values_loki.yaml'
+#    mode: "0640"
+#
+#- name: Install loki
+#  kubernetes.core.helm:
+#    name: loki
+#    chart_ref: grafana/loki
+#    release_namespace: monitoring
+#    create_namespace: true
+#    wait: yes
+#    state: present
+#    values_files:
+#      - /tmp/values_loki.yaml
 
 
 #- name: Remove promtail
@@ -207,7 +207,7 @@
 #    values_files:
 #      - /tmp/values_promtail.yaml
 
-- name: ConfigMap alertmanager-config
+- name: AlertmanagerConfig alertmanager-config
   kubernetes.core.k8s:
     state: present
     wait: true
@@ -245,3 +245,37 @@
         route:
           groupBy: ['alertname']
           receiver: "telegram-notifications"
+
+- name: PrometheusRule custom-rule
+  kubernetes.core.k8s:
+    state: present
+    wait: true
+    definition:
+      apiVersion: monitoring.coreos.com/v1
+      kind: PrometheusRule
+      metadata:
+        name: custom-rule
+        namespace: monitoring
+        labels:
+          release: prometheus
+      spec:
+        groups:
+          - name: cpu-usage
+            rules:
+              - alert: HighCPUUsage
+                expr: |
+                  100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle", instance=~"control01|dev01|prod01"}[5m])) * 100) > 80
+                for: 5m
+                labels:
+                  severity: warning
+                annotations:
+                  summary: "High CPU usage on {{ $labels.instance }}"
+                  description: "CPU usage on {{ $labels.instance }} is {{ $value }}% for more than 5 minutes."
+
+              - record: cpu_usage_status
+                expr: |
+                  (
+                    100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle", instance=~"control01|dev01|prod01"}[5m])) * 100
+                  ) <= bool 80
+                labels:
+                  severity: info
