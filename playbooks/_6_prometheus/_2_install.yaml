@@ -269,11 +269,11 @@
                 labels:
                   severity: warning
                 annotations:
-                  summary: "High CPU usage on {{ $labels.instance }}"
-                  description: "CPU usage on {{ $labels.instance }} is {{ $value }}% for more than 5 minutes."
+                  summary: !unsafe "High CPU usage on {{ $labels.instance }}"
+                  description: !unsafe "CPU usage on {{ $labels.instance }} is {{ $value }}% for more than 5 minutes."
 
               - record: cpu_usage_status
-                expr: |
+                expr: !unsafe |
                   (
                     100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle", instance=~"control01|dev01|prod01"}[5m])) * 100
                   ) <= bool 80
