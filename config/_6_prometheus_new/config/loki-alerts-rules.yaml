@@ -9,8 +9,8 @@ groups:
           severity: "critical"
           namespace: "monitoring"
         annotations:
-          summary: High request latency
-      - alert: HighPercentageError
+          summary: High request Error latency
+      - alert: HighPercentageWarn
         expr: |
           sum(rate({pod=~".+"} |= "warn" [5m])) by (pod) / sum(rate({pod=~".+"}[5m])) by (pod) > 0.05
         for: 1m
@@ -18,8 +18,8 @@ groups:
           severity: "critical"
           namespace: "monitoring"
         annotations:
-          summary: High request latency
-      - alert: HighPercentageError
+          summary: High request Warn latency
+      - alert: HighPercentageDEBUG
         expr: |
           sum(rate({pod=~".+"} |= "DEBUG" [5m])) by (pod) / sum(rate({pod=~".+"}[5m])) by (pod) > 0.05
         for: 1m
@@ -27,7 +27,7 @@ groups:
           severity: "warning"
           namespace: "monitoring"
         annotations:
-          summary: High request latency
+          summary: High request DEBUG latency
 
   
 #  - name: logs-error-warn-alerts
