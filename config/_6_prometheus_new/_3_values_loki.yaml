@@ -3846,7 +3846,7 @@ sidecar:
     # -- Label value that the configmaps/secrets with rules will be set to.
     labelValue: ""
     # -- Folder into which the rules will be placed.
-    folder: /rules
+    folder: /loki/rules
     # -- Comma separated list of namespaces. If specified, the sidecar will search for config-maps/secrets inside these namespaces.
     # Otherwise the namespace in which the sidecar is running will be used.
     # It's also possible to specify 'ALL' to search in all namespaces.
