@@ -1,7 +1,7 @@
 groups:
-  - name: should_fire
+  - name: should_fire1
     rules:
-      - alert: HighPercentageError
+      - alert: HighPercentageError1
         expr: |
           sum(rate({namespace=~".+"} |= "error" [5m])) by (job) / sum(rate({namespace=~".+"}[5m])) by (job) > 0.05
         for: 1m
