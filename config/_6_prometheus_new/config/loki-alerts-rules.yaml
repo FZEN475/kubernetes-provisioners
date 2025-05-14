@@ -3,7 +3,7 @@ groups:
     rules:
       - alert: HighPercentageError1
         expr: |
-          sum(rate({namespace=~".+"} |= "error" [5m])) by (job) / sum(rate({namespace=~".+"}[5m])) by (job) > 0.05
+          sum(rate({namespace=~".+"} |= "error" [5m])) by (job) / sum(rate({namespace=~".+"}[5m])) by (job) > 0.00
         for: 1m
         labels:
           severity: page
