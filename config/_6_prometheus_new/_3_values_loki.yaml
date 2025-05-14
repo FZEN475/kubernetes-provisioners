@@ -567,6 +567,13 @@ loki:
           period: 24h
   # -- Check https://grafana.com/docs/loki/latest/configuration/#ruler for more info on configuring ruler
   rulerConfig:
+    type: local
+    local:
+      # Directory to scan for rules.
+      # This folder correspond to where the rules are first mounted with the ConfigMap
+      directory: /rules
+    # File path to store temporary rule files.
+    rule_path: /rules/fake
 #    storage:
 #      type: s3
 #      s3:
