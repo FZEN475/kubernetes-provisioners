@@ -236,9 +236,12 @@
                   {{ if eq .Status "firing" }}🔴{{ else }}🟢{{ end }} [{{ .Status | toUpper }}]
                   {{ range .Alerts }}
                   *Alert:* {{ .Labels.alertname }}
+                  *Severity:* {{ .Labels.severity }}
+                  {{ if .Annotations.summary }}*Summary:* {{ .Annotations.summary }}{{ end }}
+                  {{ if .Annotations.description }}*Details:* {{ .Annotations.description }}{{ end }}
                   {{ end }}
                 sendResolved: true
-                parseMode: "MarkdownV2"  # Поддержка форматирования (Markdown/V2)
+                parseMode: "HTML"  # Поддержка форматирования (Markdown/V2)
         route:
           groupBy: ['alertname']
           receiver: "telegram-notifications"
