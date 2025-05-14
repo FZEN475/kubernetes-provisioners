@@ -772,8 +772,7 @@ alertmanager:
     #   port: 8082
     #   targetPort: 8082
 
-    externalIPs: 
-      - 192.168.2.2
+    externalIPs: []
     loadBalancerIP: ""
     loadBalancerSourceRanges: []
 
