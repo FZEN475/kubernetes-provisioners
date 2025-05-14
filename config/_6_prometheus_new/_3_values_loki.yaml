@@ -578,11 +578,8 @@ loki:
     storage:
       type: local
       local:
-        # Directory to scan for rules.
-        # This folder correspond to where the rules are first mounted with the ConfigMap
-        directory: /rules/fake
-    # File path to store temporary rule files.
-    rule_path: /rules/fake
+        directory: /loki/rules
+    rule_path: /tmp/rules/fake/
 #    storage:
 #      type: s3
 #      s3:
