@@ -422,13 +422,13 @@ loki:
   commonConfig:
     path_prefix: /var/loki
     replication_factor: 1
-    storage:
-      s3:
-        bucketnames: loki-data
-        endpoint: https://minio.storage.svc:9000
-        insecure: false
-        region: us-east-1
-        s3forcepathstyle: true
+#    storage:
+#      s3:
+#        bucketnames: loki-data
+#        endpoint: https://minio.storage.svc:9000
+#        insecure: false
+#        region: us-east-1
+#        s3forcepathstyle: true
 
   #    compactor_address: 'https://loki-backend.monitoring.svc:3100'
   # -- Storage config. Providing this will automatically populate all necessary storage configs in the templated config.
@@ -447,13 +447,13 @@ loki:
     type: s3
     s3:
       s3: null
-      endpoint: null
-      region: null
+      endpoint: https://minio.storage.svc:9000
+      region: us-east-1
       secretAccessKey: null
       accessKeyId: null
       signatureVersion: null
-      s3ForcePathStyle: null
-      insecure: null
+      s3ForcePathStyle: true
+      insecure: false
       http_config: {}
       # -- Check https://grafana.com/docs/loki/latest/configure/#s3_storage_config for more info on how to provide a backoff_config
       backoff_config: {}
