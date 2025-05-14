@@ -6,11 +6,28 @@ groups:
           sum(rate({pod=~".+"} |= "error" [5m])) by (pod) / sum(rate({pod=~".+"}[5m])) by (pod) > 0.05
         for: 1m
         labels:
-          severity: page
+          severity: "critical"
+          namespace: "monitoring"
         annotations:
           summary: High request latency
-
-
+      - alert: HighPercentageError
+        expr: |
+          sum(rate({pod=~".+"} |= "warn" [5m])) by (pod) / sum(rate({pod=~".+"}[5m])) by (pod) > 0.05
+        for: 1m
+        labels:
+          severity: "critical"
+          namespace: "monitoring"
+        annotations:
+          summary: High request latency
+      - alert: HighPercentageError
+        expr: |
+          sum(rate({pod=~".+"} |= "DEBUG" [5m])) by (pod) / sum(rate({pod=~".+"}[5m])) by (pod) > 0.05
+        for: 1m
+        labels:
+          severity: "warning"
+          namespace: "monitoring"
+        annotations:
+          summary: High request latency
 
   
 #  - name: logs-error-warn-alerts
