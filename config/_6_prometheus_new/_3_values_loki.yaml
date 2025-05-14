@@ -422,7 +422,15 @@ loki:
   commonConfig:
     path_prefix: /var/loki
     replication_factor: 1
-#    compactor_address: 'https://loki-backend.monitoring.svc:3100'
+    storage:
+      s3:
+        bucketnames: loki-data
+        endpoint: https://minio.storage.svc:9000
+        insecure: false
+        region: us-east-1
+        s3forcepathstyle: true
+
+  #    compactor_address: 'https://loki-backend.monitoring.svc:3100'
   # -- Storage config. Providing this will automatically populate all necessary storage configs in the templated config.
   # -- In case of using thanos storage, enable use_thanos_objstore and the configuration should be done inside the object_store section.
   storage:
@@ -439,13 +447,13 @@ loki:
     type: s3
     s3:
       s3: null
-      endpoint: https://minio.storage.svc:9000
-      region: us-east-1
+      endpoint: null
+      region: null
       secretAccessKey: null
       accessKeyId: null
       signatureVersion: null
-      s3ForcePathStyle: true
-      insecure: false
+      s3ForcePathStyle: null
+      insecure: null
       http_config: {}
       # -- Check https://grafana.com/docs/loki/latest/configure/#s3_storage_config for more info on how to provide a backoff_config
       backoff_config: {}
@@ -610,13 +618,13 @@ loki:
 #      tls_server_name: 'loki-query-frontend'
   # -- Additional storage config
   storage_config:
-#    aws:
-##      s3: https://minio.storage.svc:9000  # HTTPS endpoint
-#      s3: s3://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@minio.storage.svc:9000/loki-data
-#      bucketnames: loki-data
-#      region: us-east-1
-#      s3forcepathstyle: true
-#      insecure: false  # Включаем проверку TLS (true только для HTTP!)
+    aws:
+#      s3: https://minio.storage.svc:9000  # HTTPS endpoint
+      s3: s3://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@minio.storage.svc:9000/loki-data
+      bucketnames: loki-data
+      region: us-east-1
+      s3forcepathstyle: true
+      insecure: false  # Включаем проверку TLS (true только для HTTP!)
     bloom_shipper:
       working_directory: /var/loki/data/bloomshipper
     boltdb_shipper:
