@@ -1041,7 +1041,7 @@ alertmanager:
 
     ## Log level for Alertmanager to be configured with.
     ##
-    logLevel: info
+    logLevel: debug
 
     ## Size is the expected size of the alertmanager cluster. The controller will eventually make the size of the
     ## running cluster equal to the expected size.
