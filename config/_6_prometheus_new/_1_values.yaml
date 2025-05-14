@@ -1029,7 +1029,8 @@ alertmanager:
 
     ## Defines the strategy used by AlertmanagerConfig objects to match alerts. eg:
     ##
-    alertmanagerConfigMatcherStrategy: {}
+    alertmanagerConfigMatcherStrategy:
+      type: None
     ## Example with use OnNamespace strategy
     # alertmanagerConfigMatcherStrategy:
     #   type: OnNamespace
