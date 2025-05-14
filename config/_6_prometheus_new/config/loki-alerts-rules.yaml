@@ -1,32 +1,53 @@
 groups:
-  - name: logs-error-warn-alerts
+  - name: should_fire
     rules:
-      # Правило 1: Алерт при >10 ошибках за 5 минут
-      - alert: HighErrorRate
+      - alert: HighPercentageError
         expr: |
-          sum(count_over_time({namespace=~".+"} |= `error` [30m])) > bool 1
-        for: 1m  # Держаться 1 минуту перед отправкой
-        labels:
-          severity: "critical"
-          namespace: "monitoring"  # Чтобы Alertmanager отправил в Telegram
-        annotations:
-          summary: "High ERROR log rate ({{ $value }} lines in 5m)"
-          description: |
-            🚨 More than 10 ERROR logs in 5 minutes.
-            **Job:** {{ $labels.job }}
-            **Namespace:** {{ $labels.namespace | default "unknown" }}
-
-      # Правило 2: Алерт при >30 предупреждениях за 5 минут
-      - alert: HighWarnRate
-        expr: |
-          sum(count_over_time({namespace=~".+"} |= `warn` [30m])) > bool 1
+          sum(rate({namespace=~".+"} |= "error" [5m])) by (job) / sum(rate({namespace=~".+"}[5m])) by (job) > 0.05
         for: 1m
         labels:
-          severity: "warning"
-          namespace: "monitoring"
+          severity: page
         annotations:
-          summary: "High WARN log rate ({{ $value }} lines in 5m)"
-          description: |
-            ⚠ More than 30 WARN logs in 5 minutes.
-            **Job:** {{ $labels.job }}
-            **Namespace:** {{ $labels.namespace | default "unknown" }}
+          summary: High request latency
+
+
+
+  
+#  - name: logs-error-warn-alerts
+#    rules:
+#      # Правило 1: Алерт при >10 ошибках за 5 минут
+#      - alert: HighErrorRate
+#        expr: |
+#          sum(count_over_time({namespace=~".+"} |= `error` [30m])) > bool 1
+#        for: 1m  # Держаться 1 минуту перед отправкой
+#        labels:
+#          severity: "critical"
+#          namespace: "monitoring"  # Чтобы Alertmanager отправил в Telegram
+#        annotations:
+#          summary: "High ERROR log rate ({{ $value }} lines in 5m)"
+#          description: |
+#            🚨 More than 10 ERROR logs in 5 minutes.
+#            **Job:** {{ $labels.job }}
+#            **Namespace:** {{ $labels.namespace | default "unknown" }}
+#
+#      # Правило 2: Алерт при >30 предупреждениях за 5 минут
+#      - alert: HighWarnRate
+#        expr: |
+#          sum(count_over_time({namespace=~".+"} |= `warn` [30m])) > bool 1
+#        for: 1m
+#        labels:
+#          severity: "warning"
+#          namespace: "monitoring"
+#        annotations:
+#          summary: "High WARN log rate ({{ $value }} lines in 5m)"
+#          description: |
+#            ⚠ More than 30 WARN logs in 5 minutes.
+#            **Job:** {{ $labels.job }}
+#            **Namespace:** {{ $labels.namespace | default "unknown" }}
+            
+            
+#
+#            sum(rate({namespace=".+"} |= "error" [5m])) by (job)
+#                        /
+#                      sum(rate({namespace=".+" }[5m])) by (job)
+#                        > 0.00
