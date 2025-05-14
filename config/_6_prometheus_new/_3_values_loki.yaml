@@ -578,8 +578,8 @@ loki:
     storage:
       type: local
       local:
-        directory: /loki/rules/fake/
-    rule_path: /tmp/rules/
+        directory: /loki/rules/
+    rule_path: /loki/rules/
 #    storage:
 #      type: s3
 #      s3:
