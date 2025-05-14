@@ -580,7 +580,7 @@ loki:
       local:
         # Directory to scan for rules.
         # This folder correspond to where the rules are first mounted with the ConfigMap
-        directory: /rules
+        directory: /rules/fake
     # File path to store temporary rule files.
     rule_path: /rules/fake
 #    storage:
