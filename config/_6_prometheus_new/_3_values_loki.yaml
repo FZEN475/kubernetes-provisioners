@@ -581,8 +581,12 @@ loki:
     alertmanager_client:
       tls_ca_path: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt  # Используем CA кластера
       tls_insecure_skip_verify: false  # Не пропускать проверку (лучше false для безопасности)
-    wal:
-      dir: /var/loki/ruler-wal
+#    wal:
+#      dir: /var/loki/ruler-wal
+    ring:
+      kvstore:
+        store: inmemory
+    enable_api: true
   # -- Structured loki configuration, takes precedence over `loki.config`, `loki.schemaConfig`, `loki.storageConfig`
   structuredConfig: {}
   # -- Additional query scheduler config
