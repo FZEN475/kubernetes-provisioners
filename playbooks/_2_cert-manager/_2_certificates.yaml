@@ -21,9 +21,11 @@
         'prometheus-kube-state-metrics.monitoring.svc',
         'prometheus-prometheus-node-exporter.monitoring.svc',
         'prometheus-kube-prometheus-alertmanager.monitoring.svc',
+        'alertmanager-operated.monitoring.svc',
         'loki-memberlist.monitoring.svc',
         'loki-write.monitoring.svc',
         'loki-read.monitoring.svc'
+
       ]}
 #      - { name: "client-etcd", ns: "storage",issuer: "vault-etcd-ci", dns: [ 'etcd.fzen.pro' ] }
 #      - { name: "kuber", ns: "monitoring",issuer: "root-intermediate0-ci", dns: [ 'kuber.fzen.pro' ] }
