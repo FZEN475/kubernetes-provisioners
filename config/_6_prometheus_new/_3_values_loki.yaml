@@ -578,8 +578,8 @@ loki:
     storage:
       type: local
       local:
-        directory: /loki/rules
-    rule_path: /tmp/rules/fake/
+        directory: /loki/rules/fake/
+    rule_path: /tmp/rules/
 #    storage:
 #      type: s3
 #      s3:
@@ -589,7 +589,7 @@ loki:
 #        region: us-east-1
 #        s3forcepathstyle: true
 #        insecure: false  # Включаем проверку TLS (true только для HTTP!)
-    alertmanager_url: "https://alertmanager-operated.monitoring.svc:9093"
+    alertmanager_url: "https://alertmanager-operated.monitoring.svc:9093/api/v2/alerts"
     enable_alertmanager_v2: true
     alertmanager_client:
       tls_ca_path: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt  # Используем CA кластера
