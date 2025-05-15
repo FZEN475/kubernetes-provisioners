@@ -176,6 +176,8 @@ rules:
       metricsQuery: 'max(cpu_usage_status or vector(1)) by ()'  # Агрегируем максимум по всем узлам
       name:
         as: "cpu_usage_alert"  # Имя новой метрики
+      resources:
+        namespaced: false
   resource:
     cpu:
       containerLabel: container
