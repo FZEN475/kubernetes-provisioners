@@ -272,49 +272,16 @@
 
               - record: cpu_usage_status
                 expr: !unsafe |
-                  (100 - (avg by(node) (irate(node_cpu_seconds_total{mode="idle", node=~"control01|dev01|prod01"}[5m])) * 100)) <= bool 10
+                  (100 - (avg by(node) (irate(node_cpu_seconds_total{mode="idle", node=~"control01|dev01|prod01"}[5m])) * 100)) <= bool 80
                 labels:
                   severity: info
                   
-- name: HPA
-  kubernetes.core.k8s:
-    state: absent
-    wait: true
-    definition:          
-      apiVersion: autoscaling/v2
-      kind: HorizontalPodAutoscaler
-      metadata:
-        name: monitoring-scaler
-        namespace: monitoring
-      spec:
-        scaleTargetRef:
-          apiVersion: apps/v1
-          kind: Deployment
-          name: prometheus-kube-prometheus-operator
-        minReplicas: 0
-        maxReplicas: 1
-        metrics:
-          - type: External
-            external:
-              metric:
-                name: cpu_usage_alert
-              target:
-                type: Value
-                value: "1"
-        behavior:
-          scaleDown:
-            policies:
-              - type: Pods           # Уменьшает на 100% реплик (до 0)
-                value: 100
-                periodSeconds: 10    # За 10 секунд
-            stabilizationWindowSeconds: 0  # Без задержки
-          scaleUp:
-            policies:
-              - type: Pods           # Увеличивает на 1 реплику
-                value: 1
-                periodSeconds: 300  # Ждёт 1 час (3600 секунд)
-            stabilizationWindowSeconds: 300  # Дополнительная задержка
-            
+
+- name: hpa_list
+  ansible.builtin.set_fact:
+    hpa-list:
+      - {name: "prometheus-operator", kind: "Deployment", set-name: "prometheus-kube-prometheus-operator"}
+          
 - name: HPA
   kubernetes.core.k8s:
     state: present
@@ -323,13 +290,13 @@
       apiVersion: autoscaling/v2
       kind: HorizontalPodAutoscaler
       metadata:
-        name: HPA-prometheus-operator
+        name: "{{ item.name }}"
         namespace: monitoring
       spec:
         scaleTargetRef:
           apiVersion: apps/v1
-          kind: Deployment
-          name: prometheus-kube-prometheus-operator
+          kind: "{{ item.kind }}"
+          name: "{{ item.set-name }}"
         minReplicas: 0
         maxReplicas: 1
         metrics:
@@ -353,3 +320,4 @@
                 value: 1
                 periodSeconds: 300  # Ждёт 1 час (3600 секунд)
             stabilizationWindowSeconds: 300  # Дополнительная задержка
+    with_items: "{{ hpa-list }}"
