@@ -606,9 +606,9 @@ loki:
   # -- Additional query scheduler config
   query_scheduler:
     use_scheduler_ring: true
-#    scheduler_ring:
-#      kvstore:
-#        store: memberlist
+    scheduler_ring:
+      kvstore:
+        store: memberlist
     grpc_client_config:
       tls_enabled: true
       tls_cert_path: /tmp/certs/tls.crt
