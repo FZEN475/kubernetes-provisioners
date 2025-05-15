@@ -172,7 +172,10 @@ rules:
         as: "ssh_active_sessions_external"
       resources:
         namespaced: false
-
+    - seriesQuery: 'cpu_usage_status{node!=""}'
+      metricsQuery: 'max(cpu_usage_status or vector(1)) by ()'  # Агрегируем максимум по всем узлам
+      name:
+        as: "cpu_usage_alert"  # Имя новой метрики
   resource:
     cpu:
       containerLabel: container

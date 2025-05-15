@@ -75,6 +75,10 @@ externalRules:
     resources:
       namespaced: false
     seriesQuery: '{__name__=~"pod_cpu_usage_seconds_total",namespace="kube-system"}'
+  - seriesQuery: 'cpu_usage_status{node!=""}'
+    metricsQuery: 'max(cpu_usage_status or vector(1) ) by ()'  # Агрегируем максимум по всем узлам
+    name:
+      as: "cpu_usage_alert"  # Имя новой метрики
 resourceRules:
   cpu:
     containerLabel: container
