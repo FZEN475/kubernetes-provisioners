@@ -330,6 +330,6 @@
             policies:
               - type: Pods           # Увеличивает на 1 реплику
                 value: 1
-                periodSeconds: 300  # Ждёт 1 час (3600 секунд)
-            stabilizationWindowSeconds: 300  # Дополнительная задержка
+                periodSeconds: 3600  # Ждёт 1 час (3600 секунд)
+            stabilizationWindowSeconds: 3600  # Дополнительная задержка
   with_items: "{{ hpa_list }}"
