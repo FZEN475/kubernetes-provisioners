@@ -22,7 +22,7 @@
   "links": [],
   "panels": [
     {
-      "collapsed": false,
+      "collapsed": true,
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -30,21 +30,265 @@
         "y": 0
       },
       "id": 6,
-      "panels": [],
+      "panels": [
+        {
+          "datasource": "$Loki",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "neutral": -1
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 1
+          },
+          "id": 5,
+          "options": {
+            "legend": "{{pod}}",
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "12.0.0",
+          "targets": [
+            {
+              "datasource": "$Loki",
+              "direction": "backward",
+              "editorMode": "code",
+              "expr": "sum(rate({pod=~\".+\"} |~ \"(?i)error\" [5m])) by (pod) / sum(rate({pod=~\".+\"}[5m])) by (pod) > 0.05",
+              "legendFormat": "{{label}}",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "HighPercentageError",
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${Loki}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "fieldMinMax": false,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 10
+          },
+          "id": 7,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "12.0.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "${Loki}"
+              },
+              "direction": "backward",
+              "editorMode": "code",
+              "expr": "sum(rate({pod=~\".+\"} |~ \"(?i)warn\" [5m])) by (pod) / sum(rate({pod=~\".+\"}[5m])) by (pod) > 0.05",
+              "legendFormat": "{{label}}",
+              "queryType": "range",
+              "refId": "A"
+            }
+          ],
+          "title": "HighPercentageWarn",
+          "type": "gauge"
+        },
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${Loki}"
+          },
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 7,
+            "w": 24,
+            "x": 0,
+            "y": 19
+          },
+          "id": 8,
+          "options": {
+            "minVizHeight": 75,
+            "minVizWidth": 75,
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ],
+              "fields": "",
+              "values": false
+            },
+            "showThresholdLabels": false,
+            "showThresholdMarkers": true,
+            "sizing": "auto"
+          },
+          "pluginVersion": "12.0.0",
+          "targets": [
+            {
+              "datasource": {
+                "type": "loki",
+                "uid": "${Loki}"
+              },
+              "direction": "backward",
+              "editorMode": "code",
+              "expr": "sum(rate({pod=~\".+\"} |~ \"(?i)debug\" [5m])) by (pod) / sum(rate({pod=~\".+\"}[5m])) by (pod) > 0.05",
+              "legendFormat": "{{label}}",
+              "queryType": "range",
+              "refId": "A",
+              "step": ""
+            }
+          ],
+          "title": "HighPercentageDEBUG",
+          "type": "gauge"
+        }
+      ],
       "title": "loki-alerts-rules",
       "type": "row"
     },
     {
-      "datasource": "$Loki",
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 1,
+      "panels": [],
+      "title": "Test custom and external metrics.",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic"
           },
           "custom": {
-            "neutral": -1
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
           },
-
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -59,49 +303,74 @@
             ]
           }
         },
-        "overrides": []
+        "overrides": [
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "control01"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 9,
-        "w": 24,
+        "h": 7,
+        "w": 18,
         "x": 0,
-        "y": 1
+        "y": 2
       },
-      "id": 5,
+      "id": 10,
       "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto",
-        "legend": "{{pod}}"
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
       },
       "pluginVersion": "12.0.0",
       "targets": [
         {
-          "datasource": "$Loki",
-          "direction": "backward",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
           "editorMode": "code",
-          "expr": "sum(rate({pod=~\".+\"} |= \"error\" [5m])) by (pod) / sum(rate({pod=~\"$pod\"}[5m])) by (pod) > 0.05",
-          "queryType": "range",
+          "expr": "100 - (avg by(node) (irate(node_cpu_seconds_total{mode=\"idle\", node=~\"control01|dev01|prod01\"}[5m])) * 100) > 30",
+          "legendFormat": "__auto",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "HighPercentageError",
-      "type": "gauge"
+      "title": "HighCPUUsage (disable monitoring)",
+      "type": "timeseries"
     },
     {
       "datasource": {
-        "type": "loki",
-        "uid": "${Loki}"
+        "type": "prometheus",
+        "uid": "${datasource}"
       },
       "fieldConfig": {
         "defaults": {
@@ -110,71 +379,8 @@
           },
           "fieldMinMax": false,
           "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green"
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 24,
-        "x": 0,
-        "y": 10
-      },
-      "id": 7,
-      "options": {
-        "minVizHeight": 75,
-        "minVizWidth": 75,
-        "orientation": "auto",
-        "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "sizing": "auto"
-      },
-      "pluginVersion": "12.0.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "${Loki}"
-          },
-          "direction": "backward",
-          "editorMode": "code",
-          "expr": "sum(rate({pod=~\".+\"} |= \"warn\" [5m])) by (pod) / sum(rate({pod=~\".+\"}[5m])) by (pod) > 0.05",
-          "queryType": "range",
-          "refId": "A"
-        }
-      ],
-      "title": "HighPercentageWarn",
-      "type": "gauge"
-    },
-    {
-      "datasource": {
-        "type": "loki",
-        "uid": "${Loki}"
-      },
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [],
+          "max": 1,
+          "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -192,11 +398,11 @@
       },
       "gridPos": {
         "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 19
+        "w": 6,
+        "x": 18,
+        "y": 2
       },
-      "id": 8,
+      "id": 11,
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -208,39 +414,29 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
+        "showThresholdLabels": true,
         "showThresholdMarkers": true,
-        "sizing": "auto"
+        "sizing": "auto",
+        "text": {
+          "percentSize": 2
+        }
       },
       "pluginVersion": "12.0.0",
       "targets": [
         {
           "datasource": {
-            "type": "loki",
-            "uid": "${Loki}"
+            "type": "prometheus",
+            "uid": "${datasource}"
           },
-          "direction": "backward",
           "editorMode": "code",
-          "expr": "sum(rate({pod=~\".+\"} |~ \"(?i)debug\" [5m])) by (pod) / sum(rate({pod=~\".+\"}[5m])) by (pod) > 0.05 ",
-          "queryType": "range",
+          "expr": "(100 - (avg by(node) (irate(node_cpu_seconds_total{mode=\"idle\", node=~\"control01|dev01|prod01\"}[5m])) * 100)) > bool 80",
+          "legendFormat": "__auto",
+          "range": true,
           "refId": "A"
         }
       ],
-      "title": "HighPercentageDEBUG",
+      "title": "HighCPUUsage (bool)",
       "type": "gauge"
-    },
-    {
-      "collapsed": false,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 26
-      },
-      "id": 1,
-      "panels": [],
-      "title": "Test custom and external metrics.",
-      "type": "row"
     },
     {
       "datasource": "$datasource",
@@ -275,9 +471,9 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 4,
+        "w": 5,
         "x": 0,
-        "y": 27
+        "y": 9
       },
       "id": 3,
       "maxDataPoints": 100,
@@ -347,9 +543,9 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 4,
-        "x": 4,
-        "y": 27
+        "w": 5,
+        "x": 5,
+        "y": 9
       },
       "id": 4,
       "maxDataPoints": 100,
@@ -487,5 +683,5 @@
   "timezone": "browser",
   "title": "Test custom metrics",
   "uid": "4abb9f68-1420-4542-b910-0d63dc57721a",
-  "version": 2
+  "version": 3
 }

@@ -11,6 +11,17 @@ datasources:
     type: loki
     access: proxy
     url: https://loki-read.monitoring.svc:3100
+    isDefault: true
     jsonData:
       timeout: 60
       maxLines: 1000
+  - name: Alertmanager
+    type: alertmanager
+    access: proxy
+    url: https://alertmanager-operated.monitoring.svc:9093  # Обычно Alertmanager работает на 9093
+    isDefault: true  # Делаем Alertmanager источником по умолчанию для алертов
+    jsonData:
+      implementation: prometheus  # Указываем, что это Prometheus Alertmanager
+      handleGrafanaManagedAlerts: true  # Разрешает принимать алерты из Grafana
+      handleAlerts: true  # Включает обработку алертов
+      timeout: 30

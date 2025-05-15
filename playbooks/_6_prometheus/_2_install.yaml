@@ -51,20 +51,20 @@
 #    values_files:
 #      - /tmp/values_prometheus.yaml
 #
-#- name: ConfigMap grafana-datasource
-#  kubernetes.core.k8s:
-#    state: present
-#    wait: true
-#    definition:
-#      apiVersion: v1
-#      kind: ConfigMap
-#      metadata:
-#        name: grafana-datasource
-#        namespace: 'monitoring'
-#        labels:
-#          grafana_datasource: ""
-#      data:
-#        datasource.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/datasource.yaml') }}"
+- name: ConfigMap grafana-datasource
+  kubernetes.core.k8s:
+    state: present
+    wait: true
+    definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: grafana-datasource
+        namespace: 'monitoring'
+        labels:
+          grafana_datasource: ""
+      data:
+        datasource.yaml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/datasource.yaml') }}"
 #
 - name: Creating tmp_kube_state_metrics_dashboard_json
   ansible.builtin.set_fact:
@@ -98,7 +98,7 @@
 
 - name: ConfigMap alertmanager-config
   kubernetes.core.k8s:
-    state: present
+    state: absent
     wait: true
     definition:
       apiVersion: v1
@@ -108,8 +108,6 @@
         namespace: 'monitoring'
         labels:
           alertmanager_config: ""
-      data:
-        alertmanager.yml: "{{ lookup('ansible.builtin.file', '/source/config/_6_prometheus_new/config/alertmanager.yml') }}"
 
 
 - name: ConfigMap loki-rule
