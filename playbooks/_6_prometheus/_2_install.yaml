@@ -278,13 +278,52 @@
                   
 - name: HPA
   kubernetes.core.k8s:
-    state: present
+    state: absent
     wait: true
     definition:          
       apiVersion: autoscaling/v2
       kind: HorizontalPodAutoscaler
       metadata:
         name: monitoring-scaler
+        namespace: monitoring
+      spec:
+        scaleTargetRef:
+          apiVersion: apps/v1
+          kind: Deployment
+          name: prometheus-kube-prometheus-operator
+        minReplicas: 0
+        maxReplicas: 1
+        metrics:
+          - type: External
+            external:
+              metric:
+                name: cpu_usage_alert
+              target:
+                type: Value
+                value: "1"
+        behavior:
+          scaleDown:
+            policies:
+              - type: Pods           # Уменьшает на 100% реплик (до 0)
+                value: 100
+                periodSeconds: 10    # За 10 секунд
+            stabilizationWindowSeconds: 0  # Без задержки
+          scaleUp:
+            policies:
+              - type: Pods           # Увеличивает на 1 реплику
+                value: 1
+                periodSeconds: 300  # Ждёт 1 час (3600 секунд)
+            stabilizationWindowSeconds: 300  # Дополнительная задержка
+            
+- name: HPA
+  kubernetes.core.k8s:
+    state: present
+    wait: true
+    definition:
+      apiVersion: autoscaling/v2
+      kind: HorizontalPodAutoscaler
+      metadata:
+        name: HPA-prometheus-operator
         namespace: monitoring
       spec:
         scaleTargetRef:
