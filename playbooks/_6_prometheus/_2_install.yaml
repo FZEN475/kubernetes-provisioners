@@ -332,4 +332,4 @@
                 value: 1
                 periodSeconds: 300  # Ждёт 1 час (3600 секунд)
             stabilizationWindowSeconds: 300  # Дополнительная задержка
-    with_items: "{{ hpa_list }}"
+  with_items: "{{ hpa_list }}"
