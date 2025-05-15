@@ -41,6 +41,10 @@
           "color": {
             "mode": "thresholds"
           },
+          "custom": {
+            "neutral": -1
+          },
+
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -58,12 +62,76 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 8,
-        "w": 12,
+        "h": 9,
+        "w": 24,
         "x": 0,
         "y": 1
       },
       "id": 5,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto",
+        "legend": "{{pod}}"
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": "$Loki",
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "sum(rate({pod=~\".+\"} |= \"error\" [5m])) by (pod) / sum(rate({pod=~\"$pod\"}[5m])) by (pod) > 0.05",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "HighPercentageError",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${Loki}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 7,
       "options": {
         "minVizHeight": 75,
         "minVizWidth": 75,
@@ -82,15 +150,83 @@
       "pluginVersion": "12.0.0",
       "targets": [
         {
-          "datasource": "$Loki",
+          "datasource": {
+            "type": "loki",
+            "uid": "${Loki}"
+          },
           "direction": "backward",
           "editorMode": "code",
-          "expr": "sum(rate({pod=~\".+\"} |= \"error\" [5m])) by (pod) / sum(rate({pod=~\"$pod\"}[5m])) by (pod) > 0.05",
+          "expr": "sum(rate({pod=~\".+\"} |= \"warn\" [5m])) by (pod) / sum(rate({pod=~\".+\"}[5m])) by (pod) > 0.05",
           "queryType": "range",
           "refId": "A"
         }
       ],
-      "title": "HighPercentageError",
+      "title": "HighPercentageWarn",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${Loki}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 8,
+      "options": {
+        "minVizHeight": 75,
+        "minVizWidth": 75,
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "sizing": "auto"
+      },
+      "pluginVersion": "12.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${Loki}"
+          },
+          "direction": "backward",
+          "editorMode": "code",
+          "expr": "sum(rate({pod=~\".+\"} |~ \"(?i)debug\" [5m])) by (pod) / sum(rate({pod=~\".+\"}[5m])) by (pod) > 0.05 ",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "HighPercentageDEBUG",
       "type": "gauge"
     },
     {
@@ -99,7 +235,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 26
       },
       "id": 1,
       "panels": [],
@@ -141,7 +277,7 @@
         "h": 3,
         "w": 4,
         "x": 0,
-        "y": 1
+        "y": 27
       },
       "id": 3,
       "maxDataPoints": 100,
@@ -162,7 +298,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.0",
       "targets": [
         {
           "editorMode": "code",
@@ -213,7 +349,7 @@
         "h": 3,
         "w": 4,
         "x": 4,
-        "y": 1
+        "y": 27
       },
       "id": 4,
       "maxDataPoints": 100,
@@ -234,7 +370,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.6.1",
+      "pluginVersion": "12.0.0",
       "targets": [
         {
           "editorMode": "code",
@@ -272,7 +408,10 @@
       },
       {
         "allowCustomValue": false,
-        "current": {},
+        "current": {
+          "text": "Loki",
+          "value": "P8E80F9AEF21F6940"
+        },
         "label": "Loki",
         "name": "Loki",
         "options": [],
@@ -347,6 +486,6 @@
   },
   "timezone": "browser",
   "title": "Test custom metrics",
-  "version": 1
+  "uid": "4abb9f68-1420-4542-b910-0d63dc57721a",
+  "version": 2
 }
-

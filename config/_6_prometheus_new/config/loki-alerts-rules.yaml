@@ -3,7 +3,7 @@ groups:
     rules:
       - alert: HighPercentageError
         expr: |
-          sum(rate({pod=~".+"} |= "error" [5m])) by (pod) / sum(rate({pod=~".+"}[5m])) by (pod) > 0.05
+          sum(rate({pod=~".+"} |~ "(?i)error" [5m])) by (pod) / sum(rate({pod=~".+"}[5m])) by (pod) > 0.05
         for: 1m
         labels:
           severity: "critical"
@@ -12,7 +12,7 @@ groups:
           summary: High request Error latency
       - alert: HighPercentageWarn
         expr: |
-          sum(rate({pod=~".+"} |= "warn" [5m])) by (pod) / sum(rate({pod=~".+"}[5m])) by (pod) > 0.05
+          sum(rate({pod=~".+"} |~ "(?i)warn" [5m])) by (pod) / sum(rate({pod=~".+"}[5m])) by (pod) > 0.05
         for: 1m
         labels:
           severity: "critical"
@@ -21,7 +21,7 @@ groups:
           summary: High request Warn latency
       - alert: HighPercentageDEBUG
         expr: |
-          sum(rate({pod=~".+"} |= "DEBUG" [5m])) by (pod) / sum(rate({pod=~".+"}[5m])) by (pod) > 0.05
+          sum(rate({pod=~".+"} |~ "(?i)debug" [5m])) by (pod) / sum(rate({pod=~".+"}[5m])) by (pod) > 0.05
         for: 1m
         labels:
           severity: "warning"
