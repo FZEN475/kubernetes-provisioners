@@ -173,7 +173,7 @@ rules:
       resources:
         namespaced: false
     - seriesQuery: 'cpu_usage_status{node!=""}'
-      metricsQuery: 'max(cpu_usage_status or vector(1)) by ()'  # Агрегируем максимум по всем узлам
+      metricsQuery: 'max(cpu_usage_status) by ()'  # Агрегируем максимум по всем узлам
       name:
         as: "cpu_usage_alert"  # Имя новой метрики
       resources:
