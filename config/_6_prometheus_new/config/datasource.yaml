@@ -17,7 +17,7 @@ datasources:
   - name: Alertmanager
     type: alertmanager
     access: proxy
-    url: https://alertmanager-operated.monitoring.svc:90931  # Обычно Alertmanager работает на 9093
+    url: https://alertmanager-operated.monitoring.svc:9093  # Обычно Alertmanager работает на 9093
     jsonData:
       implementation: prometheus  # Указываем, что это Prometheus Alertmanager
       handleGrafanaManagedAlerts: true  # Разрешает принимать алерты из Grafana
