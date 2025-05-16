@@ -262,7 +262,7 @@
             rules:
               - alert: HighCPUUsage
                 expr: !unsafe |
-                  100 - (avg by(node) (irate(node_cpu_seconds_total{mode="idle", node=~"control01|dev01|prod01"}[5m])) * 100) > 80
+                  100 - (avg by(node) (irate(node_cpu_seconds_total{mode="idle", node=~"control01|dev01|prod01"}[5m])) * 100) > 60
                 for: 5m
                 labels:
                   severity: warning
@@ -272,7 +272,7 @@
 
               - record: cpu_usage_status
                 expr: !unsafe |
-                  (100 - (avg by(node) (irate(node_cpu_seconds_total{mode="idle", node=~"control01|dev01|prod01"}[5m])) * 100)) <= bool 80
+                  (100 - (avg by(node) (irate(node_cpu_seconds_total{mode="idle", node=~"control01|dev01|prod01"}[5m])) * 100)) <= bool 60
                 labels:
                   severity: info
                   
