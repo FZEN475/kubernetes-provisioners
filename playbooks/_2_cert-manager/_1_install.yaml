@@ -242,3 +242,21 @@
                   apiTokenSecretRef:
                     name: cloudflare-api-secrets
                     key: api-token
+
+- name: Create ACME letsencrypt ClusterIssuer.
+  kubernetes.core.k8s:
+    state: present
+    definition:
+      apiVersion: cert-manager.io/v1alpha2
+      kind: Certificate
+      metadata:
+        name: cm-external-nginx-tls
+      spec:
+        secretName: cm-external-nginx-tls
+        issuerRef:
+          kind: ClusterIssuer
+          name: letsencrypt-ci
+        commonName: fzen.pro
+        dnsNames:
+          - "fzen.pro"
+          - "*.fzen.pro"
