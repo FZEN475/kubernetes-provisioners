@@ -224,6 +224,27 @@
 
 - name: Create ACME letsencrypt ClusterIssuer.
   kubernetes.core.k8s:
+    state: absent
+    definition:
+      apiVersion: cert-manager.io/v1
+      kind: ClusterIssuer
+      metadata:
+        name: letsencrypt-ci
+      spec:
+        acme:
+          server: https://acme-staging-v02.api.letsencrypt.org/directory
+          privateKeySecretRef:
+            name: letsencrypt
+          solvers:
+            - dns01:
+                cloudflare:
+                  email: firzen475@gmail.com
+                  apiTokenSecretRef:
+                    name: cloudflare-api-secrets
+                    key: api-token
+
+- name: Create ACME letsencrypt ClusterIssuer.
+  kubernetes.core.k8s:
     state: present
     definition:
       apiVersion: cert-manager.io/v1
