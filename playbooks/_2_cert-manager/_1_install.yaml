@@ -251,6 +251,7 @@
       kind: Certificate
       metadata:
         name: cm-external-nginx-tls
+        namespace: prod
       spec:
         secretName: cm-external-nginx-tls
         issuerRef:
