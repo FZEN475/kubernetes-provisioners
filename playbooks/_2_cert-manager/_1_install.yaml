@@ -226,10 +226,10 @@
   kubernetes.core.k8s:
     state: present
     definition:
-      apiVersion: cert-manager.io/v1alpha2
+      apiVersion: cert-manager.io/v1
       kind: ClusterIssuer
       metadata:
-        name: letsencrypt
+        name: letsencrypt-ci
       spec:
         acme:
           server: https://acme-staging-v02.api.letsencrypt.org/directory
