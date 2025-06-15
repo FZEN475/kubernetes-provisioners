@@ -271,17 +271,8 @@
       apiVersion: cert-manager.io/v1
       kind: Certificate
       metadata:
-        name: cm-external-nginx-tls
+        name: cm-fzen-pro-tls
         namespace: prod
-      spec:
-        secretName: cm-external-nginx-tls
-        issuerRef:
-          kind: ClusterIssuer
-          name: letsencrypt-ci
-        commonName: fzen.pro
-        dnsNames:
-          - "fzen.pro"
-          - "*.fzen.pro"
 
 - name: Create ACME letsencrypt ClusterIssuer.
   kubernetes.core.k8s:
