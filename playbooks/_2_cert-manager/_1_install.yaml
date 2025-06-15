@@ -32,16 +32,16 @@
 #    values_files:
 #      - /tmp/values_cm.yaml
 #
-- name: Install cert-manager
-  kubernetes.core.helm:
-    name: cert-manager
-    chart_ref: jetstack/cert-manager
-    release_namespace: secrets
-    create_namespace: true
-    state: present
-    wait: true
-    values_files:
-      - /tmp/values_cm.yaml
+#- name: Install cert-manager
+#  kubernetes.core.helm:
+#    name: cert-manager
+#    chart_ref: jetstack/cert-manager
+#    release_namespace: secrets
+#    create_namespace: true
+#    state: present
+#    wait: true
+#    values_files:
+#      - /tmp/values_cm.yaml
 #
 #- name: Copy values
 #  ansible.builtin.copy:
