@@ -257,11 +257,11 @@ config: {}
 # For more information, see the [cert-manager documentation](https://cert-manager.io/docs/configuration/acme/dns01/#setting-nameservers-for-dns01-self-check).
 
 # A comma-separated string with the host and port of the recursive nameservers cert-manager should query.
-dns01RecursiveNameservers: ""
+dns01RecursiveNameservers: "dell.ns.cloudflare.com:53,kipp.ns.cloudflare.com:53"
 
 # Forces cert-manager to use only the recursive nameservers for verification.
 # Enabling this option could cause the DNS01 self check to take longer owing to caching performed by the recursive nameservers.
-dns01RecursiveNameserversOnly: false
+dns01RecursiveNameserversOnly: true
 
 # Option to disable cert-manager's build-in auto-approver. The auto-approver
 # approves all CertificateRequests that reference issuers matching the 'approveSignerNames'
@@ -750,9 +750,7 @@ webhook:
 
   # Additional command line flags to pass to cert-manager webhook binary.
   # To see all available flags run `docker run quay.io/jetstack/cert-manager-webhook:<version> --help`.
-  extraArgs: 
-    - --dns01-recursive-nameservers-only
-    - --dns01-recursive-nameservers=dell.ns.cloudflare.com:53,kipp.ns.cloudflare.com:53
+  extraArgs: []
   # Path to a file containing a WebhookConfiguration object used to configure the webhook.
   # - --config=<path-to-config-file>
 
