@@ -15,11 +15,11 @@
 #    - {name: "jetstack", url: "https://charts.jetstack.io"}
 #    - {name: "emberstack", url: "https://emberstack.github.io/helm-charts"}
 #
-#- name: Copy values
-#  ansible.builtin.copy:
-#    src: '/source/config/_2_cert-manager/_0_values-cm.yaml'
-#    dest: '/tmp/values_cm.yaml'
-#    mode: "0640"
+- name: Copy values
+  ansible.builtin.copy:
+    src: '/source/config/_2_cert-manager/_0_values-cm.yaml'
+    dest: '/tmp/values_cm.yaml'
+    mode: "0640"
 #
 #- name: Remove cert-manager
 #  kubernetes.core.helm:
@@ -32,16 +32,16 @@
 #    values_files:
 #      - /tmp/values_cm.yaml
 #
-#- name: Install cert-manager
-#  kubernetes.core.helm:
-#    name: cert-manager
-#    chart_ref: jetstack/cert-manager
-#    release_namespace: secrets
-#    create_namespace: true
-#    state: present
-#    wait: true
-#    values_files:
-#      - /tmp/values_cm.yaml
+- name: Install cert-manager
+  kubernetes.core.helm:
+    name: cert-manager
+    chart_ref: jetstack/cert-manager
+    release_namespace: secrets
+    create_namespace: true
+    state: present
+    wait: true
+    values_files:
+      - /tmp/values_cm.yaml
 #
 #- name: Copy values
 #  ansible.builtin.copy:
