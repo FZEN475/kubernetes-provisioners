@@ -12,21 +12,21 @@
 #        'external-nginx-ingress-nginx-controller-metrics.provisioners.svc'
 #      ]}
 #      - {name: "vault", ns: "secrets",issuer: "root-intermediate0-ci", dns: ['vault.fzen.pro','vault.secrets.svc']}
-      - {name: "prometheus", ns: "monitoring",issuer: "root-intermediate0-ci", dns: [
-        'prometheus.fzen.pro',
-        'alertmanager.fzen.pro',
-        'loki.fzen.pro',
-        'grafana.fzen.pro',
-        'prometheus-kube-prometheus-prometheus.monitoring.svc',
-        'prometheus-kube-state-metrics.monitoring.svc',
-        'prometheus-prometheus-node-exporter.monitoring.svc',
-        'prometheus-kube-prometheus-alertmanager.monitoring.svc',
-        'alertmanager-operated.monitoring.svc',
-        'loki-memberlist.monitoring.svc',
-        'loki-write.monitoring.svc',
-        'loki-read.monitoring.svc'
-
-      ]}
+#      - {name: "prometheus", ns: "monitoring",issuer: "root-intermediate0-ci", dns: [
+#        'prometheus.fzen.pro',
+#        'alertmanager.fzen.pro',
+#        'loki.fzen.pro',
+#        'grafana.fzen.pro',
+#        'prometheus-kube-prometheus-prometheus.monitoring.svc',
+#        'prometheus-kube-state-metrics.monitoring.svc',
+#        'prometheus-prometheus-node-exporter.monitoring.svc',
+#        'prometheus-kube-prometheus-alertmanager.monitoring.svc',
+#        'alertmanager-operated.monitoring.svc',
+#        'loki-memberlist.monitoring.svc',
+#        'loki-write.monitoring.svc',
+#        'loki-read.monitoring.svc'
+#      ]}
+      - { name: "kafka", ns: "storage",issuer: "root-intermediate0-ci", dns: [ 'kafka.storage.svc' ] }
 #      - { name: "client-etcd", ns: "storage",issuer: "vault-etcd-ci", dns: [ 'etcd.fzen.pro' ] }
 #      - { name: "kuber", ns: "monitoring",issuer: "root-intermediate0-ci", dns: [ 'kuber.fzen.pro' ] }
 #      - { name: "minio", ns: "storage",issuer: "root-intermediate0-ci", dns: [ 'minio.fzen.pro','minio.storage.svc' ] }
