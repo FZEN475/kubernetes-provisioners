@@ -26,12 +26,6 @@
 #        'loki-write.monitoring.svc',
 #        'loki-read.monitoring.svc'
 #      ]}
-      - { name: "kafka", ns: "storage",issuer: "root-intermediate0-ci", dns: [
-        'kafka.storage.svc',
-        'kafka-controller-headless.storage.svc',
-        '*.kafka-controller-headless.storage.svc.fzen.pro',
-        '*.kafka-controller-headless.storage.svc.cluster.local'
-      ] }
 #      - { name: "client-etcd", ns: "storage",issuer: "vault-etcd-ci", dns: [ 'etcd.fzen.pro' ] }
 #      - { name: "kuber", ns: "monitoring",issuer: "root-intermediate0-ci", dns: [ 'kuber.fzen.pro' ] }
 #      - { name: "minio", ns: "storage",issuer: "root-intermediate0-ci", dns: [ 'minio.fzen.pro','minio.storage.svc' ] }
