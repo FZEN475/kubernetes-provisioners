@@ -2154,7 +2154,7 @@ ingester:
   maxUnavailable: 1
   # -- Node selector for ingester pods
   nodeSelector:
-    kubernetes.io/hostname: "dev01"
+    kubernetes.io/hostname: "workflow01"
   # -- Tolerations for ingester pods
   tolerations:
     - key: "node-role.kubernetes.io/control-plane"
@@ -2343,7 +2343,7 @@ distributor:
   maxSurge: 0
   # -- Node selector for distributor pods
   nodeSelector:
-    kubernetes.io/hostname: "dev01"
+    kubernetes.io/hostname: "workflow01"
   # -- Topology Spread Constraints for distributor pods
   topologySpreadConstraints: []
   # -- Tolerations for distributor pods
@@ -2460,7 +2460,7 @@ querier:
   maxSurge: 0
   # -- Node selector for querier pods
   nodeSelector:
-    kubernetes.io/hostname: "dev01"
+    kubernetes.io/hostname: "workflow01"
   # -- Tolerations for querier pods
   tolerations:
     - key: "node-role.kubernetes.io/control-plane"
